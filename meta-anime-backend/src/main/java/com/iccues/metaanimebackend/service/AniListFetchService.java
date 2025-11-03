@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -83,9 +84,27 @@ public class AniListFetchService {
     }
 
     List<JsonNode> fetchAnimeData(int seasonYear, String season) {
+        JsonNode firstPage = fetchPage(seasonYear, season, 1);
+        boolean hasNextPage = firstPage.path("pageInfo").path("hasNextPage").asBoolean();
+        List<JsonNode> resultList = new ArrayList<>();
+        firstPage.path("media").forEach(resultList::add);
+
+        for (int i = 2; hasNextPage; i++) {
+            JsonNode nextPage = fetchPage(seasonYear, season, i);
+            hasNextPage = nextPage.path("pageInfo").path("hasNextPage").asBoolean();
+            nextPage.path("media").forEach(resultList::add);
+        }
+
+        return resultList;
+    }
+
+    JsonNode fetchPage(int seasonYear, String season, int page) {
         String query = """
-                query ($seasonYear: Int, $season: MediaSeason) {
-                  Page {
+                query ($seasonYear: Int, $season: MediaSeason, $page: Int) {
+                  Page(page: $page) {
+                    pageInfo {
+                      hasNextPage
+                    }
                     media(seasonYear: $seasonYear, season: $season, type: ANIME) {
                       id
                       title {
@@ -114,7 +133,8 @@ public class AniListFetchService {
 
         Map<String, Object> variables = Map.of(
                 "seasonYear", seasonYear,
-                "season", season
+                "season", season,
+                "page", page
         );
 
         Map<String, Object> requestBody = Map.of(
@@ -128,11 +148,10 @@ public class AniListFetchService {
                 .bodyToMono(JsonNode.class)
                 .block();
 
-        JsonNode array = null;
-        if (result != null) {
-            array = result.path("data").path("Page").path("media");
+        if (result == null) {
+            return null;
         }
 
-        return mapper.convertValue(array, new TypeReference<>() {});
+        return result.path("data").path("Page");
     }
 }

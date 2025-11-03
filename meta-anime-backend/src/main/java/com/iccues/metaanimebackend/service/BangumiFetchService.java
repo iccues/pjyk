@@ -11,7 +11,9 @@ import com.iccues.metaanimebackend.repo.AnimeRepository;
 import jakarta.annotation.Resource;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,7 +25,12 @@ public class BangumiFetchService {
     @Resource
     AnimeMappingService animeMappingService;
 
-    final WebClient client = WebClient.create("https://api.bgm.tv/calendar");
+    final WebClient client = WebClient.builder()
+            .baseUrl("https://api.bgm.tv/v0/subjects?type=2&sort=rank")
+            .exchangeStrategies(ExchangeStrategies.builder()
+                    .codecs(cfg -> cfg.defaultCodecs().maxInMemorySize(16 * 1024 * 1024)) // 16MB
+                    .build())
+            .build();
 
     @Resource
     ObjectMapper mapper;
@@ -35,7 +42,7 @@ public class BangumiFetchService {
     AnimeRepository repo;
 
     Anime searchOrCreateAnime(JsonNode jsonNode) {
-        String date = jsonNode.path("air_date").asText();
+        String date = jsonNode.path("date").asText();
         LocalDate startDate = LocalDate.parse(date);
 
         AnimeTitles titles = new AnimeTitles();
@@ -72,33 +79,47 @@ public class BangumiFetchService {
         return mapping;
     }
 
-    public void fetchAnime() {
-        List<JsonNode> mediaList = fetchAnimeData();
+    public void fetchAnime(int year, int month) {
+        List<JsonNode> mediaList = fetchAnimeData(year, month);
         for (JsonNode jsonNode : mediaList) {
             AnimeMapping mapping = handleAnimeMapping(jsonNode);
             animeMappingService.saveOrUpdate(mapping);
         }
     }
 
-    List<JsonNode> fetchAnimeData() {
-        var weekdays = client.get()
-                .retrieve()
-                .bodyToMono(ArrayNode.class)
-                .block();
-
-        if (weekdays == null) {
+    List<JsonNode> fetchAnimeData(int year, int month) {
+        JsonNode firstPage = fetchPage(year, month, 0);
+        if (firstPage == null) {
             return new ArrayList<>();
         }
 
-        List<JsonNode> jsonNodes = new ArrayList<>();
+        List<JsonNode> list = new ArrayList<>();
+        firstPage.path("data").forEach(list::add);
 
-        for (JsonNode weekday : weekdays) {
-            for (JsonNode item : weekday.path("items")) {
-                jsonNodes.add(item);
-            }
 
+        int total = firstPage.path("total").asInt();
+        int totalPage = (total + pageSize - 1) / pageSize;
+
+        for (int i = 1; i < totalPage; i++) {
+            JsonNode page = fetchPage(year, month, i);
+            page.path("data").forEach(list::add);
         }
 
-        return jsonNodes;
+        return list;
+    }
+
+    final int pageSize = 50;
+
+    JsonNode fetchPage(int year, int month, int page) {
+        return client.get()
+                .uri(uriBuilder -> uriBuilder
+                        .queryParam("year", year)
+                        .queryParam("month", month)
+                        .queryParam("limit", pageSize)
+                        .queryParam("offset", page * pageSize)
+                        .build())
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .block();
     }
 }
