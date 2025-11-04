@@ -1,7 +1,9 @@
 package com.iccues.metaanimebackend.controller;
 
 import com.iccues.metaanimebackend.common.Response;
+import com.iccues.metaanimebackend.dto.AnimeDTO;
 import com.iccues.metaanimebackend.entity.Anime;
+import com.iccues.metaanimebackend.mapper.AnimeMapper;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
@@ -18,10 +20,14 @@ class AnimeController {
     @Resource
     AnimeRepository animeRepository;
 
+    @Resource
+    AnimeMapper animeMapper;
+
     @ResponseBody
     @GetMapping("/get_list")
-    public Response<List<Anime>> getAnimeList() {
+    public Response<List<AnimeDTO>> getAnimeList() {
         List<Anime> animeList = animeRepository.findAllByOrderByAverageScoreDesc();
-        return Response.ok(animeList);
+        List<AnimeDTO> dtoList = animeMapper.toDtoList(animeList);
+        return Response.ok(dtoList);
     }
 }
