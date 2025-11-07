@@ -1,8 +1,7 @@
 package com.iccues.metaanimebackend.jobs;
 
 import com.iccues.metaanimebackend.entity.Season;
-import com.iccues.metaanimebackend.service.*;
-import com.iccues.metaanimebackend.service.fetch.*;
+import com.iccues.metaanimebackend.service.fetch.FetchService;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,22 +11,11 @@ import org.springframework.stereotype.Component;
 public class AnimeFetchJob {
 
     @Resource
-    BangumiFetchService bangumiFetchService;
-    @Resource
-    AniListFetchService aniListFetchService;
-    @Resource
-    MyAnimeListFetchService myAnimeListFetchService;
-
-    @Resource
-    ScoreService scoreService;
+    FetchService fetchService;
 
     @Scheduled(cron = "0 0 4 * * *")
     public void fetchAnime() {
-        bangumiFetchService.fetchAnime(2025, Season.FALL);
-        aniListFetchService.fetchAnime(2025, Season.FALL);
-        myAnimeListFetchService.fetchAnime(2025, Season.FALL);
-
-        scoreService.calculateAverageScore();
+        fetchService.fetchAnime(2025, Season.SUMMER);
     }
 
     @PostConstruct
