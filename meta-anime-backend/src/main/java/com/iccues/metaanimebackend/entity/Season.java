@@ -14,4 +14,8 @@ public enum Season {
             case FALL -> 10;
         };
     }
+
+    public String toLowerName() {
+        return this.name().toLowerCase();
+    }
 }

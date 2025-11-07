@@ -19,6 +19,9 @@ public class AnimeService {
     TitleMatchingService titleMatchingService;
 
     List<Anime> findAnimeAroundDate(LocalDate date) {
+        if (date == null) {
+            return List.of();
+        }
         LocalDate start = date.minusDays(1);
         LocalDate end = date.plusDays(1);
         return repo.findByStartDateBetween(start, end);

@@ -60,17 +60,21 @@ public class AniListFetchService extends AbstractAnimeFetchService {
     @Override
     protected List<JsonNode> fetchAnimeData(int year, Season season) {
         JsonNode firstPage = fetchPage(year, season, 1);
+        if (firstPage == null) {
+            return new ArrayList<>();
+        }
+
         boolean hasNextPage = firstPage.path("pageInfo").path("hasNextPage").asBoolean();
-        List<JsonNode> resultList = new ArrayList<>();
-        firstPage.path("media").forEach(resultList::add);
+        List<JsonNode> list = new ArrayList<>();
+        firstPage.path("media").forEach(list::add);
 
         for (int i = 2; hasNextPage; i++) {
             JsonNode nextPage = fetchPage(year, season, i);
             hasNextPage = nextPage.path("pageInfo").path("hasNextPage").asBoolean();
-            nextPage.path("media").forEach(resultList::add);
+            nextPage.path("media").forEach(list::add);
         }
 
-        return resultList;
+        return list;
     }
 
     final WebClient client = WebClient.create("https://graphql.anilist.co");
