@@ -29,8 +29,7 @@ public class Anime {
 
     @OneToMany(mappedBy = "anime",
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            orphanRemoval = true)
+            fetch = FetchType.LAZY)
     List<Mapping> mappings = new ArrayList<>();
 
     public void addMapping(Mapping mapping) {

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { getAnimeList, getMappingList } from '../../api/admin';
+import { getAnimeList, getUnmappedMappingList, updateMappingAnime } from '../../api/admin';
 import type { AdminAnime, AdminMapping } from '../../types/adminAnime';
 import AdminAnimeItem from '../../components/admin/AdminAnimeItem.vue';
 import AdminMappingItem from '../../components/admin/AdminMappingItem.vue';
+import draggable from 'vuedraggable';
+import { ElMessage } from 'element-plus';
 
 const animeList = ref<AdminAnime[]>([]);
 const mappingList = ref<AdminMapping[]>([]);
@@ -15,7 +17,7 @@ onMounted(async () => {
     loading.value = true;
     const [animes, mappings] = await Promise.all([
       getAnimeList(),
-      getMappingList()
+      getUnmappedMappingList()
     ]);
     animeList.value = animes;
     mappingList.value = mappings;
@@ -26,6 +28,50 @@ onMounted(async () => {
     loading.value = false;
   }
 });
+
+const applyMappingChange = async (mapping: AdminMapping, newAnimeId: number | null) => {
+  const oldAnimeId = mapping.animeId
+  if (oldAnimeId === newAnimeId) return
+
+  try {
+    await updateMappingAnime(mapping.mappingId, newAnimeId)
+
+    if (oldAnimeId !== null) {
+      const oldAnime = animeList.value.find(a => a.animeId === oldAnimeId)
+      if (oldAnime) oldAnime.mappings = oldAnime.mappings.filter(m => m.mappingId !== mapping.mappingId)
+    } else {
+      const idx = mappingList.value.findIndex(m => m.mappingId === mapping.mappingId)
+      if (idx !== -1) mappingList.value.splice(idx, 1)
+    }
+
+    mapping.animeId = newAnimeId
+
+    if (newAnimeId !== null) {
+      const newAnime = animeList.value.find(a => a.animeId === newAnimeId)
+      if (newAnime && !newAnime.mappings.some(m => m.mappingId === mapping.mappingId)) {
+        newAnime.mappings.push(mapping)
+      }
+      ElMessage.success('映射关联成功')
+    } else {
+      if (!mappingList.value.some(m => m.mappingId === mapping.mappingId)) {
+        mappingList.value.push(mapping)
+      }
+      ElMessage.success('已解除映射关联')
+    }
+  } catch (e) {
+    ElMessage.error('更新失败: ' + (e instanceof Error ? e.message : '未知错误'))
+  }
+}
+
+const handleMappingToAnime = (evt: any, animeId: number) => {
+  const mapping = evt.added?.element as AdminMapping | undefined
+  if (mapping) applyMappingChange(mapping, animeId)
+}
+
+const handleMappingToUnmapped = (evt: any) => {
+  const mapping = evt.added?.element as AdminMapping | undefined
+  if (mapping) applyMappingChange(mapping, null)
+}
 </script>
 
 <template>
@@ -56,26 +102,33 @@ onMounted(async () => {
                   v-for="anime in animeList"
                   :key="anime.animeId"
                   :anime="anime"
+                  @mapping-change="(evt) => handleMappingToAnime(evt, anime.animeId)"
                 />
               </div>
             </el-scrollbar>
           </div>
         </el-col>
 
-        <!-- 右列：映射列表 -->
+        <!-- 右列：未关联映射列表 -->
         <el-col :xs="24" :lg="12">
           <div class="list-section">
             <div class="section-header">
-              <h2>映射列表</h2>
+              <h2>未关联映射</h2>
               <el-tag type="warning">{{ mappingList.length }}</el-tag>
             </div>
             <el-scrollbar height="calc(100vh - 200px)" class="list-scrollbar">
-              <div class="list-content">
-                <AdminMappingItem
-                  v-for="mapping in mappingList"
-                  :key="mapping.mappingId"
-                  :mapping="mapping"
-                />
+              <div class="list-content drop-zone">
+                <draggable
+                  :model-value="mappingList"
+                  :group="{ name: 'mappings', pull: true, put: true }"
+                  item-key="mappingId"
+                  :sort="false"
+                  @change="handleMappingToUnmapped"
+                >
+                  <template #item="{ element }">
+                    <AdminMappingItem :mapping="element" />
+                  </template>
+                </draggable>
               </div>
             </el-scrollbar>
           </div>
@@ -134,6 +187,35 @@ onMounted(async () => {
   flex-direction: column;
   gap: 12px;
   padding-right: 8px;
+}
+
+.drop-zone {
+  min-height: 200px;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.drop-zone.sortable-drag {
+  opacity: 0.5;
+}
+
+.drop-zone.sortable-ghost {
+  opacity: 0.3;
+  background: var(--el-color-primary-light-9);
+}
+
+.empty-unmapped {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--el-text-color-placeholder);
+  font-size: 14px;
+  border: 2px dashed var(--el-border-color-lighter);
+  border-radius: 4px;
+  background: var(--el-fill-color-blank);
+  margin: 8px;
 }
 
 @media (max-width: 992px) {

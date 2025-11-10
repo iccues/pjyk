@@ -3,15 +3,24 @@ import { ref } from 'vue';
 import { ArrowDown } from '@element-plus/icons-vue';
 import type { AdminAnime } from '../../types/adminAnime';
 import AdminMappingItem from './AdminMappingItem.vue';
+import draggable from 'vuedraggable';
 
 defineProps<{
   anime: AdminAnime;
+}>();
+
+const emit = defineEmits<{
+  mappingChange: [evt: any];
 }>();
 
 const isExpanded = ref(false);
 
 const toggleExpand = () => {
   isExpanded.value = !isExpanded.value;
+};
+
+const handleMappingChange = (evt: any) => {
+  emit('mappingChange', evt);
 };
 </script>
 
@@ -38,10 +47,6 @@ const toggleExpand = () => {
         <span class="cell-label">评分</span>
         <span class="cell-value score-value">{{ anime.averageScore?.toFixed(3) }}</span>
       </div>
-      <!-- <div class="anime-cell anime-mappings-cell">
-        <span class="cell-label">映射</span>
-        <el-badge :value="anime.mappings.length" class="mapping-badge" />
-      </div> -->
       <div class="anime-cell anime-action-cell">
         <el-icon class="expand-icon" :class="{ expanded: isExpanded }">
           <ArrowDown />
@@ -50,19 +55,18 @@ const toggleExpand = () => {
     </div>
 
     <el-collapse-transition>
-      <div v-show="isExpanded" class="mappings-container">
-        <!-- <div class="mappings-header">
-          <el-divider content-position="left">
-            <span class="mappings-title">关联映射 ({{ anime.mappings.length }})</span>
-          </el-divider>
-        </div> -->
-        <div class="mappings-list">
-          <AdminMappingItem
-            v-for="mapping in anime.mappings"
-            :key="mapping.mappingId"
-            :mapping="mapping"
-          />
-        </div>
+      <div v-show="isExpanded" class="mappings-container" @click.stop>
+        <draggable
+          :model-value="anime.mappings"
+          :group="{ name: 'mappings', pull: true, put: true }"
+          item-key="mappingId"
+          class="mappings-list"
+          @change="handleMappingChange"
+        >
+          <template #item="{ element }">
+            <AdminMappingItem :mapping="element" />
+          </template>
+        </draggable>
       </div>
     </el-collapse-transition>
   </div>
@@ -222,6 +226,19 @@ const toggleExpand = () => {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-height: 60px;
+}
+
+.empty-mappings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+  color: var(--el-text-color-placeholder);
+  font-size: 13px;
+  border: 2px dashed var(--el-border-color-lighter);
+  border-radius: 4px;
+  background: var(--el-fill-color-blank);
 }
 
 @media (max-width: 768px) {

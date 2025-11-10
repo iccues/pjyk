@@ -41,6 +41,12 @@ defineProps<{
   border-radius: 3px;
   transition: all 0.2s;
   min-height: 50px;
+  /* cursor: move; */
+  cursor: grab;
+}
+
+.mapping-item-row:active {
+  cursor: grabbing;
 }
 
 .mapping-item-row:hover {

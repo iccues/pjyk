@@ -27,6 +27,7 @@ public class Mapping {
     Anime anime;
 
     public Long getAnimeId() {
+        if (anime == null) return null;
         return anime.getAnimeId();
     }
 

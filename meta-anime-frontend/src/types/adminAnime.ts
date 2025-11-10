@@ -8,7 +8,7 @@ export interface AdminAnime {
 
 export interface AdminMapping {
     mappingId: number,
-    animeId: number,
+    animeId: number | null,
     sourcePlatform: string,
     platformId: string,
     rawScore: number,
