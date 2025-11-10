@@ -29,6 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.apache.commons:commons-text:1.14.0")
     implementation("org.apache.commons:commons-lang3:3.18.0")
     implementation("org.mapstruct:mapstruct:1.6.3")

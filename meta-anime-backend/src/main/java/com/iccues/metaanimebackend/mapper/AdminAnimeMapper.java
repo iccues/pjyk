@@ -11,6 +11,8 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AdminAnimeMapper {
     List<AdminMappingDTO> toMappingDtoList(List<Mapping> mappingList);
+
+    AdminAnimeDTO toAnimeDto(Anime anime);
     List<AdminAnimeDTO> toAnimeDtoList(List<Anime> animeList);
 
     AdminMappingDTO toMappingDto(Mapping mapping);
