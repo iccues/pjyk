@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { getAnimeList, getUnmappedMappingList, updateMappingAnime } from '../../api/admin';
+import { getAnimeList, getUnmappedMappingList, updateMappingAnime, deleteAnime } from '../../api/admin';
 import type { AdminAnime, AdminMapping } from '../../types/adminAnime';
 import AdminAnimeItem from '../../components/admin/AdminAnimeItem.vue';
 import AdminMappingItem from '../../components/admin/AdminMappingItem.vue';
 import draggable from 'vuedraggable';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 const animeList = ref<AdminAnime[]>([]);
 const mappingList = ref<AdminMapping[]>([]);
@@ -72,6 +72,54 @@ const handleMappingToUnmapped = (evt: any) => {
   const mapping = evt.added?.element as AdminMapping | undefined
   if (mapping) applyMappingChange(mapping, null)
 }
+
+const handleDeleteAnime = async (animeId: number) => {
+  const anime = animeList.value.find(a => a.animeId === animeId)
+  if (!anime) return
+
+  try {
+    const mappingCount = anime.mappings.length
+    const confirmMessage = mappingCount > 0
+      ? `确定要删除动画《${anime.title.titleCn || anime.title.titleNative}》吗？\n该动画包含 ${mappingCount} 个映射，将先解除关联后再删除动画。\n此操作不可恢复。`
+      : `确定要删除动画《${anime.title.titleCn || anime.title.titleNative}》吗？此操作不可恢复。`
+
+    await ElMessageBox.confirm(
+      confirmMessage,
+      '确认删除',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        dangerouslyUseHTMLString: false,
+      }
+    )
+
+    // 保存映射列表用于更新前端状态
+    const mappingsToMove = [...anime.mappings]
+
+    // 调用后端删除 API（后端会自动解除映射关联）
+    await deleteAnime(animeId)
+
+    // 更新前端状态：将映射移到未关联列表
+    mappingsToMove.forEach(mapping => {
+      mapping.animeId = null
+      if (!mappingList.value.some(m => m.mappingId === mapping.mappingId)) {
+        mappingList.value.push(mapping)
+      }
+    })
+
+    // 从列表中移除该动画
+    const idx = animeList.value.findIndex(a => a.animeId === animeId)
+    if (idx !== -1) {
+      animeList.value.splice(idx, 1)
+    }
+
+    ElMessage.success('删除成功')
+  } catch (e) {
+    if (e === 'cancel') return
+    ElMessage.error('删除失败: ' + (e instanceof Error ? e.message : '未知错误'))
+  }
+}
 </script>
 
 <template>
@@ -103,6 +151,7 @@ const handleMappingToUnmapped = (evt: any) => {
                   :key="anime.animeId"
                   :anime="anime"
                   @mapping-change="(evt) => handleMappingToAnime(evt, anime.animeId)"
+                  @delete-anime="handleDeleteAnime"
                 />
               </div>
             </el-scrollbar>

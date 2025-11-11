@@ -22,7 +22,7 @@ public class Mapping {
 
     @ToString.Exclude
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "anime_id")
     Anime anime;
 

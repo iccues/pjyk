@@ -11,6 +11,7 @@ import com.iccues.metaanimebackend.repo.AnimeRepository;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,9 @@ public class AdminAnimeController {
 
     @Resource
     AnimeRepository animeRepository;
+
+    @Resource
+    MappingRepository mappingRepository;
 
     @Resource
     AdminAnimeMapper adminAnimeMapper;
@@ -69,10 +73,18 @@ public class AdminAnimeController {
 
     @ResponseBody
     @DeleteMapping("/delete_anime/{animeId}")
+    @Transactional
     public Response<Void> deleteAnime(@PathVariable Long animeId) {
-        if (!animeRepository.existsById(animeId)) {
-            throw new RuntimeException("Anime not found with id: " + animeId);
-        }
+        Anime anime = animeRepository.findById(animeId)
+                .orElseThrow(() -> new RuntimeException("Anime not found with id: " + animeId));
+
+        // 解除所有映射的关联
+        anime.getMappings().forEach(mapping -> {
+            mapping.setAnime(null);
+            mappingRepository.save(mapping);
+        });
+
+        // 再删除动画
         animeRepository.deleteById(animeId);
         return Response.ok(null);
     }

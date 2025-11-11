@@ -28,7 +28,7 @@ public class Anime {
     Double averageScore;
 
     @OneToMany(mappedBy = "anime",
-            cascade = CascadeType.ALL,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             fetch = FetchType.LAZY)
     List<Mapping> mappings = new ArrayList<>();
 

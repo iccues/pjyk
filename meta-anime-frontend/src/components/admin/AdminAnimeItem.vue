@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { ArrowDown } from '@element-plus/icons-vue';
+import { ArrowDown, Delete } from '@element-plus/icons-vue';
 import type { AdminAnime } from '../../types/adminAnime';
 import AdminMappingItem from './AdminMappingItem.vue';
 import draggable from 'vuedraggable';
 
-defineProps<{
+const props = defineProps<{
   anime: AdminAnime;
 }>();
 
 const emit = defineEmits<{
   mappingChange: [evt: any];
+  deleteAnime: [animeId: number];
 }>();
 
 const isExpanded = ref(false);
@@ -21,6 +22,11 @@ const toggleExpand = () => {
 
 const handleMappingChange = (evt: any) => {
   emit('mappingChange', evt);
+};
+
+const handleDelete = (event: Event) => {
+  event.stopPropagation();
+  emit('deleteAnime', props.anime.animeId);
 };
 </script>
 
@@ -48,6 +54,15 @@ const handleMappingChange = (evt: any) => {
         <span class="cell-value score-value">{{ anime.averageScore?.toFixed(3) }}</span>
       </div>
       <div class="anime-cell anime-action-cell">
+        <el-button
+          type="danger"
+          size="small"
+          :icon="Delete"
+          circle
+          @click="handleDelete"
+          class="delete-btn"
+          title="删除动画"
+        />
         <el-icon class="expand-icon" :class="{ expanded: isExpanded }">
           <ArrowDown />
         </el-icon>
@@ -150,8 +165,13 @@ const handleMappingChange = (evt: any) => {
 
 .anime-action-cell {
   flex-shrink: 0;
-  width: 40px;
+  width: 80px;
   justify-content: center;
+  gap: 8px;
+}
+
+.delete-btn {
+  flex-shrink: 0;
 }
 
 .cell-label {
