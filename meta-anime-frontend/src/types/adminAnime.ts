@@ -1,8 +1,12 @@
+import type { AnimeTitles } from "./anime";
+
 export interface AdminAnime {
     animeId: number,
     title: AnimeTitles,
     coverImage: string,
+    startDate: string,
     averageScore: number,
+    reviewStatus: ReviewStatus,
     mappings: AdminMapping[]
 }
 
@@ -15,9 +19,4 @@ export interface AdminMapping {
     rawJSON: string,
 }
 
-export interface AnimeTitles {
-    titleNative: string,
-    titleRomaji: string,
-    titleEn: string,
-    titleCn: string,
-}
+export type ReviewStatus = 'PENDING' | 'APPROVED' | 'REJECTED';

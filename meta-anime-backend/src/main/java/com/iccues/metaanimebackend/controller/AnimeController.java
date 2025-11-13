@@ -26,7 +26,7 @@ class AnimeController {
     @ResponseBody
     @GetMapping("/get_list")
     public Response<List<AnimeDTO>> getAnimeList() {
-        List<Anime> animeList = animeRepository.findAllByOrderByAverageScoreDescNullsLast();
+        List<Anime> animeList = animeRepository.findAllDisplay();
         List<AnimeDTO> dtoList = animeMapper.toDtoList(animeList);
         return Response.ok(dtoList);
     }

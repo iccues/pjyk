@@ -1,24 +1,52 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { getAnimeList, getUnmappedMappingList, updateMappingAnime, deleteAnime, createAnime, updateAnime } from '../../api/admin';
-import type { AdminAnime, AdminMapping } from '../../types/adminAnime';
+import type { AdminAnime, AdminMapping, ReviewStatus } from '../../types/adminAnime';
 import AdminAnimeItem from '../../components/admin/AdminAnimeItem.vue';
 import AdminMappingItem from '../../components/admin/AdminMappingItem.vue';
 import AnimeFormDialog from '../../components/admin/AnimeFormDialog.vue';
 import draggable from 'vuedraggable';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Plus } from '@element-plus/icons-vue';
+import { Plus, Filter } from '@element-plus/icons-vue';
 
 const animeList = ref<AdminAnime[]>([]);
 const mappingList = ref<AdminMapping[]>([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
 
+// 筛选器状态
+const selectedReviewStatus = ref<ReviewStatus | undefined>('PENDING');
+const reviewStatusOptions = [
+  { label: '全部', value: undefined },
+  { label: '待审核', value: 'PENDING' as ReviewStatus },
+  { label: '已通过', value: 'APPROVED' as ReviewStatus },
+  { label: '已拒绝', value: 'REJECTED' as ReviewStatus }
+];
+
+// 加载动画列表
+const loadAnimeList = async () => {
+  try {
+    loading.value = true;
+    const animes = await getAnimeList(selectedReviewStatus.value);
+    animeList.value = animes;
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : '加载动画列表失败';
+    console.error('Failed to load anime list:', e);
+  } finally {
+    loading.value = false;
+  }
+};
+
+// 处理筛选变化
+const handleFilterChange = () => {
+  loadAnimeList();
+};
+
 onMounted(async () => {
   try {
     loading.value = true;
     const [animes, mappings] = await Promise.all([
-      getAnimeList(),
+      getAnimeList(selectedReviewStatus.value),
       getUnmappedMappingList()
     ]);
     animeList.value = animes;
@@ -181,6 +209,39 @@ const handleSubmitForm = async (formData: any) => {
     ElMessage.error('操作失败: ' + (e instanceof Error ? e.message : '未知错误'))
   }
 }
+
+// 处理审核状态更新
+const handleUpdateReviewStatus = async (animeId: number, reviewStatus: ReviewStatus) => {
+  try {
+    const anime = animeList.value.find(a => a.animeId === animeId)
+    if (!anime) return
+
+    // 调用更新API
+    const updated = await updateAnime({
+      animeId,
+      reviewStatus
+    })
+
+    // 检查更新后的状态是否符合当前筛选条件
+    const idx = animeList.value.findIndex(a => a.animeId === animeId)
+    if (idx !== -1) {
+      if (selectedReviewStatus.value && reviewStatus !== selectedReviewStatus.value) {
+        // 如果有筛选条件且新状态不符合，从列表中移除
+        animeList.value.splice(idx, 1)
+        ElMessage.success('审核状态已更新，该动画已从当前筛选列表中移除')
+      } else {
+        // 否则更新列表中的数据
+        animeList.value[idx] = {
+          ...updated,
+          mappings: animeList.value[idx]?.mappings || []
+        }
+        ElMessage.success('审核状态更新成功')
+      }
+    }
+  } catch (e) {
+    ElMessage.error('更新失败: ' + (e instanceof Error ? e.message : '未知错误'))
+  }
+}
 </script>
 
 <template>
@@ -215,6 +276,25 @@ const handleSubmitForm = async (formData: any) => {
                 新建动画
               </el-button>
             </div>
+            <!-- 筛选器 -->
+            <div class="mb-3 flex items-center gap-2">
+              <el-icon><Filter /></el-icon>
+              <span class="text-sm text-gray-600">审核状态：</span>
+              <el-select
+                v-model="selectedReviewStatus"
+                placeholder="选择审核状态"
+                size="small"
+                style="width: 140px;"
+                @change="handleFilterChange"
+              >
+                <el-option
+                  v-for="option in reviewStatusOptions"
+                  :key="option.label"
+                  :label="option.label"
+                  :value="option.value"
+                />
+              </el-select>
+            </div>
             <el-scrollbar height="calc(100vh - 200px)">
               <div class="flex flex-col gap-3 pr-2">
                 <AdminAnimeItem
@@ -224,6 +304,7 @@ const handleSubmitForm = async (formData: any) => {
                   @mapping-change="(evt) => handleMappingToAnime(evt, anime.animeId)"
                   @delete-anime="handleDeleteAnime"
                   @edit-anime="handleEditAnime"
+                  @update-review-status="handleUpdateReviewStatus"
                 />
               </div>
             </el-scrollbar>

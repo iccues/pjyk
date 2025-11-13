@@ -5,6 +5,7 @@ import com.iccues.metaanimebackend.dto.admin.AdminAnimeDTO;
 import com.iccues.metaanimebackend.dto.admin.AnimeCreateRequest;
 import com.iccues.metaanimebackend.dto.admin.AnimeUpdateRequest;
 import com.iccues.metaanimebackend.entity.Anime;
+import com.iccues.metaanimebackend.entity.ReviewStatus;
 import com.iccues.metaanimebackend.mapper.AdminAnimeMapper;
 import com.iccues.metaanimebackend.repo.MappingRepository;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
@@ -31,8 +32,13 @@ public class AdminAnimeController {
 
     @ResponseBody
     @GetMapping("/get_anime_list")
-    public Response<List<AdminAnimeDTO>> getAnimeList() {
-        List<Anime> animeList = animeRepository.findAll();
+    public Response<List<AdminAnimeDTO>> getAnimeList(@RequestParam(required = false) ReviewStatus reviewStatus) {
+        List<Anime> animeList;
+        if (reviewStatus != null) {
+            animeList = animeRepository.findByReviewStatus(reviewStatus);
+        } else {
+            animeList = animeRepository.findAll();
+        }
         List<AdminAnimeDTO> animeDtoList = adminAnimeMapper.toAnimeDtoList(animeList);
         return Response.ok(animeDtoList);
     }
@@ -64,6 +70,9 @@ public class AdminAnimeController {
         }
         if (request.startDate() != null) {
             anime.setStartDate(request.startDate());
+        }
+        if (request.reviewStatus() != null) {
+            anime.setReviewStatus(request.reviewStatus());
         }
 
         Anime updatedAnime = animeRepository.save(anime);

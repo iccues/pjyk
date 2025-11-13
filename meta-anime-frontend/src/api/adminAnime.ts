@@ -1,11 +1,13 @@
 import { get, post, put, del } from './http';
-import type { AdminAnime } from '../types/adminAnime';
+import type { AdminAnime, ReviewStatus } from '../types/adminAnime';
 
 /**
  * 获取所有动画列表（管理后台）
+ * @param reviewStatus 可选的审核状态筛选
  */
-export async function getAnimeList(): Promise<AdminAnime[]> {
-    return get<AdminAnime[]>('/api/admin/get_anime_list');
+export async function getAnimeList(reviewStatus?: ReviewStatus): Promise<AdminAnime[]> {
+    const options = reviewStatus ? { params: { reviewStatus } } : undefined;
+    return get<AdminAnime[]>('/api/admin/get_anime_list', options);
 }
 
 /**
@@ -39,6 +41,7 @@ export interface AnimeUpdateRequest {
     };
     coverImage?: string;
     startDate?: string;
+    reviewStatus?: ReviewStatus;
 }
 
 export async function updateAnime(request: AnimeUpdateRequest): Promise<AdminAnime> {

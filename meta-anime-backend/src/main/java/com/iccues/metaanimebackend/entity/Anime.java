@@ -27,6 +27,9 @@ public class Anime {
 
     Double averageScore;
 
+    @Enumerated(EnumType.STRING)
+    ReviewStatus reviewStatus = ReviewStatus.PENDING;
+
     @OneToMany(mappedBy = "anime",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             fetch = FetchType.LAZY)
