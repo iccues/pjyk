@@ -46,9 +46,19 @@ public class FetchService {
         log.info("Merge mapping end");
     }
 
+    @Async
     public void calculateAllAverageScore() {
         log.info("Calculate average score start");
         scoreService.calculateAllAverageScore();
         log.info("Calculate average score end");
+    }
+
+    public AbstractAnimeFetchService getFetchServiceByName(String platformName) {
+        return switch (platformName) {
+            case "Bangumi" -> bangumiFetchService;
+            case "AniList" -> aniListFetchService;
+            case "MyAnimeList" -> myAnimeListFetchService;
+            default -> null;
+        };
     }
 }

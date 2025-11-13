@@ -1,6 +1,7 @@
 package com.iccues.metaanimebackend.service.fetch;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.iccues.metaanimebackend.dto.admin.MappingInfo;
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.Mapping;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
@@ -39,6 +40,15 @@ public abstract class AbstractAnimeFetchService {
     protected abstract double extractRawScore(JsonNode jsonNode);
 
     protected abstract double normalizeScore(double rawScore);
+
+    public MappingInfo getMappingInfo(Mapping mapping) {
+        JsonNode jsonNode = mapping.getRawJSON();
+        return new MappingInfo(
+                extractTitles(jsonNode),
+                extractCoverImage(jsonNode),
+                extractStartDate(jsonNode)
+        );
+    }
 
     Anime findOrCreateAnime(JsonNode jsonNode) {
         LocalDate startDate = extractStartDate(jsonNode);

@@ -16,7 +16,13 @@ export interface AdminMapping {
     sourcePlatform: string,
     platformId: string,
     rawScore: number,
-    rawJSON: string,
+    mappingInfo: MappingInfo,
+}
+
+export interface MappingInfo {
+    title: AnimeTitles,
+    coverImage: string,
+    startDate: string,
 }
 
 export type ReviewStatus = 'PENDING' | 'APPROVED' | 'REJECTED';

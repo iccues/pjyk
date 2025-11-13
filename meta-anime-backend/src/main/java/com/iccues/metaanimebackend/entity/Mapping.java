@@ -2,6 +2,10 @@ package com.iccues.metaanimebackend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.iccues.metaanimebackend.common.SpringContext;
+import com.iccues.metaanimebackend.dto.admin.MappingInfo;
+import com.iccues.metaanimebackend.service.fetch.AbstractAnimeFetchService;
+import com.iccues.metaanimebackend.service.fetch.FetchService;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,8 +35,6 @@ public class Mapping {
         return anime.getAnimeId();
     }
 
-//    public void setAnimeId(Long animeId) {}
-
     @NaturalId
     String sourcePlatform;
 
@@ -45,6 +47,12 @@ public class Mapping {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     JsonNode rawJSON;
+
+    public MappingInfo getMappingInfo() {
+        FetchService fetchService = SpringContext.getBean(FetchService.class);
+        AbstractAnimeFetchService service = fetchService.getFetchServiceByName(sourcePlatform);
+        return service.getMappingInfo(this);
+    }
 
     Instant updateTime;
 
