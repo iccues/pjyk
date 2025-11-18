@@ -19,3 +19,5 @@ export interface AnimeTitles {
     titleEn: string,
     titleCn: string,
 }
+
+export type Season = 'WINTER' | 'SPRING' | 'SUMMER' | 'FALL';

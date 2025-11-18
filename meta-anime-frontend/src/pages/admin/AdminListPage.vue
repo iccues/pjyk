@@ -2,7 +2,8 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { getAnimeList, getUnmappedMappingList, updateMappingAnime, deleteAnime, createAnime, updateAnime } from '../../api/admin';
-import type { AdminAnime, AdminMapping, ReviewStatus, Season } from '../../types/adminAnime';
+import type { AdminAnime, AdminMapping, ReviewStatus } from '../../types/adminAnime';
+import type { Season } from '../../types/anime';
 import AdminAnimeItem from '../../components/admin/AdminAnimeItem.vue';
 import AdminMappingItem from '../../components/admin/AdminMappingItem.vue';
 import AnimeFormDialog from '../../components/admin/AnimeFormDialog.vue';
@@ -41,7 +42,7 @@ const seasonOptions = [
 // 生成年份选项（从当前年份往前推10年）
 const currentYear = new Date().getFullYear();
 const yearOptions = computed(() => {
-  const years = [{ label: '全部', value: undefined }];
+  const years: { label: string; value: number | undefined }[] = [{ label: '全部', value: undefined }];
   for (let i = 0; i <= 10; i++) {
     const year = currentYear - i;
     years.push({ label: `${year}年`, value: year });

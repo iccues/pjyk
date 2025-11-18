@@ -1,14 +1,37 @@
 <script setup lang="ts">
+import { ref, onMounted, watchEffect } from 'vue';
 import AnimeCard from "./AnimeCard.vue";
 import type { Anime } from "../types/anime.ts";
+import type { Page, PageInfo } from '../types/page.ts';
+import { getAnimeList, type AnimeListParams } from '../api/anime.ts';
 
-defineProps<{
-  animes: Anime[]
+const props = defineProps<AnimeListParams>();
+const emit = defineEmits<{
+  (event: 'update:pageInfo', payload: PageInfo): void;
 }>();
+
+const animes = ref<Page<Anime> | null>(null);
+const error = ref<string | null>(null);
+
+const fetchAnimes = async () => {
+  try {
+    error.value = null;
+    animes.value = await getAnimeList(props);
+    emit('update:pageInfo', animes.value.page);
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : '未知错误';
+    console.error('获取动漫列表失败:', err);
+  }
+};
+
+onMounted(fetchAnimes);
+watchEffect(fetchAnimes);
 </script>
 
 <template>
-  <div class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-5 justify-items-center">
-    <AnimeCard v-for="(anime, index) in animes" :key="index" :anime="anime"/>
+  <div v-if="error" class="text-center py-10 text-base text-red-600">{{ error }}</div>
+  <div v-else-if="animes" class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-5 justify-items-center">
+    <AnimeCard v-for="(anime, index) in animes?.content" :key="index" :anime="anime"/>
   </div>
+  <div v-else class="text-center py-10 text-base text-gray-600">加载中...</div>
 </template>

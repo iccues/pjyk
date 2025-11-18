@@ -1,36 +1,47 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import AnimeList from "../components/AnimeList.vue";
-import type { Anime } from "../types/anime.ts";
-import { get } from '../api/http.ts';
+import AnimeListRow from "../components/AnimeListRow.vue";
 
-const animes = ref<Anime[]>([]);
-const loading = ref(true);
-const error = ref<string | null>(null);
+// 获取当前年份和季度
+const now = new Date();
+const currentYear = now.getFullYear();
+const currentMonth = now.getMonth() + 1; // JavaScript 月份从0开始
 
-const fetchAnimes = async () => {
-  try {
-    loading.value = true;
-    error.value = null;
-    animes.value = await get<Anime[]>('/api/anime/get_list');
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : '未知错误';
-    console.error('获取动漫列表失败:', err);
-  } finally {
-    loading.value = false;
-  }
+// 根据月份确定当前季度
+const getCurrentSeason = (): 'WINTER' | 'SPRING' | 'SUMMER' | 'FALL' => {
+  if (currentMonth >= 1 && currentMonth <= 3) return 'WINTER';
+  if (currentMonth >= 4 && currentMonth <= 6) return 'SPRING';
+  if (currentMonth >= 7 && currentMonth <= 9) return 'SUMMER';
+  if (currentMonth >= 10 && currentMonth <= 12) return 'FALL';
+  return 'SPRING';
 };
 
-onMounted(async () => {
-  fetchAnimes();
-});
+const currentSeason = getCurrentSeason();
+
+// 季度名称映射
+const seasonNames: Record<string, string> = {
+  WINTER: '冬季',
+  SPRING: '春季',
+  SUMMER: '夏季',
+  FALL: '秋季'
+};
 </script>
 
 <template>
   <div class="p-5 max-w-[1400px] mx-auto">
-    <h1 class="mb-6 text-gray-800">动漫列表</h1>
-    <div v-if="loading" class="text-center py-10 text-base text-gray-600">加载中...</div>
-    <div v-else-if="error" class="text-center py-10 text-base text-red-600">{{ error }}</div>
-    <AnimeList v-else :animes="animes"/>
+    <!-- 本季新番 -->
+    <div class="mb-10">
+      <AnimeListRow
+        :title="`${currentYear}年${seasonNames[currentSeason]}新番`"
+        :year="currentYear"
+        :season="currentSeason"
+      />
+    </div>
+
+    <!-- 高分动画 -->
+    <div class="mb-10">
+      <AnimeListRow
+        title="高分动画"
+      />
+    </div>
   </div>
 </template>

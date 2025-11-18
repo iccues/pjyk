@@ -1,5 +1,6 @@
 import { get, post, put, del } from './http';
-import type { AdminAnime, ReviewStatus, Season } from '../types/adminAnime';
+import type { AdminAnime, ReviewStatus } from '../types/adminAnime';
+import type { Season } from '../types/anime';
 
 /**
  * 获取所有动画列表（管理后台）
