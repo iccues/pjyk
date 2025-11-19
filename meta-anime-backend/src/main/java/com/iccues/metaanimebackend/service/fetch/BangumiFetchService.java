@@ -95,4 +95,14 @@ public class BangumiFetchService extends AbstractAnimeFetchService {
                 .bodyToMono(JsonNode.class)
                 .block();
     }
+
+    @Override
+    protected JsonNode fetchSingleMappingJson(String platformId) {
+        WebClient singleClient = WebClient.create("https://api.bgm.tv/v0/subjects");
+        return singleClient.get()
+                .uri("/{id}", platformId)
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .block();
+    }
 }

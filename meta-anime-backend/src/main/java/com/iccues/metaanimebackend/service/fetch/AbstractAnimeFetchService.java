@@ -80,6 +80,8 @@ public abstract class AbstractAnimeFetchService {
 
     protected abstract List<JsonNode> fetchMappingJson(int year, Season season);
 
+    protected abstract JsonNode fetchSingleMappingJson(String platformId);
+
     void processAndSaveMapping(JsonNode jsonNode) {
         String platformId = extractPlatformId(jsonNode);
 
@@ -102,5 +104,14 @@ public abstract class AbstractAnimeFetchService {
         for (JsonNode jsonNode : mediaList) {
             processAndSaveMapping(jsonNode);
         }
+    }
+
+    public Mapping fetchAndCreateMapping(String platformId) {
+        JsonNode jsonNode = fetchSingleMappingJson(platformId);
+        if (jsonNode == null) {
+            throw new RuntimeException("无法从平台获取数据: " + platformId);
+        }
+        processAndSaveMapping(jsonNode);
+        return mappingRepository.findBySourcePlatformAndPlatformId(getPlatform(), platformId);
     }
 }

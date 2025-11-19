@@ -135,4 +135,53 @@ public class AniListFetchService extends AbstractAnimeFetchService {
 
         return result.path("data").path("Page");
     }
+
+    @Override
+    protected JsonNode fetchSingleMappingJson(String platformId) {
+        String query = """
+                query ($id: Int) {
+                  Media(id: $id, type: ANIME) {
+                    id
+                    title {
+                      romaji
+                      english
+                      native
+                    }
+                    coverImage {
+                      extraLarge
+                      large
+                      medium
+                      color
+                    }
+                    averageScore
+                    startDate {
+                      year
+                      month
+                      day
+                    }
+                    idMal
+                    seasonYear
+                    season
+                  }
+                }""";
+
+        Map<String, Object> variables = Map.of("id", Integer.parseInt(platformId));
+
+        Map<String, Object> requestBody = Map.of(
+                "query", query,
+                "variables", variables
+        );
+
+        var result = client.post()
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .block();
+
+        if (result == null) {
+            return null;
+        }
+
+        return result.path("data").path("Media");
+    }
 }

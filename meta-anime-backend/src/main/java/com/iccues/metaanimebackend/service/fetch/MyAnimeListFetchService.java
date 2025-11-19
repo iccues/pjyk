@@ -115,4 +115,16 @@ public class MyAnimeListFetchService extends AbstractAnimeFetchService {
                 .bodyToMono(JsonNode.class)
                 .block();
     }
+
+    @Override
+    protected JsonNode fetchSingleMappingJson(String platformId) {
+        return client.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/anime/{anime_id}")
+                        .queryParam("fields", "id,alternative_titles,main_picture,start_date,mean,media_type")
+                        .build(platformId))
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .block();
+    }
 }
