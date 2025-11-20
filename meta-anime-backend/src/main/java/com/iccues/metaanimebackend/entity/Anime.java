@@ -19,7 +19,7 @@ public class Anime {
     Long animeId;
 
     @Version
-    Integer version;
+    Integer version = 0;
 
     @Embedded
     AnimeTitles title;

@@ -61,10 +61,7 @@ public class AdminAnimeController {
     @PostMapping("/create_anime")
     @Transactional
     public Response<AdminAnimeDTO> createAnime(@Valid @RequestBody AnimeCreateRequest request) {
-        Anime anime = new Anime();
-        anime.setTitle(request.title());
-        anime.setCoverImage(request.coverImage());
-        anime.setStartDate(request.startDate());
+        Anime anime = adminAnimeMapper.requestToAnime(request);
 
         Anime savedAnime = animeRepository.save(anime);
         AdminAnimeDTO animeDto = adminAnimeMapper.toAnimeDto(savedAnime);
@@ -78,18 +75,7 @@ public class AdminAnimeController {
         Anime anime = animeRepository.findById(request.animeId())
                 .orElseThrow(() -> new RuntimeException("Anime not found with id: " + request.animeId()));
 
-        if (request.title() != null) {
-            anime.setTitle(request.title());
-        }
-        if (request.coverImage() != null) {
-            anime.setCoverImage(request.coverImage());
-        }
-        if (request.startDate() != null) {
-            anime.setStartDate(request.startDate());
-        }
-        if (request.reviewStatus() != null) {
-            anime.setReviewStatus(request.reviewStatus());
-        }
+        adminAnimeMapper.updateAnimeByRequest(request, anime);
 
         Anime updatedAnime = animeRepository.save(anime);
         AdminAnimeDTO animeDto = adminAnimeMapper.toAnimeDto(updatedAnime);

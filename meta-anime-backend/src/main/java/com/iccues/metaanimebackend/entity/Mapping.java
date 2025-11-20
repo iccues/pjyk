@@ -25,7 +25,7 @@ public class Mapping {
     Long mappingId;
 
     @Version
-    Integer version;
+    Integer version = 0;
 
     @ToString.Exclude
     @JsonIgnore
