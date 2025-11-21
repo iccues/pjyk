@@ -114,7 +114,7 @@ watch([selectedYear, selectedSeason, currentPage], () => {
         v-model="selectedYear"
         placeholder="年份"
         size="medium"
-        style="width: 180px;"
+        class="!w-40"
         clearable
         @change="handleFilterChange"
       >
@@ -141,6 +141,10 @@ watch([selectedYear, selectedSeason, currentPage], () => {
           :value="option.value"
         />
       </el-select>
+
+      <div class="text-sm text-gray-400" v-if="pageInfo">
+        共 {{ pageInfo.totalElements }} 部动画
+      </div>
     </div>
 
     <AnimeList
@@ -159,7 +163,7 @@ watch([selectedYear, selectedSeason, currentPage], () => {
         :page-size="pageSize"
         :total="pageInfo.totalElements"
         :page-count="pageInfo.totalPages"
-        layout="prev, pager, next, total"
+        layout="prev, pager, next"
         @current-change="handlePageChange"
       />
     </div>

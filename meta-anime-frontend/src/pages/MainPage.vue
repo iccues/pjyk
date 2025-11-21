@@ -27,18 +27,15 @@ const seasonNames: Record<string, string> = {
 </script>
 
 <template>
-  <div class="p-5 max-w-[1400px] mx-auto">
-    <!-- 本季新番 -->
-    <div class="mb-10">
+  <div class="min-h-screen bg-gray-50/50">
+    <div class="p-5 max-w-[1400px] mx-auto space-y-16 pb-20">
+      <!-- 本季新番 -->
       <AnimeListRow
         :title="`${currentYear}年${seasonNames[currentSeason]}新番`"
         :year="currentYear"
         :season="currentSeason"
       />
-    </div>
-
-    <!-- 高分动画 -->
-    <div class="mb-10">
+      <!-- 高分动画 -->
       <AnimeListRow
         title="高分动画"
       />
