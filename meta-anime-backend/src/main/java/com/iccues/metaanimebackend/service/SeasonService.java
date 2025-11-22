@@ -14,8 +14,8 @@ public class SeasonService {
         }
 
         if (season == null) {
-            LocalDate start = LocalDate.of(year, 1, 1);
-            LocalDate end = LocalDate.of(year + 1, 1, 1);
+            LocalDate start = LocalDate.of(year, 1, 1).minusMonths(1);
+            LocalDate end = start.plusYears(1);
             return new LocalDateRange(start, end);
         }
 
