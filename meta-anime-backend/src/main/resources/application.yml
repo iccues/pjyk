@@ -2,6 +2,9 @@ spring:
   application:
     name: meta-anime-backend
 
+  profiles:
+    active: dev
+
   datasource:
     url: jdbc:postgresql://localhost:5432/meta-anime
     username: jim
@@ -10,6 +13,17 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    show-sql: false
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.iccues.metaanimebackend: DEBUG
+    org.springframework.web: INFO
+    org.hibernate: INFO
+  file:
+    name: logs/meta-anime.log
 
 mal:
   client-id: ${MAL_CLIENT_ID}

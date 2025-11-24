@@ -11,6 +11,7 @@ import com.iccues.metaanimebackend.repo.AnimeRepository;
 import com.iccues.metaanimebackend.service.SeasonService;
 import com.iccues.metaanimebackend.spec.AnimeSpec;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/api/anime")
+@Slf4j
 class AnimeController {
 
     @Resource
