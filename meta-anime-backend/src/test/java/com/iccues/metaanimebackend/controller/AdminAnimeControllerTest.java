@@ -223,6 +223,35 @@ public class AdminAnimeControllerTest {
     }
 
     @Test
+    public void testDeleteAnime_WithMappings() throws Exception {
+        // 先创建一个有映射关联的动画
+        Anime anime = createAnime("有映射的动画", LocalDate.of(2024, 1, 15), ReviewStatus.PENDING);
+        anime = animeRepository.save(anime);
+
+        // 创建一个映射并关联到这个动画
+        com.iccues.metaanimebackend.entity.Mapping mapping = new com.iccues.metaanimebackend.entity.Mapping();
+        mapping.setSourcePlatform("MAL");
+        mapping.setPlatformId("12345");
+        mapping.setAnime(anime);
+        mapping = mappingRepository.save(mapping);
+
+        Long animeId = anime.getAnimeId();
+        Long mappingId = mapping.getMappingId();
+
+        mockMvc.perform(delete("/api/admin/delete_anime/" + animeId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+
+        // 验证动画已删除
+        assertFalse(animeRepository.existsById(animeId));
+
+        // 验证映射仍然存在，但关联已解除
+        assertTrue(mappingRepository.existsById(mappingId));
+        com.iccues.metaanimebackend.entity.Mapping updatedMapping = mappingRepository.findById(mappingId).orElseThrow();
+        assertNull(updatedMapping.getAnime());
+    }
+
+    @Test
     public void testGetAnimeList_SortedById() throws Exception {
         // 准备测试数据，不同的创建顺序
         Anime anime3 = createAnime("动画3", LocalDate.of(2024, 1, 17), ReviewStatus.APPROVED);
