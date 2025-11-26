@@ -1,0 +1,395 @@
+package com.iccues.metaanimebackend.service.fetch;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.iccues.metaanimebackend.dto.admin.MappingInfo;
+import com.iccues.metaanimebackend.entity.Anime;
+import com.iccues.metaanimebackend.entity.AnimeTitles;
+import com.iccues.metaanimebackend.entity.Mapping;
+import com.iccues.metaanimebackend.entity.Season;
+import com.iccues.metaanimebackend.exception.FetchFailedException;
+import com.iccues.metaanimebackend.repo.AnimeRepository;
+import com.iccues.metaanimebackend.repo.MappingRepository;
+import com.iccues.metaanimebackend.service.AnimeService;
+import com.iccues.metaanimebackend.service.MappingService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+public class AbstractAnimeFetchServiceTest {
+
+    @Mock
+    private MappingService mappingService;
+
+    @Mock
+    private AnimeService animeService;
+
+    @Mock
+    private AnimeRepository animeRepository;
+
+    @Mock
+    private MappingRepository mappingRepository;
+
+    private TestAnimeFetchService testService;
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    public void setUp() {
+        testService = new TestAnimeFetchService();
+        testService.mappingService = mappingService;
+        testService.animeService = animeService;
+        testService.animeRepository = animeRepository;
+        testService.mappingRepository = mappingRepository;
+        objectMapper = new ObjectMapper();
+    }
+
+    @Test
+    public void testGetMappingInfo() throws Exception {
+        // 准备 JSON 数据
+        String jsonString = """
+                {
+                    "id": "12345",
+                    "title": "Test Anime",
+                    "coverImage": "https://example.com/image.jpg",
+                    "startDate": "2024-01-15"
+                }
+                """;
+        JsonNode jsonNode = objectMapper.readTree(jsonString);
+
+        // 准备 Mapping
+        Mapping mapping = new Mapping("TestPlatform", "12345", jsonNode);
+
+        // 调用方法
+        MappingInfo result = testService.getMappingInfo(mapping);
+
+        // 验证结果
+        assertNotNull(result);
+        assertEquals("Test Anime", result.title().getTitleNative());
+        assertEquals("https://example.com/image.jpg", result.coverImage());
+        assertEquals(LocalDate.of(2024, 1, 15), result.startDate());
+    }
+
+    @Test
+    public void testFindOrCreateAnime_NewAnime() throws Exception {
+        // 准备 JSON 数据
+        String jsonString = """
+                {
+                    "title": "New Anime",
+                    "coverImage": "https://example.com/new.jpg",
+                    "startDate": "2024-04-01"
+                }
+                """;
+        JsonNode jsonNode = objectMapper.readTree(jsonString);
+
+        // Mock animeService 返回一个新动画（没有封面）
+        Anime newAnime = new Anime();
+        AnimeTitles titles = new AnimeTitles();
+        titles.setTitleNative("New Anime");
+        newAnime.setTitle(titles);
+        newAnime.setStartDate(LocalDate.of(2024, 4, 1));
+
+        when(animeService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
+                .thenReturn(newAnime);
+        when(animeRepository.save(any(Anime.class))).thenReturn(newAnime);
+
+        // 调用方法
+        Anime result = testService.findOrCreateAnime(jsonNode);
+
+        // 验证结果
+        assertNotNull(result);
+        assertEquals("https://example.com/new.jpg", result.getCoverImage());
+        verify(animeRepository, times(1)).save(newAnime);
+    }
+
+    @Test
+    public void testFindOrCreateAnime_ExistingAnimeWithCover() throws Exception {
+        // 准备 JSON 数据
+        String jsonString = """
+                {
+                    "title": "Existing Anime",
+                    "coverImage": "https://example.com/new.jpg",
+                    "startDate": "2024-04-01"
+                }
+                """;
+        JsonNode jsonNode = objectMapper.readTree(jsonString);
+
+        // Mock animeService 返回一个已有封面的动画
+        Anime existingAnime = new Anime();
+        AnimeTitles titles = new AnimeTitles();
+        titles.setTitleNative("Existing Anime");
+        existingAnime.setTitle(titles);
+        existingAnime.setStartDate(LocalDate.of(2024, 4, 1));
+        existingAnime.setCoverImage("https://example.com/old.jpg");
+
+        when(animeService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
+                .thenReturn(existingAnime);
+        when(animeRepository.save(any(Anime.class))).thenReturn(existingAnime);
+
+        // 调用方法
+        Anime result = testService.findOrCreateAnime(jsonNode);
+
+        // 验证结果：封面不应该被覆盖
+        assertNotNull(result);
+        assertEquals("https://example.com/old.jpg", result.getCoverImage());
+        verify(animeRepository, times(1)).save(existingAnime);
+    }
+
+    @Test
+    public void testLinkMappingToAnime_UnlinkedMapping() throws Exception {
+        // 准备 JSON 数据
+        String jsonString = """
+                {
+                    "title": "Test Anime",
+                    "coverImage": "https://example.com/image.jpg",
+                    "startDate": "2024-01-15"
+                }
+                """;
+        JsonNode jsonNode = objectMapper.readTree(jsonString);
+
+        // 准备未关联的 Mapping
+        Mapping mapping = new Mapping("TestPlatform", "12345", jsonNode);
+
+        // Mock anime
+        Anime anime = new Anime();
+        AnimeTitles titles = new AnimeTitles();
+        titles.setTitleNative("Test Anime");
+        anime.setTitle(titles);
+
+        when(animeService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
+                .thenReturn(anime);
+        when(animeRepository.save(any(Anime.class))).thenReturn(anime);
+
+        // 调用方法
+        testService.linkMappingToAnime(mapping);
+
+        // 验证：findOrCreateAnime 调用一次，linkMappingToAnime 又调用一次，共2次
+        verify(animeRepository, times(2)).save(anime);
+    }
+
+    @Test
+    public void testLinkMappingToAnime_AlreadyLinkedMapping() {
+        // 准备已关联的 Mapping
+        Anime existingAnime = new Anime();
+        Mapping mapping = new Mapping();
+        mapping.setAnime(existingAnime);
+
+        // 调用方法
+        testService.linkMappingToAnime(mapping);
+
+        // 验证：不应该调用 save（因为已经关联）
+        verify(animeRepository, never()).save(any(Anime.class));
+    }
+
+    @Test
+    public void testLinkAllOrphanedMappings() throws Exception {
+        // 准备测试数据
+        String jsonString = """
+                {
+                    "title": "Orphaned Anime",
+                    "coverImage": "https://example.com/image.jpg",
+                    "startDate": "2024-01-15"
+                }
+                """;
+        JsonNode jsonNode = objectMapper.readTree(jsonString);
+
+        Mapping mapping1 = new Mapping("TestPlatform", "1", jsonNode);
+        Mapping mapping2 = new Mapping("TestPlatform", "2", jsonNode);
+
+        List<Mapping> orphanedMappings = List.of(mapping1, mapping2);
+
+        // Mock repository
+        when(mappingRepository.findAllBySourcePlatformAndAnimeIsNull("TestPlatform"))
+                .thenReturn(orphanedMappings);
+
+        // Mock anime service
+        Anime anime = new Anime();
+        AnimeTitles titles = new AnimeTitles();
+        titles.setTitleNative("Orphaned Anime");
+        anime.setTitle(titles);
+
+        when(animeService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
+                .thenReturn(anime);
+        when(animeRepository.save(any(Anime.class))).thenReturn(anime);
+
+        // 调用方法
+        testService.linkAllOrphanedMappings();
+
+        // 验证：每个 mapping 调用 linkMappingToAnime，每次都会调用 save 2次（findOrCreateAnime + linkMappingToAnime），共4次
+        verify(animeRepository, times(4)).save(any(Anime.class));
+    }
+
+    @Test
+    public void testProcessAndSaveMapping_WithScore() throws Exception {
+        // 准备 JSON 数据（带评分）
+        String jsonString = """
+                {
+                    "id": "12345",
+                    "title": "Test Anime",
+                    "score": 8.5
+                }
+                """;
+        JsonNode jsonNode = objectMapper.readTree(jsonString);
+
+        // 调用方法
+        testService.processAndSaveMapping(jsonNode);
+
+        // 验证：应该调用 saveOrUpdate
+        verify(mappingService, times(1)).saveOrUpdate(any(Mapping.class));
+    }
+
+    @Test
+    public void testProcessAndSaveMapping_WithoutScore() throws Exception {
+        // 准备 JSON 数据（无评分）
+        String jsonString = """
+                {
+                    "id": "12345",
+                    "title": "Test Anime",
+                    "score": 0
+                }
+                """;
+        JsonNode jsonNode = objectMapper.readTree(jsonString);
+
+        // 调用方法
+        testService.processAndSaveMapping(jsonNode);
+
+        // 验证：应该调用 saveOrUpdate
+        verify(mappingService, times(1)).saveOrUpdate(any(Mapping.class));
+    }
+
+    @Test
+    public void testFetchAndSaveMappings() throws Exception {
+        // 准备 JSON 数据
+        String jsonString1 = """
+                {
+                    "id": "1",
+                    "title": "Anime 1"
+                }
+                """;
+        String jsonString2 = """
+                {
+                    "id": "2",
+                    "title": "Anime 2"
+                }
+                """;
+
+        JsonNode jsonNode1 = objectMapper.readTree(jsonString1);
+        JsonNode jsonNode2 = objectMapper.readTree(jsonString2);
+
+        // Mock fetchMappingJson 返回两个节点
+        testService.mockMediaList = List.of(jsonNode1, jsonNode2);
+
+        // 调用方法
+        testService.fetchAndSaveMappings(2024, Season.SPRING);
+
+        // 验证：应该处理所有节点
+        verify(mappingService, times(2)).saveOrUpdate(any(Mapping.class));
+    }
+
+    @Test
+    public void testFetchAndCreateMapping_Success() throws Exception {
+        // 准备 JSON 数据
+        String jsonString = """
+                {
+                    "id": "12345",
+                    "title": "New Mapping"
+                }
+                """;
+        JsonNode jsonNode = objectMapper.readTree(jsonString);
+
+        // Mock fetchSingleMappingJson
+        testService.mockSingleNode = jsonNode;
+
+        // Mock repository
+        Mapping savedMapping = new Mapping("TestPlatform", "12345", jsonNode);
+        when(mappingRepository.findBySourcePlatformAndPlatformId("TestPlatform", "12345"))
+                .thenReturn(savedMapping);
+
+        // 调用方法
+        Mapping result = testService.fetchAndCreateMapping("12345");
+
+        // 验证
+        assertNotNull(result);
+        assertEquals("12345", result.getPlatformId());
+        verify(mappingService, times(1)).saveOrUpdate(any(Mapping.class));
+    }
+
+    @Test
+    public void testFetchAndCreateMapping_FetchFailed() {
+        // Mock fetchSingleMappingJson 返回 null
+        testService.mockSingleNode = null;
+
+        // 调用方法并验证异常
+        assertThrows(FetchFailedException.class, () -> testService.fetchAndCreateMapping("99999"));
+
+        // 验证：不应该调用 saveOrUpdate
+        verify(mappingService, never()).saveOrUpdate(any(Mapping.class));
+    }
+
+    // 测试用的具体实现类
+    private static class TestAnimeFetchService extends AbstractAnimeFetchService {
+        public List<JsonNode> mockMediaList;
+        public JsonNode mockSingleNode;
+
+        @Override
+        protected String getPlatform() {
+            return "TestPlatform";
+        }
+
+        @Override
+        protected LocalDate extractStartDate(JsonNode jsonNode) {
+            String dateStr = jsonNode.path("startDate").asText();
+            if (dateStr == null || dateStr.isEmpty()) {
+                return LocalDate.of(2024, 1, 1);
+            }
+            return LocalDate.parse(dateStr);
+        }
+
+        @Override
+        protected AnimeTitles extractTitles(JsonNode jsonNode) {
+            AnimeTitles titles = new AnimeTitles();
+            titles.setTitleNative(jsonNode.path("title").asText());
+            return titles;
+        }
+
+        @Override
+        protected String extractCoverImage(JsonNode jsonNode) {
+            return jsonNode.path("coverImage").asText();
+        }
+
+        @Override
+        protected String extractPlatformId(JsonNode jsonNode) {
+            return jsonNode.path("id").asText();
+        }
+
+        @Override
+        protected double extractRawScore(JsonNode jsonNode) {
+            return jsonNode.path("score").asDouble(0.0);
+        }
+
+        @Override
+        protected double normalizeScore(double rawScore) {
+            // 简单的归一化：假设满分10分
+            return rawScore * 10;
+        }
+
+        @Override
+        protected List<JsonNode> fetchMappingJson(int year, Season season) {
+            return mockMediaList;
+        }
+
+        @Override
+        protected JsonNode fetchSingleMappingJson(String platformId) {
+            return mockSingleNode;
+        }
+    }
+}
