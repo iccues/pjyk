@@ -6,6 +6,7 @@ import com.iccues.metaanimebackend.dto.admin.AnimeCreateRequest;
 import com.iccues.metaanimebackend.dto.admin.AnimeUpdateRequest;
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.LocalDateRange;
+import com.iccues.metaanimebackend.entity.Mapping;
 import com.iccues.metaanimebackend.entity.ReviewStatus;
 import com.iccues.metaanimebackend.entity.Season;
 import com.iccues.metaanimebackend.exception.ResourceNotFoundException;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -90,14 +92,16 @@ public class AdminAnimeController {
         Anime anime = animeRepository.findById(animeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Anime", animeId));
 
-        // 解除所有映射的关联
-        anime.getMappings().forEach(mapping -> {
-            mapping.setAnime(null);
+        // 使用 removeMapping 方法安全地解除所有映射的关联
+        // 创建副本以避免 ConcurrentModificationException
+        List<Mapping> mappingsCopy = new ArrayList<>(anime.getMappings());
+        mappingsCopy.forEach(mapping -> {
+            anime.removeMapping(mapping);
             mappingRepository.save(mapping);
         });
 
-        // 再删除动画
-        animeRepository.deleteById(animeId);
+        // 删除动画
+        animeRepository.delete(anime);
         return Response.ok(null);
     }
 }

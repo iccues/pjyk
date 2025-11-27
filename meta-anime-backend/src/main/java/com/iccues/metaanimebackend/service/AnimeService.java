@@ -5,6 +5,7 @@ import com.iccues.metaanimebackend.entity.AnimeTitles;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,6 +28,7 @@ public class AnimeService {
         return repo.findByStartDateBetween(start, end);
     }
 
+    @Transactional
     public Anime findAnime(LocalDate date, AnimeTitles titles) {
         List<Anime> list = findAnimeAroundDate(date);
 

@@ -98,9 +98,10 @@ public class AdminMappingController {
         // 获取关联的动画（如果有）
         Anime relatedAnime = mapping.getAnime();
 
-        // 如果关联了动画，先解除关联
+        // 如果关联了动画，先解除关联并保存
         if (relatedAnime != null) {
             relatedAnime.removeMapping(mapping);
+            // 注意：必须在删除 mapping 之前保存 anime，确保双向关系正确更新
             animeRepository.save(relatedAnime);
         }
 
