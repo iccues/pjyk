@@ -1,2 +1,5 @@
-CLAUDE.md
 .DS_Store
+.idea/
+logs/
+*.log
+CLAUDE.md
