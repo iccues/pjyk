@@ -8,7 +8,6 @@ import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.Mapping;
 import com.iccues.metaanimebackend.exception.ResourceAlreadyExistsException;
 import com.iccues.metaanimebackend.exception.ResourceNotFoundException;
-import com.iccues.metaanimebackend.exception.UnsupportedPlatformException;
 import com.iccues.metaanimebackend.mapper.AdminAnimeMapper;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
 import com.iccues.metaanimebackend.repo.MappingRepository;
@@ -131,14 +130,11 @@ public class AdminMappingController {
         );
 
         if (existingMapping != null) {
-            throw new ResourceAlreadyExistsException("Mapping", request.sourcePlatform() + " - " + request.platformId());
+            throw new ResourceAlreadyExistsException("Mapping", request.sourcePlatform().name() + " - " + request.platformId());
         }
 
         // 获取对应的 FetchService
-        AbstractAnimeFetchService fetchServiceImpl = fetchService.getFetchServiceByName(request.sourcePlatform());
-        if (fetchServiceImpl == null) {
-            throw new UnsupportedPlatformException(request.sourcePlatform());
-        }
+        AbstractAnimeFetchService fetchServiceImpl = fetchService.getFetchService(request.sourcePlatform());
 
         // 从平台获取数据并创建映射
         Mapping mapping = fetchServiceImpl.fetchAndSaveMapping(request.platformId());

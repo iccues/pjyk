@@ -1,5 +1,6 @@
 package com.iccues.metaanimebackend.service.fetch;
 
+import com.iccues.metaanimebackend.entity.Platform;
 import com.iccues.metaanimebackend.entity.Season;
 import com.iccues.metaanimebackend.exception.FetchFailedException;
 import com.iccues.metaanimebackend.service.ScoreService;
@@ -31,34 +32,27 @@ public class FetchServiceTest {
     private FetchService fetchService;
 
     @Test
-    public void testGetFetchServiceByName_Bangumi() {
-        AbstractAnimeFetchService result = fetchService.getFetchServiceByName("Bangumi");
+    public void testGetFetchService_Bangumi() {
+        AbstractAnimeFetchService result = fetchService.getFetchService(Platform.Bangumi);
 
         assertNotNull(result);
         assertEquals(bangumiFetchService, result);
     }
 
     @Test
-    public void testGetFetchServiceByName_AniList() {
-        AbstractAnimeFetchService result = fetchService.getFetchServiceByName("AniList");
+    public void testGetFetchService_AniList() {
+        AbstractAnimeFetchService result = fetchService.getFetchService(Platform.AniList);
 
         assertNotNull(result);
         assertEquals(aniListFetchService, result);
     }
 
     @Test
-    public void testGetFetchServiceByName_MyAnimeList() {
-        AbstractAnimeFetchService result = fetchService.getFetchServiceByName("MyAnimeList");
+    public void testGetFetchService_MyAnimeList() {
+        AbstractAnimeFetchService result = fetchService.getFetchService(Platform.MyAnimeList);
 
         assertNotNull(result);
         assertEquals(myAnimeListFetchService, result);
-    }
-
-    @Test
-    public void testGetFetchServiceByName_Unknown() {
-        AbstractAnimeFetchService result = fetchService.getFetchServiceByName("Unknown");
-
-        assertNull(result);
     }
 
     @Test
@@ -107,13 +101,6 @@ public class FetchServiceTest {
         verify(scoreService, times(1)).calculateAllAverageScore();
     }
 
-    @Test
-    public void testGetFetchServiceByName_CaseSensitive() {
-        assertNull(fetchService.getFetchServiceByName("bangumi"));
-        assertNull(fetchService.getFetchServiceByName("BANGUMI"));
-        assertNull(fetchService.getFetchServiceByName("anilist"));
-        assertNull(fetchService.getFetchServiceByName("myanimelist"));
-    }
 
     @Test
     public void testFetchMapping_BangumiFailsButOthersContinue() {
@@ -121,7 +108,7 @@ public class FetchServiceTest {
         Season season = Season.SPRING;
 
         // Mock Bangumi to throw exception
-        doThrow(new FetchFailedException("Bangumi", "year=2024, season=SPRING"))
+        doThrow(new FetchFailedException(Platform.Bangumi, "year=2024, season=SPRING"))
                 .when(bangumiFetchService).fetchAndSaveMappings(year, season);
 
         // Execute - should not throw exception
@@ -139,7 +126,7 @@ public class FetchServiceTest {
         Season season = Season.SUMMER;
 
         // Mock AniList to throw exception
-        doThrow(new FetchFailedException("AniList", "year=2024, season=SUMMER"))
+        doThrow(new FetchFailedException(Platform.AniList, "year=2024, season=SUMMER"))
                 .when(aniListFetchService).fetchAndSaveMappings(year, season);
 
         // Execute - should not throw exception
@@ -157,7 +144,7 @@ public class FetchServiceTest {
         Season season = Season.FALL;
 
         // Mock MyAnimeList to throw exception
-        doThrow(new FetchFailedException("MyAnimeList", "year=2024, season=FALL"))
+        doThrow(new FetchFailedException(Platform.MyAnimeList, "year=2024, season=FALL"))
                 .when(myAnimeListFetchService).fetchAndSaveMappings(year, season);
 
         // Execute - should not throw exception
@@ -175,7 +162,7 @@ public class FetchServiceTest {
         Season season = Season.WINTER;
 
         // Mock Bangumi and AniList to throw exceptions
-        doThrow(new FetchFailedException("Bangumi", "year=2024, season=WINTER"))
+        doThrow(new FetchFailedException(Platform.Bangumi, "year=2024, season=WINTER"))
                 .when(bangumiFetchService).fetchAndSaveMappings(year, season);
         doThrow(new RuntimeException("AniList network error"))
                 .when(aniListFetchService).fetchAndSaveMappings(year, season);
@@ -195,11 +182,11 @@ public class FetchServiceTest {
         Season season = Season.SPRING;
 
         // Mock all services to throw exceptions
-        doThrow(new FetchFailedException("Bangumi", "year=2024, season=SPRING"))
+        doThrow(new FetchFailedException(Platform.Bangumi, "year=2024, season=SPRING"))
                 .when(bangumiFetchService).fetchAndSaveMappings(year, season);
-        doThrow(new FetchFailedException("AniList", "year=2024, season=SPRING"))
+        doThrow(new FetchFailedException(Platform.AniList, "year=2024, season=SPRING"))
                 .when(aniListFetchService).fetchAndSaveMappings(year, season);
-        doThrow(new FetchFailedException("MyAnimeList", "year=2024, season=SPRING"))
+        doThrow(new FetchFailedException(Platform.MyAnimeList, "year=2024, season=SPRING"))
                 .when(myAnimeListFetchService).fetchAndSaveMappings(year, season);
 
         // Execute - should not throw exception even when all fail

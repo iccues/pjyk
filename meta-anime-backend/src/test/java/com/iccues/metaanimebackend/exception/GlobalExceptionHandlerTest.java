@@ -1,6 +1,7 @@
 package com.iccues.metaanimebackend.exception;
 
 import com.iccues.metaanimebackend.common.Response;
+import com.iccues.metaanimebackend.entity.Platform;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleUnsupportedPlatformException() {
-        UnsupportedPlatformException ex = new UnsupportedPlatformException("UnknownPlatform");
+        UnsupportedPlatformException ex = new UnsupportedPlatformException(Platform.Bangumi);
 
         ResponseEntity<Response<Void>> response = handler.handleBusinessException(ex);
 
@@ -56,12 +57,12 @@ class GlobalExceptionHandlerTest {
         assertNotNull(response.getBody());
         assertFalse(response.getBody().isSuccess());
         assertEquals("UNSUPPORTED_PLATFORM", response.getBody().getCode());
-        assertTrue(response.getBody().getMessage().contains("UnknownPlatform"));
+        assertTrue(response.getBody().getMessage().contains("Bangumi"));
     }
 
     @Test
     void handleFetchFailedException() {
-        FetchFailedException ex = new FetchFailedException("MyAnimeList", "12345");
+        FetchFailedException ex = new FetchFailedException(Platform.MyAnimeList, "12345");
 
         ResponseEntity<Response<Void>> response = handler.handleBusinessException(ex);
 

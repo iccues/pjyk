@@ -3,6 +3,7 @@ package com.iccues.metaanimebackend.service.fetch;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
+import com.iccues.metaanimebackend.entity.Platform;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ public class BangumiFetchServiceTest {
 
     @Test
     public void testGetPlatform() {
-        assertEquals("Bangumi", service.getPlatform());
+        assertEquals(Platform.Bangumi, service.getPlatform());
     }
 
     @Test

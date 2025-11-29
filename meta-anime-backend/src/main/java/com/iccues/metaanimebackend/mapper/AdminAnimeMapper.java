@@ -34,7 +34,7 @@ public abstract class AdminAnimeMapper {
             return null;
         }
 
-        AbstractAnimeFetchService service = fetchService.getFetchServiceByName(mapping.getSourcePlatform());
+        AbstractAnimeFetchService service = fetchService.getFetchService(mapping.getSourcePlatform());
         if (service == null) {
             return null;
         }

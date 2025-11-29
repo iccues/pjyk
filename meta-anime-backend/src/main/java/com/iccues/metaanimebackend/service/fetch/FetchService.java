@@ -1,5 +1,6 @@
 package com.iccues.metaanimebackend.service.fetch;
 
+import com.iccues.metaanimebackend.entity.Platform;
 import com.iccues.metaanimebackend.entity.Season;
 import com.iccues.metaanimebackend.service.ScoreService;
 import jakarta.annotation.Resource;
@@ -31,13 +32,13 @@ public class FetchService {
     @Async
     public void fetchMapping(int year, Season season) {
         log.info("Fetch mapping start for year={}, season={}", year, season);
-        safeFetchMappings(bangumiFetchService, "Bangumi", year, season);
-        safeFetchMappings(aniListFetchService, "AniList", year, season);
-        safeFetchMappings(myAnimeListFetchService, "MyAnimeList", year, season);
+        safeFetchMappings(bangumiFetchService, Platform.Bangumi, year, season);
+        safeFetchMappings(aniListFetchService, Platform.AniList, year, season);
+        safeFetchMappings(myAnimeListFetchService, Platform.MyAnimeList, year, season);
         log.info("Fetch mapping end for year={}, season={}", year, season);
     }
 
-    private void safeFetchMappings(AbstractAnimeFetchService service, String platform, int year, Season season) {
+    private void safeFetchMappings(AbstractAnimeFetchService service, Platform platform, int year, Season season) {
         try {
             service.fetchAndSaveMappings(year, season);
             log.info("{} fetch completed successfully for year={}, season={}", platform, year, season);
@@ -49,13 +50,13 @@ public class FetchService {
     @Async
     public void linkMappings() {
         log.info("Merge mapping start");
-        safeLinkMappings(bangumiFetchService, "Bangumi");
-        safeLinkMappings(aniListFetchService, "AniList");
-        safeLinkMappings(myAnimeListFetchService, "MyAnimeList");
+        safeLinkMappings(bangumiFetchService, Platform.Bangumi);
+        safeLinkMappings(aniListFetchService, Platform.AniList);
+        safeLinkMappings(myAnimeListFetchService, Platform.MyAnimeList);
         log.info("Merge mapping end");
     }
 
-    private void safeLinkMappings(AbstractAnimeFetchService service, String platform) {
+    private void safeLinkMappings(AbstractAnimeFetchService service, Platform platform) {
         try {
             service.linkAllOrphanedMappings();
             log.info("{} link mappings completed successfully", platform);
@@ -71,12 +72,11 @@ public class FetchService {
         log.info("Calculate average score end");
     }
 
-    public AbstractAnimeFetchService getFetchServiceByName(String platformName) {
-        return switch (platformName) {
-            case "Bangumi" -> bangumiFetchService;
-            case "AniList" -> aniListFetchService;
-            case "MyAnimeList" -> myAnimeListFetchService;
-            default -> null;
+    public AbstractAnimeFetchService getFetchService(Platform platform) {
+        return switch (platform) {
+            case Bangumi -> bangumiFetchService;
+            case AniList -> aniListFetchService;
+            case MyAnimeList -> myAnimeListFetchService;
         };
     }
 }

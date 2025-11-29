@@ -35,7 +35,8 @@ public class Mapping {
     }
 
     @NaturalId
-    String sourcePlatform;
+    @Enumerated(EnumType.STRING)
+    Platform sourcePlatform;
 
     @NaturalId
     String platformId;
@@ -49,7 +50,7 @@ public class Mapping {
 
     Instant updateTime;
 
-    public Mapping(String sourcePlatform, String platformId, JsonNode rawJSON) {
+    public Mapping(Platform sourcePlatform, String platformId, JsonNode rawJSON) {
         this.sourcePlatform = sourcePlatform;
         this.platformId = platformId;
         this.rawJSON = rawJSON;

@@ -7,6 +7,7 @@ import com.iccues.metaanimebackend.dto.admin.UpdateMappingAnimeRequest;
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
 import com.iccues.metaanimebackend.entity.Mapping;
+import com.iccues.metaanimebackend.entity.Platform;
 import com.iccues.metaanimebackend.entity.ReviewStatus;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
 import com.iccues.metaanimebackend.repo.MappingRepository;
@@ -61,15 +62,15 @@ public class AdminMappingControllerTest {
     @Test
     public void testGetUnmappedMappingList() throws Exception {
         // 准备测试数据 - 未关联的 mapping
-        Mapping unmappedMapping1 = createMapping("MAL", "12345");
-        Mapping unmappedMapping2 = createMapping("Bangumi", "67890");
+        Mapping unmappedMapping1 = createMapping(Platform.MyAnimeList, "12345");
+        Mapping unmappedMapping2 = createMapping(Platform.Bangumi, "67890");
         mappingRepository.save(unmappedMapping1);
         mappingRepository.save(unmappedMapping2);
 
         // 准备测试数据 - 已关联的 mapping
         Anime anime = createAnime("测试动画");
         anime = animeRepository.save(anime);
-        Mapping mappedMapping = createMapping("AniList", "11111");
+        Mapping mappedMapping = createMapping(Platform.AniList, "11111");
         mappedMapping.setAnime(anime);
         mappingRepository.save(mappedMapping);
 
@@ -78,7 +79,7 @@ public class AdminMappingControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data", hasSize(2)))
-                .andExpect(jsonPath("$.data[*].sourcePlatform", containsInAnyOrder("MAL", "Bangumi")));
+                .andExpect(jsonPath("$.data[*].sourcePlatform", containsInAnyOrder("MyAnimeList", "Bangumi")));
     }
 
     @Test
@@ -93,7 +94,7 @@ public class AdminMappingControllerTest {
     @Test
     public void testUpdateMappingAnime_LinkMappingToAnime() throws Exception {
         // 准备未关联的 mapping
-        Mapping mapping = createMapping("MAL", "12345");
+        Mapping mapping = createMapping(Platform.MyAnimeList, "12345");
         mapping = mappingRepository.save(mapping);
 
         // 准备动画
@@ -125,7 +126,7 @@ public class AdminMappingControllerTest {
         Anime anime = createAnime("原动画");
         anime = animeRepository.save(anime);
 
-        Mapping mapping = createMapping("MAL", "12345");
+        Mapping mapping = createMapping(Platform.MyAnimeList, "12345");
         mapping.setAnime(anime);
         mapping = mappingRepository.save(mapping);
 
@@ -156,7 +157,7 @@ public class AdminMappingControllerTest {
         newAnime = animeRepository.save(newAnime);
 
         // 准备已关联到原动画的 mapping
-        Mapping mapping = createMapping("MAL", "12345");
+        Mapping mapping = createMapping(Platform.MyAnimeList, "12345");
         mapping.setAnime(oldAnime);
         mapping = mappingRepository.save(mapping);
 
@@ -192,7 +193,7 @@ public class AdminMappingControllerTest {
     @Test
     public void testUpdateMappingAnime_AnimeNotFound() throws Exception {
         // 准备 mapping
-        Mapping mapping = createMapping("MAL", "12345");
+        Mapping mapping = createMapping(Platform.MyAnimeList, "12345");
         mapping = mappingRepository.save(mapping);
 
         UpdateMappingAnimeRequest request = new UpdateMappingAnimeRequest(
@@ -211,7 +212,7 @@ public class AdminMappingControllerTest {
     @Test
     public void testDeleteMapping_Success() throws Exception {
         // 准备 mapping
-        Mapping mapping = createMapping("MAL", "12345");
+        Mapping mapping = createMapping(Platform.MyAnimeList, "12345");
         mapping = mappingRepository.save(mapping);
 
         Long mappingId = mapping.getMappingId();
@@ -230,7 +231,7 @@ public class AdminMappingControllerTest {
         Anime anime = createAnime("关联动画");
         anime = animeRepository.save(anime);
 
-        Mapping mapping = createMapping("MAL", "12345");
+        Mapping mapping = createMapping(Platform.MyAnimeList, "12345");
         mapping.setAnime(anime);
         mapping = mappingRepository.save(mapping);
 
@@ -259,33 +260,33 @@ public class AdminMappingControllerTest {
     public void testCreateMapping_Success() throws Exception {
         // Mock FetchService
         AbstractAnimeFetchService mockFetchServiceImpl = mock(AbstractAnimeFetchService.class);
-        Mapping mockedMapping = createMapping("MAL", "12345");
+        Mapping mockedMapping = createMapping(Platform.MyAnimeList, "12345");
         mockedMapping.setRawScore(8.5);
 
-        when(fetchService.getFetchServiceByName("MAL")).thenReturn(mockFetchServiceImpl);
+        when(fetchService.getFetchService(Platform.MyAnimeList)).thenReturn(mockFetchServiceImpl);
         when(mockFetchServiceImpl.fetchAndSaveMapping("12345")).thenReturn(mockedMapping);
 
-        CreateMappingRequest request = new CreateMappingRequest("MAL", "12345");
+        CreateMappingRequest request = new CreateMappingRequest(Platform.MyAnimeList, "12345");
 
         mockMvc.perform(post("/api/admin/create_mapping")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.sourcePlatform").value("MAL"))
+                .andExpect(jsonPath("$.data.sourcePlatform").value("MyAnimeList"))
                 .andExpect(jsonPath("$.data.platformId").value("12345"));
 
-        verify(fetchService, atLeast(1)).getFetchServiceByName("MAL");
+        verify(fetchService, atLeast(1)).getFetchService(Platform.MyAnimeList);
         verify(mockFetchServiceImpl, times(1)).fetchAndSaveMapping("12345");
     }
 
     @Test
     public void testCreateMapping_AlreadyExists() throws Exception {
         // 先创建一个 mapping
-        Mapping existingMapping = createMapping("MAL", "12345");
+        Mapping existingMapping = createMapping(Platform.MyAnimeList, "12345");
         mappingRepository.save(existingMapping);
 
-        CreateMappingRequest request = new CreateMappingRequest("MAL", "12345");
+        CreateMappingRequest request = new CreateMappingRequest(Platform.MyAnimeList, "12345");
 
         mockMvc.perform(post("/api/admin/create_mapping")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -293,21 +294,6 @@ public class AdminMappingControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.code").value("ALREADY_EXISTS"));
-    }
-
-    @Test
-    public void testCreateMapping_UnsupportedPlatform() throws Exception {
-        // Mock FetchService 返回 null（不支持的平台）
-        when(fetchService.getFetchServiceByName("UnknownPlatform")).thenReturn(null);
-
-        CreateMappingRequest request = new CreateMappingRequest("UnknownPlatform", "12345");
-
-        mockMvc.perform(post("/api/admin/create_mapping")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.code").value("UNSUPPORTED_PLATFORM"));
     }
 
     // 辅助方法：创建测试用的 Anime
@@ -323,7 +309,7 @@ public class AdminMappingControllerTest {
     }
 
     // 辅助方法：创建测试用的 Mapping
-    private Mapping createMapping(String sourcePlatform, String platformId) {
+    private Mapping createMapping(Platform sourcePlatform, String platformId) {
         JsonNode emptyJson = objectMapper.createObjectNode();
         return new Mapping(sourcePlatform, platformId, emptyJson);
     }

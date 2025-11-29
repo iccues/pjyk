@@ -2,6 +2,7 @@ package com.iccues.metaanimebackend.service;
 
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.Mapping;
+import com.iccues.metaanimebackend.entity.Platform;
 import com.iccues.metaanimebackend.entity.ReviewStatus;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
 import com.iccues.metaanimebackend.service.fetch.AbstractAnimeFetchService;
@@ -113,19 +114,15 @@ public class MappingSyncService {
      */
     @Transactional
     public void syncMapping(Mapping mapping) {
-        String platform = mapping.getSourcePlatform();
+        Platform platform = mapping.getSourcePlatform();
         String platformId = mapping.getPlatformId();
 
         try {
-            AbstractAnimeFetchService service = fetchService.getFetchServiceByName(platform);
-            if (service != null) {
-                log.debug("Syncing mapping {}:{}", platform, platformId);
-                service.fetchAndSaveMapping(platformId);
-                pendingMappings.remove(mapping);
-                log.info("Successfully synced mapping {}:{}", platform, platformId);
-            } else {
-                log.warn("No fetch service found for platform: {}, skipping mapping {}", platform, platformId);
-            }
+            AbstractAnimeFetchService service = fetchService.getFetchService(platform);
+            log.debug("Syncing mapping {}:{}", platform, platformId);
+            service.fetchAndSaveMapping(platformId);
+            pendingMappings.remove(mapping);
+            log.info("Successfully synced mapping {}:{}", platform, platformId);
         } catch (Exception e) {
             log.error("Failed to sync mapping {}:{} - {}", platform, platformId, e.getMessage(), e);
         }

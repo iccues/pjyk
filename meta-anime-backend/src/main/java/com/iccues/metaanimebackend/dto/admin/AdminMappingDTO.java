@@ -1,9 +1,11 @@
 package com.iccues.metaanimebackend.dto.admin;
 
+import com.iccues.metaanimebackend.entity.Platform;
+
 public record AdminMappingDTO(
         Long mappingId,
         Long animeId,
-        String sourcePlatform,
+        Platform sourcePlatform,
         String platformId,
         Double rawScore,
         MappingInfo mappingInfo

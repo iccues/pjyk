@@ -5,6 +5,7 @@ import com.iccues.metaanimebackend.dto.admin.AnimeCreateRequest;
 import com.iccues.metaanimebackend.dto.admin.AnimeUpdateRequest;
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
+import com.iccues.metaanimebackend.entity.Platform;
 import com.iccues.metaanimebackend.entity.ReviewStatus;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
 import com.iccues.metaanimebackend.repo.MappingRepository;
@@ -230,7 +231,7 @@ public class AdminAnimeControllerTest {
 
         // 创建一个映射并关联到这个动画
         com.iccues.metaanimebackend.entity.Mapping mapping = new com.iccues.metaanimebackend.entity.Mapping();
-        mapping.setSourcePlatform("MAL");
+        mapping.setSourcePlatform(Platform.MyAnimeList);
         mapping.setPlatformId("12345");
         mapping.setAnime(anime);
         mapping = mappingRepository.save(mapping);

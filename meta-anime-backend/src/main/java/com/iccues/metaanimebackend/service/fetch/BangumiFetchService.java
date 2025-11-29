@@ -2,6 +2,7 @@ package com.iccues.metaanimebackend.service.fetch;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
+import com.iccues.metaanimebackend.entity.Platform;
 import com.iccues.metaanimebackend.entity.Season;
 import com.iccues.metaanimebackend.util.RetryUtil;
 import jakarta.annotation.Resource;
@@ -15,8 +16,8 @@ import java.util.List;
 @Service
 public class BangumiFetchService extends AbstractAnimeFetchService {
     @Override
-    protected String getPlatform() {
-        return "Bangumi";
+    protected Platform getPlatform() {
+        return Platform.Bangumi;
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.iccues.metaanimebackend.dto.admin.MappingInfo;
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.Mapping;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
+import com.iccues.metaanimebackend.entity.Platform;
 import com.iccues.metaanimebackend.entity.Season;
 import com.iccues.metaanimebackend.exception.FetchFailedException;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
@@ -32,7 +33,7 @@ public abstract class AbstractAnimeFetchService {
     @Resource
     protected MappingRepository mappingRepository;
 
-    protected abstract String getPlatform();
+    protected abstract Platform getPlatform();
 
     protected abstract LocalDate extractStartDate(JsonNode jsonNode);
 

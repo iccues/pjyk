@@ -6,6 +6,7 @@ import com.iccues.metaanimebackend.dto.admin.MappingInfo;
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
 import com.iccues.metaanimebackend.entity.Mapping;
+import com.iccues.metaanimebackend.entity.Platform;
 import com.iccues.metaanimebackend.entity.Season;
 import com.iccues.metaanimebackend.exception.FetchFailedException;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
@@ -68,7 +69,7 @@ public class AbstractAnimeFetchServiceTest {
         JsonNode jsonNode = objectMapper.readTree(jsonString);
 
         // 准备 Mapping
-        Mapping mapping = new Mapping("TestPlatform", "12345", jsonNode);
+        Mapping mapping = new Mapping(Platform.Bangumi, "12345", jsonNode);
 
         // 调用方法
         MappingInfo result = testService.getMappingInfo(mapping);
@@ -158,7 +159,7 @@ public class AbstractAnimeFetchServiceTest {
         JsonNode jsonNode = objectMapper.readTree(jsonString);
 
         // 准备未关联的 Mapping
-        Mapping mapping = new Mapping("TestPlatform", "12345", jsonNode);
+        Mapping mapping = new Mapping(Platform.Bangumi, "12345", jsonNode);
 
         // Mock anime
         Anime anime = new Anime();
@@ -203,13 +204,13 @@ public class AbstractAnimeFetchServiceTest {
                 """;
         JsonNode jsonNode = objectMapper.readTree(jsonString);
 
-        Mapping mapping1 = new Mapping("TestPlatform", "1", jsonNode);
-        Mapping mapping2 = new Mapping("TestPlatform", "2", jsonNode);
+        Mapping mapping1 = new Mapping(Platform.Bangumi, "1", jsonNode);
+        Mapping mapping2 = new Mapping(Platform.Bangumi, "2", jsonNode);
 
         List<Mapping> orphanedMappings = List.of(mapping1, mapping2);
 
         // Mock repository
-        when(mappingRepository.findAllBySourcePlatformAndAnimeIsNull("TestPlatform"))
+        when(mappingRepository.findAllBySourcePlatformAndAnimeIsNull(Platform.Bangumi))
                 .thenReturn(orphanedMappings);
 
         // Mock anime service
@@ -311,8 +312,8 @@ public class AbstractAnimeFetchServiceTest {
         testService.mockSingleNode = jsonNode;
 
         // Mock repository
-        Mapping savedMapping = new Mapping("TestPlatform", "12345", jsonNode);
-        when(mappingRepository.findBySourcePlatformAndPlatformId("TestPlatform", "12345"))
+        Mapping savedMapping = new Mapping(Platform.Bangumi, "12345", jsonNode);
+        when(mappingRepository.findBySourcePlatformAndPlatformId(Platform.Bangumi, "12345"))
                 .thenReturn(savedMapping);
 
         // 调用方法
@@ -346,7 +347,7 @@ public class AbstractAnimeFetchServiceTest {
                 () -> testService.fetchAndSaveMappings(2024, Season.SPRING));
 
         // 验证异常信息
-        assertTrue(exception.getMessage().contains("TestPlatform"));
+        assertTrue(exception.getMessage().contains("Bangumi"));
 
         // 验证：不应该调用 saveOrUpdate
         verify(mappingService, never()).saveOrUpdate(any(Mapping.class));
@@ -362,7 +363,7 @@ public class AbstractAnimeFetchServiceTest {
                 () -> testService.fetchAndSaveMappings(2024, Season.SPRING));
 
         // 验证异常信息
-        assertTrue(exception.getMessage().contains("TestPlatform"));
+        assertTrue(exception.getMessage().contains("Bangumi"));
 
         // 验证：不应该调用 saveOrUpdate
         verify(mappingService, never()).saveOrUpdate(any(Mapping.class));
@@ -378,7 +379,7 @@ public class AbstractAnimeFetchServiceTest {
                 () -> testService.fetchAndSaveMapping("12345"));
 
         // 验证异常信息
-        assertTrue(exception.getMessage().contains("TestPlatform"));
+        assertTrue(exception.getMessage().contains("Bangumi"));
         assertTrue(exception.getMessage().contains("12345"));
 
         // 验证：不应该调用 saveOrUpdate
@@ -395,7 +396,7 @@ public class AbstractAnimeFetchServiceTest {
                 () -> testService.fetchAndSaveMapping("12345"));
 
         // 验证异常信息
-        assertTrue(exception.getMessage().contains("TestPlatform"));
+        assertTrue(exception.getMessage().contains("Bangumi"));
         assertTrue(exception.getMessage().contains("12345"));
 
         // 验证：不应该调用 saveOrUpdate
@@ -412,8 +413,8 @@ public class AbstractAnimeFetchServiceTest {
         public boolean shouldThrowGenericExceptionForSingle = false;
 
         @Override
-        protected String getPlatform() {
-            return "TestPlatform";
+        protected Platform getPlatform() {
+            return Platform.Bangumi;
         }
 
         @Override
