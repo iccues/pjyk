@@ -16,13 +16,6 @@ public class Response<T> {
         return response;
     }
 
-    public static <T> Response<T> fail(String message) {
-        Response<T> response = new Response<>();
-        response.success = false;
-        response.message = message;
-        return response;
-    }
-
     public static <T> Response<T> fail(String code, String message) {
         Response<T> response = new Response<>();
         response.success = false;
