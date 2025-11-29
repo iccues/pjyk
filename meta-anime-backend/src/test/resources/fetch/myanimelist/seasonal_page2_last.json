@@ -1,0 +1,21 @@
+{
+  "data": [
+    {
+      "node": {
+        "id": 12347,
+        "title": "Test Anime 3",
+        "alternative_titles": {
+          "en": "Test Anime 3 EN",
+          "ja": "テストアニメ3"
+        },
+        "main_picture": {
+          "large": "https://example.com/anime3.jpg"
+        },
+        "start_date": "2024-04-10",
+        "mean": 9.0,
+        "media_type": "ova"
+      }
+    }
+  ],
+  "paging": {}
+}

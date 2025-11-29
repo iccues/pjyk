@@ -1,0 +1,45 @@
+{
+  "data": {
+    "Page": {
+      "pageInfo": {
+        "hasNextPage": true
+      },
+      "media": [
+        {
+          "id": 98765,
+          "title": {
+            "romaji": "Test Anime Romaji",
+            "english": "Test Anime English",
+            "native": "テストアニメ"
+          },
+          "startDate": {
+            "year": 2024,
+            "month": 4,
+            "day": 1
+          },
+          "coverImage": {
+            "extraLarge": "https://example.com/anilist1.jpg"
+          },
+          "averageScore": 85
+        },
+        {
+          "id": 98766,
+          "title": {
+            "romaji": "Another Test Anime",
+            "english": null,
+            "native": "別のテストアニメ"
+          },
+          "startDate": {
+            "year": 2024,
+            "month": 4,
+            "day": 5
+          },
+          "coverImage": {
+            "extraLarge": "https://example.com/anilist2.jpg"
+          },
+          "averageScore": 78
+        }
+      ]
+    }
+  }
+}

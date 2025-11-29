@@ -1,0 +1,17 @@
+{
+  "total": 30,
+  "data": [
+    {
+      "id": 77777,
+      "name": "小さなアニメ",
+      "name_cn": "小型动漫",
+      "date": "2024-01-15",
+      "images": {
+        "large": "https://example.com/bangumi_small.jpg"
+      },
+      "rating": {
+        "score": 9.0
+      }
+    }
+  ]
+}

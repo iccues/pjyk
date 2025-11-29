@@ -1,0 +1,28 @@
+{
+  "data": {
+    "Page": {
+      "pageInfo": {
+        "hasNextPage": false
+      },
+      "media": [
+        {
+          "id": 98767,
+          "title": {
+            "romaji": "Final Test Anime",
+            "english": "Final Test Anime EN",
+            "native": "最後のテストアニメ"
+          },
+          "startDate": {
+            "year": 2024,
+            "month": 4,
+            "day": 10
+          },
+          "coverImage": {
+            "extraLarge": "https://example.com/anilist3.jpg"
+          },
+          "averageScore": 90
+        }
+      ]
+    }
+  }
+}

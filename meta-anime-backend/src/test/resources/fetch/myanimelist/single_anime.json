@@ -1,0 +1,14 @@
+{
+  "id": 54321,
+  "title": "Single Test Anime",
+  "alternative_titles": {
+    "en": "Single Test Anime EN",
+    "ja": "シングルテストアニメ"
+  },
+  "main_picture": {
+    "large": "https://example.com/single_anime.jpg"
+  },
+  "start_date": "2024-01-15",
+  "mean": 8.2,
+  "media_type": "tv"
+}

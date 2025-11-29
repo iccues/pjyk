@@ -1,0 +1,21 @@
+{
+  "data": {
+    "Media": {
+      "id": 55555,
+      "title": {
+        "romaji": "Single AniList Anime",
+        "english": "Single AniList Anime EN",
+        "native": "シングルアニリストアニメ"
+      },
+      "startDate": {
+        "year": 2024,
+        "month": 1,
+        "day": 15
+      },
+      "coverImage": {
+        "extraLarge": "https://example.com/anilist_single.jpg"
+      },
+      "averageScore": 82
+    }
+  }
+}
