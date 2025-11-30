@@ -1,0 +1,39 @@
+{
+  "data": [
+    {
+      "node": {
+        "id": 12345,
+        "title": "Test Anime 1",
+        "alternative_titles": {
+          "en": "Test Anime 1 EN",
+          "ja": "テストアニメ1"
+        },
+        "main_picture": {
+          "large": "https://example.com/anime1.jpg"
+        },
+        "start_date": "2024-04-01",
+        "mean": 8.5,
+        "media_type": "tv"
+      }
+    },
+    {
+      "node": {
+        "id": 12346,
+        "title": "Test Anime 2",
+        "alternative_titles": {
+          "en": "Test Anime 2 EN",
+          "ja": "テストアニメ2"
+        },
+        "main_picture": {
+          "large": "https://example.com/anime2.jpg"
+        },
+        "start_date": "2024-04-05",
+        "mean": 7.8,
+        "media_type": "movie"
+      }
+    }
+  ],
+  "paging": {
+    "next": "https://api.myanimelist.net/v2/anime/season/2024/spring?limit=100&offset=100"
+  }
+}

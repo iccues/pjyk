@@ -1,0 +1,37 @@
+{
+  "data": [
+    {
+      "node": {
+        "id": 11111,
+        "title": "Valid TV Anime",
+        "media_type": "tv",
+        "mean": 8.0
+      }
+    },
+    {
+      "node": {
+        "id": 22222,
+        "title": "Music Video",
+        "media_type": "music",
+        "mean": 7.5
+      }
+    },
+    {
+      "node": {
+        "id": 33333,
+        "title": "Promotional Video",
+        "media_type": "pv",
+        "mean": 6.5
+      }
+    },
+    {
+      "node": {
+        "id": 44444,
+        "title": "Valid Movie",
+        "media_type": "movie",
+        "mean": 9.0
+      }
+    }
+  ],
+  "paging": {}
+}

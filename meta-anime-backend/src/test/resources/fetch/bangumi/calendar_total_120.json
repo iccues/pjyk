@@ -1,0 +1,29 @@
+{
+  "total": 120,
+  "data": [
+    {
+      "id": 66666,
+      "name": "バンガミテストアニメ1",
+      "name_cn": "Bangumi测试动漫1",
+      "date": "2024-04-01",
+      "images": {
+        "large": "https://example.com/bangumi1.jpg"
+      },
+      "rating": {
+        "score": 8.5
+      }
+    },
+    {
+      "id": 66667,
+      "name": "バンガミテストアニメ2",
+      "name_cn": "Bangumi测试动漫2",
+      "date": "2024-04-05",
+      "images": {
+        "large": "https://example.com/bangumi2.jpg"
+      },
+      "rating": {
+        "score": 7.8
+      }
+    }
+  ]
+}

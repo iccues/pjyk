@@ -1,0 +1,12 @@
+{
+  "id": 88888,
+  "name": "単一バンガミアニメ",
+  "name_cn": "单一Bangumi动漫",
+  "date": "2024-02-20",
+  "images": {
+    "large": "https://example.com/bangumi_single.jpg"
+  },
+  "rating": {
+    "score": 8.2
+  }
+}
