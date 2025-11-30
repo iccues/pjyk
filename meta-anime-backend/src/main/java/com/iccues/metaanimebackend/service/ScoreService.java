@@ -2,10 +2,11 @@ package com.iccues.metaanimebackend.service;
 
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.Mapping;
+import com.iccues.metaanimebackend.entity.Platform;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
 import jakarta.annotation.Resource;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,20 +28,29 @@ public class ScoreService {
     @Transactional
     public void calculateAverageScore(Anime anime) {
         double totalScore = 0.0;
-        int i = 0;
+        int totalWeight = 0;
 
         for (Mapping mapping : anime.getMappings()) {
             Double normalizedScore = mapping.getNormalizedScore();
             if (normalizedScore != null && normalizedScore > 0) {
-                totalScore += normalizedScore;
-                i++;
+                int weight = getWeight(mapping.getSourcePlatform());
+                totalScore += normalizedScore * weight;
+                totalWeight += weight;
             }
         }
 
-        if (i > 0) {
-            anime.setAverageScore(totalScore / i);
+        if (totalWeight > 0) {
+            anime.setAverageScore(totalScore / totalWeight);
         } else  {
             anime.setAverageScore(null);
         }
+    }
+
+    private int getWeight(Platform platform) {
+        return switch (platform) {
+            case Bangumi -> 2;
+            case AniList -> 1;
+            case MyAnimeList -> 1;
+        };
     }
 }
