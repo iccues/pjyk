@@ -12,6 +12,7 @@
     "@tailwindcss/vite": "^4.1.16",
     "element-plus": "^2.11.7",
     "tailwindcss": "^4.1.16",
+    "virtua": "^0.48.2",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3",
     "vuedraggable": "^4.1.0"

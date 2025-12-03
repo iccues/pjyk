@@ -57,7 +57,7 @@ const handleReviewStatusChange = (newStatus: ReviewStatus) => {
     <div class="flex items-center py-2 px-3 cursor-pointer gap-3 min-h-[60px] hover:bg-gray-50" @click="toggleExpand">
       <div class="shrink-0 w-[50px]">
         <el-image :src="anime.coverImage" :alt="anime.title.titleCn || anime.title.titleNative" fit="cover"
-          class="w-[50px] h-[70px] rounded-sm" />
+          class="w-[50px] h-[70px] rounded-sm" lazy />
       </div>
       <div class="shrink-0 w-12 flex flex-col items-start py-1">
         <span class="text-[10px] text-gray-500 leading-tight mb-0.5">ID</span>
@@ -98,7 +98,7 @@ const handleReviewStatusChange = (newStatus: ReviewStatus) => {
     </div>
 
     <el-collapse-transition>
-      <div v-show="isExpanded" class="border-t border-gray-200 bg-gray-50 py-2 px-3 pb-3" @click.stop>
+      <div v-if="isExpanded" class="border-t border-gray-200 bg-gray-50 py-2 px-3 pb-3" @click.stop>
         <draggable :model-value="anime.mappings" :group="{ name: 'mappings', pull: true, put: true }"
           item-key="mappingId" class="flex flex-col gap-1.5 min-h-[60px]" @change="handleMappingChange">
           <template #item="{ element }">
