@@ -1,14 +1,11 @@
 package com.iccues.metaanimebackend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.NaturalId;
-import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 
@@ -44,16 +41,15 @@ public class Mapping {
     Double rawScore;
     Double normalizedScore;
 
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
-    JsonNode rawJSON;
+    @Embedded
+    MappingInfo mappingInfo;
 
     Instant updateTime;
 
-    public Mapping(Platform sourcePlatform, String platformId, JsonNode rawJSON) {
+    public Mapping(Platform sourcePlatform, String platformId, MappingInfo mappingInfo) {
         this.sourcePlatform = sourcePlatform;
         this.platformId = platformId;
-        this.rawJSON = rawJSON;
+        this.mappingInfo = mappingInfo;
         this.updateTime = Instant.now();
     }
 }

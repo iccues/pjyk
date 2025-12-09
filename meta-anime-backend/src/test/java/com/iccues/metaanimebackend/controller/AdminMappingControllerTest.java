@@ -7,6 +7,7 @@ import com.iccues.metaanimebackend.dto.admin.UpdateMappingAnimeRequest;
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
 import com.iccues.metaanimebackend.entity.Mapping;
+import com.iccues.metaanimebackend.entity.MappingInfo;
 import com.iccues.metaanimebackend.entity.Platform;
 import com.iccues.metaanimebackend.entity.ReviewStatus;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
@@ -310,7 +311,9 @@ public class AdminMappingControllerTest {
 
     // 辅助方法：创建测试用的 Mapping
     private Mapping createMapping(Platform sourcePlatform, String platformId) {
-        JsonNode emptyJson = objectMapper.createObjectNode();
-        return new Mapping(sourcePlatform, platformId, emptyJson);
+        AnimeTitles titles = new AnimeTitles();
+        titles.setTitleNative("Test Anime");
+        MappingInfo mappingInfo = new MappingInfo(titles, null, null);
+        return new Mapping(sourcePlatform, platformId, mappingInfo);
     }
 }

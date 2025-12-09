@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
 import com.iccues.metaanimebackend.entity.Mapping;
+import com.iccues.metaanimebackend.entity.MappingInfo;
 import com.iccues.metaanimebackend.entity.Platform;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
 import com.iccues.metaanimebackend.repo.MappingRepository;
@@ -34,13 +35,13 @@ public class MappingServiceTest {
     @Resource
     private MappingService mappingService;
 
-    private ObjectMapper objectMapper;
-    private JsonNode testJsonNode;
+    private MappingInfo testMappingInfo;
 
     @BeforeEach
     public void setUp() throws Exception {
-        objectMapper = new ObjectMapper();
-        testJsonNode = objectMapper.readTree("{\"title\": \"Test Anime\", \"score\": 8.5}");
+        AnimeTitles testTitles = new AnimeTitles();
+        testTitles.setTitleNative("Test Anime");
+        testMappingInfo = new MappingInfo(testTitles, "https://example.com/image.jpg", null);
     }
 
     @AfterEach
@@ -56,7 +57,7 @@ public class MappingServiceTest {
         newMapping.setPlatformId("12345");
         newMapping.setRawScore(8.5);
         newMapping.setNormalizedScore(85.0);
-        newMapping.setRawJSON(testJsonNode);
+        newMapping.setMappingInfo(testMappingInfo);
         newMapping.setUpdateTime(Instant.now());
 
         mappingService.saveOrUpdate(newMapping);
@@ -71,12 +72,16 @@ public class MappingServiceTest {
 
     @Test
     public void testSaveOrUpdate_ExistingMapping_UpdatesFields() {
+        AnimeTitles oldTitles = new AnimeTitles();
+        oldTitles.setTitleNative("Old Anime");
+        MappingInfo oldMappingInfo = new MappingInfo(oldTitles, "https://example.com/old.jpg", null);
+
         Mapping existingMapping = new Mapping();
         existingMapping.setSourcePlatform(Platform.MyAnimeList);
         existingMapping.setPlatformId("12345");
         existingMapping.setRawScore(8.0);
         existingMapping.setNormalizedScore(80.0);
-        existingMapping.setRawJSON(objectMapper.createObjectNode().put("old", "data"));
+        existingMapping.setMappingInfo(oldMappingInfo);
         existingMapping.setUpdateTime(Instant.parse("2024-01-01T00:00:00Z"));
         existingMapping = mappingRepository.save(existingMapping);
 
@@ -88,7 +93,7 @@ public class MappingServiceTest {
         updateMapping.setPlatformId("12345");
         updateMapping.setRawScore(8.5);
         updateMapping.setNormalizedScore(85.0);
-        updateMapping.setRawJSON(testJsonNode);
+        updateMapping.setMappingInfo(testMappingInfo);
         Instant newUpdateTime = Instant.now();
         updateMapping.setUpdateTime(newUpdateTime);
 
@@ -99,7 +104,7 @@ public class MappingServiceTest {
         assertEquals(originalId, updated.getMappingId());
         assertEquals(8.5, updated.getRawScore());
         assertEquals(85.0, updated.getNormalizedScore());
-        assertEquals(testJsonNode, updated.getRawJSON());
+        assertEquals(testMappingInfo, updated.getMappingInfo());
         assertEquals(newUpdateTime, updated.getUpdateTime());
         assertEquals(originalVersion + 1, updated.getVersion());
     }
@@ -186,25 +191,25 @@ public class MappingServiceTest {
     }
 
     @Test
-    public void testSaveOrUpdate_UpdateJsonToNull() {
+    public void testSaveOrUpdate_UpdateMappingInfoToNull() {
         Mapping existingMapping = new Mapping();
         existingMapping.setSourcePlatform(Platform.MyAnimeList);
         existingMapping.setPlatformId("12345");
-        existingMapping.setRawJSON(testJsonNode);
+        existingMapping.setMappingInfo(testMappingInfo);
         existingMapping.setUpdateTime(Instant.now());
         mappingRepository.save(existingMapping);
 
         Mapping updateMapping = new Mapping();
         updateMapping.setSourcePlatform(Platform.MyAnimeList);
         updateMapping.setPlatformId("12345");
-        updateMapping.setRawJSON(null);
+        updateMapping.setMappingInfo(null);
         updateMapping.setUpdateTime(Instant.now());
 
         mappingService.saveOrUpdate(updateMapping);
 
         Mapping updated = mappingRepository.findBySourcePlatformAndPlatformId(Platform.MyAnimeList, "12345");
         assertNotNull(updated);
-        assertNull(updated.getRawJSON());
+        assertNull(updated.getMappingInfo());
     }
 
     @Test
