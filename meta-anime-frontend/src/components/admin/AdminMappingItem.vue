@@ -49,9 +49,9 @@ const handleDelete = (e: Event) => {
   <div
     class="flex items-center py-1.5 px-2.5 gap-2.5 bg-white border border-gray-200 rounded-sm transition-all
     min-h-[50px] cursor-grab hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm active:cursor-grabbing">
-    <img v-if="mapping.mappingInfo.coverImage" :src="mapping.mappingInfo.coverImage"
+    <el-image v-if="mapping.mappingInfo.coverImage" :src="mapping.mappingInfo.coverImage"
       :alt="mapping.mappingInfo.title.titleNative || mapping.mappingInfo.title.titleRomaji"
-      class="shrink-0 w-8 h-12 object-cover rounded-sm">
+      class="shrink-0 w-8 h-12 object-cover rounded-sm" fit="cover" lazy />
     <div class="shrink-0 w-16 flex flex-col items-start py-0.5">
       <span class="text-[10px] text-gray-500 leading-tight mb-0.5">映射ID</span>
       <span class="text-xs text-gray-900 font-medium whitespace-nowrap overflow-hidden text-ellipsis w-full">

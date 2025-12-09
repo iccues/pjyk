@@ -1,7 +1,7 @@
 package com.iccues.metaanimebackend.service.fetch;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.iccues.metaanimebackend.dto.admin.MappingInfo;
+import com.iccues.metaanimebackend.entity.MappingInfo;
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.Mapping;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
@@ -47,8 +47,7 @@ public abstract class AbstractAnimeFetchService {
 
     protected abstract double normalizeScore(double rawScore);
 
-    public MappingInfo getMappingInfo(Mapping mapping) {
-        JsonNode jsonNode = mapping.getRawJSON();
+    protected MappingInfo extractMappingInfo(JsonNode jsonNode) {
         return new MappingInfo(
                 extractTitles(jsonNode),
                 extractCoverImage(jsonNode),
@@ -57,14 +56,14 @@ public abstract class AbstractAnimeFetchService {
     }
 
     @Transactional
-    Anime findOrCreateAnime(JsonNode jsonNode) {
-        LocalDate startDate = extractStartDate(jsonNode);
-        AnimeTitles titles = extractTitles(jsonNode);
+    Anime findOrCreateAnime(MappingInfo mappingInfo) {
+        LocalDate startDate = mappingInfo.getStartDate();
+        AnimeTitles titles = mappingInfo.getTitle();
 
         Anime anime = animeService.findAnime(startDate, titles);
 
         if (anime.getCoverImage() == null) {
-            anime.setCoverImage(extractCoverImage(jsonNode));
+            anime.setCoverImage(mappingInfo.getCoverImage());
         }
 
         return animeRepository.save(anime);
@@ -73,7 +72,7 @@ public abstract class AbstractAnimeFetchService {
     @Transactional
     public void linkMappingToAnime(Mapping mapping) {
         if (mapping.getAnime() == null) {
-            Anime anime = findOrCreateAnime(mapping.getRawJSON());
+            Anime anime = findOrCreateAnime(mapping.getMappingInfo());
             anime.addMapping(mapping);
             animeRepository.save(anime);
         }
@@ -93,8 +92,9 @@ public abstract class AbstractAnimeFetchService {
 
     void processAndSaveMapping(JsonNode jsonNode) {
         String platformId = extractPlatformId(jsonNode);
+        MappingInfo mappingInfo = extractMappingInfo(jsonNode);
 
-        Mapping mapping = new Mapping(getPlatform(), platformId, jsonNode);
+        Mapping mapping = new Mapping(getPlatform(), platformId, mappingInfo);
 
         double rawScore = extractRawScore(jsonNode);
         if (rawScore > 0) {

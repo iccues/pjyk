@@ -20,7 +20,6 @@ const fetchAnimes = async () => {
     emit('update:pageInfo', animes.value.page);
   } catch (err) {
     error.value = err instanceof Error ? err.message : '未知错误';
-    console.error('获取动漫列表失败:', err);
   }
 };
 
@@ -31,7 +30,7 @@ watchEffect(fetchAnimes);
 <template>
   <div v-if="error" class="text-center py-10 text-base text-red-600">{{ error }}</div>
   <div v-else-if="animes" class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-5 justify-items-center">
-    <AnimeCard v-for="(anime, index) in animes?.content" :key="index" :anime="anime"/>
+    <AnimeCard v-for="anime in animes?.content" :key="anime.animeId" :anime="anime"/>
   </div>
   <div v-else class="text-center py-10 text-base text-gray-600">加载中...</div>
 </template>

@@ -2,7 +2,7 @@ package com.iccues.metaanimebackend.service.fetch;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.iccues.metaanimebackend.dto.admin.MappingInfo;
+import com.iccues.metaanimebackend.entity.MappingInfo;
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
 import com.iccues.metaanimebackend.entity.Mapping;
@@ -56,7 +56,7 @@ public class AbstractAnimeFetchServiceTest {
     }
 
     @Test
-    public void testGetMappingInfo() throws Exception {
+    public void testExtractMappingInfo() throws Exception {
         // 准备 JSON 数据
         String jsonString = """
                 {
@@ -68,35 +68,25 @@ public class AbstractAnimeFetchServiceTest {
                 """;
         JsonNode jsonNode = objectMapper.readTree(jsonString);
 
-        // 准备 Mapping
-        Mapping mapping = new Mapping(Platform.Bangumi, "12345", jsonNode);
-
         // 调用方法
-        MappingInfo result = testService.getMappingInfo(mapping);
+        MappingInfo result = testService.extractMappingInfo(jsonNode);
 
         // 验证结果
         assertNotNull(result);
-        assertEquals("Test Anime", result.title().getTitleNative());
-        assertEquals("https://example.com/image.jpg", result.coverImage());
-        assertEquals(LocalDate.of(2024, 1, 15), result.startDate());
+        assertEquals("Test Anime", result.getTitle().getTitleNative());
+        assertEquals("https://example.com/image.jpg", result.getCoverImage());
+        assertEquals(LocalDate.of(2024, 1, 15), result.getStartDate());
     }
 
     @Test
     public void testFindOrCreateAnime_NewAnime() throws Exception {
-        // 准备 JSON 数据
-        String jsonString = """
-                {
-                    "title": "New Anime",
-                    "coverImage": "https://example.com/new.jpg",
-                    "startDate": "2024-04-01"
-                }
-                """;
-        JsonNode jsonNode = objectMapper.readTree(jsonString);
+        // 准备 MappingInfo
+        AnimeTitles titles = new AnimeTitles();
+        titles.setTitleNative("New Anime");
+        MappingInfo mappingInfo = new MappingInfo(titles, "https://example.com/new.jpg", LocalDate.of(2024, 4, 1));
 
         // Mock animeService 返回一个新动画（没有封面）
         Anime newAnime = new Anime();
-        AnimeTitles titles = new AnimeTitles();
-        titles.setTitleNative("New Anime");
         newAnime.setTitle(titles);
         newAnime.setStartDate(LocalDate.of(2024, 4, 1));
 
@@ -105,7 +95,7 @@ public class AbstractAnimeFetchServiceTest {
         when(animeRepository.save(any(Anime.class))).thenReturn(newAnime);
 
         // 调用方法
-        Anime result = testService.findOrCreateAnime(jsonNode);
+        Anime result = testService.findOrCreateAnime(mappingInfo);
 
         // 验证结果
         assertNotNull(result);
@@ -115,20 +105,13 @@ public class AbstractAnimeFetchServiceTest {
 
     @Test
     public void testFindOrCreateAnime_ExistingAnimeWithCover() throws Exception {
-        // 准备 JSON 数据
-        String jsonString = """
-                {
-                    "title": "Existing Anime",
-                    "coverImage": "https://example.com/new.jpg",
-                    "startDate": "2024-04-01"
-                }
-                """;
-        JsonNode jsonNode = objectMapper.readTree(jsonString);
+        // 准备 MappingInfo
+        AnimeTitles titles = new AnimeTitles();
+        titles.setTitleNative("Existing Anime");
+        MappingInfo mappingInfo = new MappingInfo(titles, "https://example.com/new.jpg", LocalDate.of(2024, 4, 1));
 
         // Mock animeService 返回一个已有封面的动画
         Anime existingAnime = new Anime();
-        AnimeTitles titles = new AnimeTitles();
-        titles.setTitleNative("Existing Anime");
         existingAnime.setTitle(titles);
         existingAnime.setStartDate(LocalDate.of(2024, 4, 1));
         existingAnime.setCoverImage("https://example.com/old.jpg");
@@ -138,7 +121,7 @@ public class AbstractAnimeFetchServiceTest {
         when(animeRepository.save(any(Anime.class))).thenReturn(existingAnime);
 
         // 调用方法
-        Anime result = testService.findOrCreateAnime(jsonNode);
+        Anime result = testService.findOrCreateAnime(mappingInfo);
 
         // 验证结果：封面不应该被覆盖
         assertNotNull(result);
@@ -148,23 +131,16 @@ public class AbstractAnimeFetchServiceTest {
 
     @Test
     public void testLinkMappingToAnime_UnlinkedMapping() throws Exception {
-        // 准备 JSON 数据
-        String jsonString = """
-                {
-                    "title": "Test Anime",
-                    "coverImage": "https://example.com/image.jpg",
-                    "startDate": "2024-01-15"
-                }
-                """;
-        JsonNode jsonNode = objectMapper.readTree(jsonString);
+        // 准备 MappingInfo
+        AnimeTitles titles = new AnimeTitles();
+        titles.setTitleNative("Test Anime");
+        MappingInfo mappingInfo = new MappingInfo(titles, "https://example.com/image.jpg", LocalDate.of(2024, 1, 15));
 
         // 准备未关联的 Mapping
-        Mapping mapping = new Mapping(Platform.Bangumi, "12345", jsonNode);
+        Mapping mapping = new Mapping(Platform.Bangumi, "12345", mappingInfo);
 
         // Mock anime
         Anime anime = new Anime();
-        AnimeTitles titles = new AnimeTitles();
-        titles.setTitleNative("Test Anime");
         anime.setTitle(titles);
 
         when(animeService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
@@ -194,18 +170,13 @@ public class AbstractAnimeFetchServiceTest {
 
     @Test
     public void testLinkAllOrphanedMappings() throws Exception {
-        // 准备测试数据
-        String jsonString = """
-                {
-                    "title": "Orphaned Anime",
-                    "coverImage": "https://example.com/image.jpg",
-                    "startDate": "2024-01-15"
-                }
-                """;
-        JsonNode jsonNode = objectMapper.readTree(jsonString);
+        // 准备 MappingInfo
+        AnimeTitles titles = new AnimeTitles();
+        titles.setTitleNative("Orphaned Anime");
+        MappingInfo mappingInfo = new MappingInfo(titles, "https://example.com/image.jpg", LocalDate.of(2024, 1, 15));
 
-        Mapping mapping1 = new Mapping(Platform.Bangumi, "1", jsonNode);
-        Mapping mapping2 = new Mapping(Platform.Bangumi, "2", jsonNode);
+        Mapping mapping1 = new Mapping(Platform.Bangumi, "1", mappingInfo);
+        Mapping mapping2 = new Mapping(Platform.Bangumi, "2", mappingInfo);
 
         List<Mapping> orphanedMappings = List.of(mapping1, mapping2);
 
@@ -215,8 +186,6 @@ public class AbstractAnimeFetchServiceTest {
 
         // Mock anime service
         Anime anime = new Anime();
-        AnimeTitles titles = new AnimeTitles();
-        titles.setTitleNative("Orphaned Anime");
         anime.setTitle(titles);
 
         when(animeService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
@@ -311,8 +280,13 @@ public class AbstractAnimeFetchServiceTest {
         // Mock fetchSingleMappingJson
         testService.mockSingleNode = jsonNode;
 
+        // 准备 MappingInfo
+        AnimeTitles titles = new AnimeTitles();
+        titles.setTitleNative("New Mapping");
+        MappingInfo mappingInfo = new MappingInfo(titles, null, null);
+
         // Mock repository
-        Mapping savedMapping = new Mapping(Platform.Bangumi, "12345", jsonNode);
+        Mapping savedMapping = new Mapping(Platform.Bangumi, "12345", mappingInfo);
         when(mappingRepository.findBySourcePlatformAndPlatformId(Platform.Bangumi, "12345"))
                 .thenReturn(savedMapping);
 

@@ -11,6 +11,7 @@ import MappingFormDialog from '../../components/admin/MappingFormDialog.vue';
 import draggable from 'vuedraggable';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Plus, Filter } from '@element-plus/icons-vue';
+import { VList } from 'virtua/vue';
 
 
 const router = useRouter();
@@ -63,7 +64,6 @@ const loadAnimeList = async () => {
     animeList.value = animes;
   } catch (e) {
     error.value = e instanceof Error ? e.message : '加载动画列表失败';
-    console.error('Failed to load anime list:', e);
   } finally {
     loading.value = false;
   }
@@ -89,7 +89,6 @@ onMounted(async () => {
     mappingList.value = mappings;
   } catch (e) {
     error.value = e instanceof Error ? e.message : '加载数据失败';
-    console.error('Failed to load admin data:', e);
   } finally {
     loading.value = false;
   }
@@ -420,19 +419,23 @@ const handleDeleteMapping = async (mappingId: number) => {
                 />
               </el-select>
             </div>
-            <el-scrollbar height="calc(100vh - 200px)">
-              <div class="flex flex-col gap-3 pr-2">
-                <AdminAnimeItem
-                  v-for="anime in animeList"
-                  :key="anime.animeId"
-                  :anime="anime"
-                  @mapping-change="(evt) => handleMappingToAnime(evt, anime.animeId)"
-                  @delete-anime="handleDeleteAnime"
-                  @edit-anime="handleEditAnime"
-                  @update-review-status="handleUpdateReviewStatus"
-                />
-              </div>
-            </el-scrollbar>
+            <VList
+              :data="animeList"
+              style="height: calc(100vh - 240px);"
+              class="pr-2"
+            >
+              <template #default="{ item: anime }">
+                <div :key="anime.animeId" class="mb-3">
+                  <AdminAnimeItem
+                    :anime="anime"
+                    @mapping-change="(evt) => handleMappingToAnime(evt, anime.animeId)"
+                    @delete-anime="handleDeleteAnime"
+                    @edit-anime="handleEditAnime"
+                    @update-review-status="handleUpdateReviewStatus"
+                  />
+                </div>
+              </template>
+            </VList>
           </div>
         </el-col>
 
@@ -453,22 +456,21 @@ const handleDeleteMapping = async (mappingId: number) => {
                 新建映射
               </el-button>
             </div>
-            <el-scrollbar height="calc(100vh - 200px)">
-              <div class="min-h-[200px] p-2 rounded transition-colors">
-                <draggable
-                  :model-value="mappingList"
-                  :group="{ name: 'mappings', pull: true, put: true }"
-                  item-key="mappingId"
-                  :sort="false"
-                  @change="handleMappingToUnmapped"
-                  class="flex flex-col gap-3 pr-2"
-                >
-                  <template #item="{ element }">
-                    <AdminMappingItem :mapping="element" @delete-mapping="handleDeleteMapping" />
-                  </template>
-                </draggable>
-              </div>
-            </el-scrollbar>
+            <div class="min-h-[200px] p-2 rounded transition-colors" style="height: calc(100vh - 240px); overflow: hidden;">
+              <draggable
+                :model-value="mappingList"
+                :group="{ name: 'mappings', pull: true, put: true }"
+                item-key="mappingId"
+                :sort="false"
+                @change="handleMappingToUnmapped"
+                style="height: 100%; overflow-y: auto;"
+                class="flex flex-col gap-3 pr-2"
+              >
+                <template #item="{ element }">
+                  <AdminMappingItem :mapping="element" @delete-mapping="handleDeleteMapping" />
+                </template>
+              </draggable>
+            </div>
           </div>
         </el-col>
       </el-row>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import AnimeList from '../components/AnimeList.vue';
 import type { Season } from '../types/anime';
@@ -94,11 +94,6 @@ const handlePageChange = (page: number) => {
   // 滚动到顶部
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
-
-// 监听状态变化，同步到 URL
-watch([selectedYear, selectedSeason, currentPage], () => {
-  updateQuery();
-}, { flush: 'post' });
 </script>
 
 <template>

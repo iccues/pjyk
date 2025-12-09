@@ -17,7 +17,7 @@ public class MappingService {
         if (existing != null) {
             existing.setRawScore(m.getRawScore());
             existing.setNormalizedScore(m.getNormalizedScore());
-            existing.setRawJSON(m.getRawJSON());
+            existing.setMappingInfo(m.getMappingInfo());
             existing.setUpdateTime(m.getUpdateTime());
             repo.save(existing);
         } else {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
+import { Picture } from '@element-plus/icons-vue';
 import type { AdminAnime } from '../../types/adminAnime';
 
 interface AnimeForm {
@@ -179,7 +180,7 @@ const handleSubmit = async () => {
         >
           <template #error>
             <div class="flex flex-col items-center justify-center w-full h-full bg-gray-100 text-gray-400 text-xs">
-              <el-icon class="text-2xl mb-1"><icon-picture /></el-icon>
+              <el-icon class="text-2xl mb-1"><Picture /></el-icon>
               <span>加载失败</span>
             </div>
           </template>

@@ -2,13 +2,10 @@ package com.iccues.metaanimebackend.mapper;
 
 import com.iccues.metaanimebackend.dto.admin.*;
 import com.iccues.metaanimebackend.entity.*;
-import com.iccues.metaanimebackend.service.fetch.AbstractAnimeFetchService;
-import com.iccues.metaanimebackend.service.fetch.FetchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import jakarta.annotation.Resource;
 
@@ -17,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -25,9 +21,6 @@ public class AdminAnimeMapperTest {
 
     @Resource
     private AdminAnimeMapper adminAnimeMapper;
-
-    @MockitoBean
-    private FetchService fetchService;
 
     private Anime testAnime;
     private Mapping testMapping;
@@ -60,6 +53,10 @@ public class AdminAnimeMapperTest {
         testMapping.setPlatformId("12345");
         testMapping.setRawScore(85.0);
         testMapping.setNormalizedScore(8.5);
+
+        // 设置 mappingInfo
+        MappingInfo testMappingInfo = new MappingInfo(testTitles, "https://example.com/cover.jpg", LocalDate.of(2024, 4, 1));
+        testMapping.setMappingInfo(testMappingInfo);
 
         testAnime.setMappings(List.of(testMapping));
     }
@@ -175,13 +172,6 @@ public class AdminAnimeMapperTest {
 
     @Test
     public void testToMappingDto_WithMappingInfo() {
-        // 准备：Mock FetchService
-        AbstractAnimeFetchService mockFetchService = mock(AbstractAnimeFetchService.class);
-        MappingInfo mockMappingInfo = new MappingInfo(testTitles, "https://example.com/cover.jpg", LocalDate.of(2024, 4, 1));
-
-        when(fetchService.getFetchService(Platform.AniList)).thenReturn(mockFetchService);
-        when(mockFetchService.getMappingInfo(testMapping)).thenReturn(mockMappingInfo);
-
         // 执行映射
         AdminMappingDTO result = adminAnimeMapper.toMappingDto(testMapping);
 
@@ -193,13 +183,15 @@ public class AdminAnimeMapperTest {
         assertEquals("12345", result.platformId());
         assertEquals(85.0, result.rawScore());
         assertNotNull(result.mappingInfo());
-        assertEquals(testTitles, result.mappingInfo().title());
+        assertEquals(testTitles, result.mappingInfo().getTitle());
+        assertEquals("https://example.com/cover.jpg", result.mappingInfo().getCoverImage());
+        assertEquals(LocalDate.of(2024, 4, 1), result.mappingInfo().getStartDate());
     }
 
     @Test
     public void testToMappingDto_NullMappingInfo() {
-        // 准备：Mock FetchService 返回 null
-        when(fetchService.getFetchService(Platform.AniList)).thenReturn(null);
+        // 准备：创建一个没有 mappingInfo 的 Mapping
+        testMapping.setMappingInfo(null);
 
         // 执行映射
         AdminMappingDTO result = adminAnimeMapper.toMappingDto(testMapping);
@@ -224,10 +216,6 @@ public class AdminAnimeMapperTest {
         // 准备：Mapping 没有关联 Anime
         testMapping.setAnime(null);
 
-        // Mock FetchService
-        AbstractAnimeFetchService mockFetchService = mock(AbstractAnimeFetchService.class);
-        when(fetchService.getFetchService(Platform.AniList)).thenReturn(mockFetchService);
-
         // 执行映射
         AdminMappingDTO result = adminAnimeMapper.toMappingDto(testMapping);
 
@@ -250,9 +238,6 @@ public class AdminAnimeMapperTest {
         mapping2.setRawScore(8.2);
 
         List<Mapping> mappingList = List.of(testMapping, mapping2);
-
-        // Mock FetchService
-        when(fetchService.getFetchService(any())).thenReturn(null);
 
         // 执行映射
         List<AdminMappingDTO> result = adminAnimeMapper.toMappingDtoList(mappingList);
@@ -278,60 +263,6 @@ public class AdminAnimeMapperTest {
     public void testToMappingDtoList_NullList() {
         // 执行映射
         List<AdminMappingDTO> result = adminAnimeMapper.toMappingDtoList(null);
-
-        // 验证结果为 null
-        assertNull(result);
-    }
-
-    // ============ extractMappingInfo 测试 ============
-
-    @Test
-    public void testExtractMappingInfo_Success() {
-        // 准备：Mock FetchService
-        AbstractAnimeFetchService mockFetchService = mock(AbstractAnimeFetchService.class);
-        MappingInfo mockMappingInfo = new MappingInfo(testTitles, "https://example.com/cover.jpg", LocalDate.of(2024, 4, 1));
-
-        when(fetchService.getFetchService(Platform.AniList)).thenReturn(mockFetchService);
-        when(mockFetchService.getMappingInfo(testMapping)).thenReturn(mockMappingInfo);
-
-        // 执行映射
-        MappingInfo result = adminAnimeMapper.extractMappingInfo(testMapping);
-
-        // 验证结果
-        assertNotNull(result);
-        assertEquals(testTitles, result.title());
-        assertEquals("https://example.com/cover.jpg", result.coverImage());
-        assertEquals(LocalDate.of(2024, 4, 1), result.startDate());
-    }
-
-    @Test
-    public void testExtractMappingInfo_NullMapping() {
-        // 执行映射
-        MappingInfo result = adminAnimeMapper.extractMappingInfo(null);
-
-        // 验证结果为 null
-        assertNull(result);
-    }
-
-    @Test
-    public void testExtractMappingInfo_NullPlatform() {
-        // 准备：设置 platform 为 null
-        testMapping.setSourcePlatform(null);
-
-        // 执行映射
-        MappingInfo result = adminAnimeMapper.extractMappingInfo(testMapping);
-
-        // 验证结果为 null
-        assertNull(result);
-    }
-
-    @Test
-    public void testExtractMappingInfo_FetchServiceNotFound() {
-        // 准备：Mock FetchService 返回 null
-        when(fetchService.getFetchService(Platform.AniList)).thenReturn(null);
-
-        // 执行映射
-        MappingInfo result = adminAnimeMapper.extractMappingInfo(testMapping);
 
         // 验证结果为 null
         assertNull(result);

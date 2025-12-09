@@ -24,5 +24,18 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
       }
     } : undefined
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'element-plus': ['element-plus'],
+          'vue-vendor': ['vue', 'vue-router'],
+          'draggable': ['vuedraggable'],
+          'virtua': ['virtua']
+        }
+      }
+    },
+    chunkSizeWarningLimit: 600
   }
 }))
