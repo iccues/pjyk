@@ -1,3 +1,7 @@
+import anilistLogo from '@/assets/logo/anilist.png'
+import bangumiLogo from '@/assets/logo/bangumi.png'
+import myAnimeListLogo from '@/assets/logo/myanimelist.png'
+
 /**
  * 平台配置接口
  */
@@ -19,19 +23,19 @@ export interface PlatformConfig {
 const platformConfigs: Record<string, PlatformConfig> = {
     'AniList': {
         name: 'AniList',
-        logo: '/src/assets/logo/anilist.png',
+        logo: anilistLogo,
         baseUrl: 'https://anilist.co',
         getAnimeUrl: (platformId: string) => `https://anilist.co/anime/${platformId}`
     },
     'Bangumi': {
         name: 'Bangumi',
-        logo: '/src/assets/logo/bangumi.png',
+        logo: bangumiLogo,
         baseUrl: 'https://bgm.tv',
         getAnimeUrl: (platformId: string) => `https://bgm.tv/subject/${platformId}`
     },
     'MyAnimeList': {
         name: 'MyAnimeList',
-        logo: '/src/assets/logo/myanimelist.png',
+        logo: myAnimeListLogo,
         baseUrl: 'https://myanimelist.net',
         getAnimeUrl: (platformId: string) => `https://myanimelist.net/anime/${platformId}`
     }
