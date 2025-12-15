@@ -1,4 +1,4 @@
-import { get, put, post, del } from './http';
+import { get, put, post, del } from './adminHttp';
 import type { AdminMapping } from '../types/adminAnime';
 
 /**

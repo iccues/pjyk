@@ -1,4 +1,4 @@
-import { get, post, put, del } from './http';
+import { get, post, put, del } from './adminHttp';
 import type { AdminAnime, ReviewStatus } from '../types/adminAnime';
 import type { Season } from '../types/anime';
 
