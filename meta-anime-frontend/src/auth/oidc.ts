@@ -13,13 +13,7 @@ export const oidcManager = new UserManager({
 });
 
 export async function login() {
-    console.log("login called");
-    try {
-        await oidcManager.signinRedirect();
-    } catch (error) {
-        console.error("Login failed:", error);
-        throw error;
-    }
+    await oidcManager.signinRedirect();
 }
 
 export function logout() {
