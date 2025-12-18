@@ -1,6 +1,6 @@
 import { get } from './http';
-import type { Anime, Season } from '../types/anime';
-import type { Page } from '../types/page';
+import type { Anime, Season } from '@/types/anime';
+import type { Page } from '@/types/page';
 
 /**
  * 获取动画列表的查询参数

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { fetchAnime, fetchMapping, linkMappings, calculateScores } from '../../api/admin';
+import { fetchAnime, fetchMapping, linkMappings, calculateScores } from '@/api/admin';
 import { ElMessage } from 'element-plus';
 import { List, Download, Refresh, SetUp, User } from '@element-plus/icons-vue';
 

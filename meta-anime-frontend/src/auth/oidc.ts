@@ -1,5 +1,5 @@
 import { UserManager } from "oidc-client-ts";
-import { getOidcConfig } from "../api/config";
+import { getOidcConfig } from "@/api/config";
 
 const oidcConfig = await getOidcConfig();
 

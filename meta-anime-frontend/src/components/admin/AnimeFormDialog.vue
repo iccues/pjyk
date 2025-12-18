@@ -2,7 +2,7 @@
 import { ref, watch, computed } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { Picture } from '@element-plus/icons-vue';
-import type { AdminAnime } from '../../types/adminAnime';
+import type { AdminAnime } from '@/types/adminAnime';
 
 interface AnimeForm {
   title: {

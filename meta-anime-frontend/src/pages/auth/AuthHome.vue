@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { logout, oidcManager } from '../../auth/oidc';
+import { logout, oidcManager } from '@/auth/oidc';
 import type { User } from 'oidc-client-ts';
 
 const user = ref<User | null>(null);

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import AnimeList from '../components/AnimeList.vue';
-import type { Season } from '../types/anime';
-import type { PageInfo } from '../types/page';
+import AnimeList from '@/components/AnimeList.vue';
+import type { Season } from '@/types/anime';
+import type { PageInfo } from '@/types/page';
 import { Filter } from '@element-plus/icons-vue';
 
 const router = useRouter();

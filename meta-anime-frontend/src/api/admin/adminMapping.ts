@@ -1,5 +1,5 @@
 import { get, put, post, del } from './adminHttp';
-import type { AdminMapping } from '../../types/adminAnime';
+import type { AdminMapping } from '@/types/adminAnime';
 
 /**
  * 获取未关联的孤立映射列表（管理后台）

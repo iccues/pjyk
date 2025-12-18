@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { getAnimeList, getUnmappedMappingList, updateMappingAnime, deleteAnime, createAnime, updateAnime, createMapping, deleteMapping } from '../../api/admin';
-import type { AdminAnime, AdminMapping, ReviewStatus } from '../../types/adminAnime';
-import type { Season } from '../../types/anime';
-import AdminAnimeItem from '../../components/admin/AdminAnimeItem.vue';
-import AdminMappingItem from '../../components/admin/AdminMappingItem.vue';
-import AnimeFormDialog from '../../components/admin/AnimeFormDialog.vue';
-import MappingFormDialog from '../../components/admin/MappingFormDialog.vue';
+import { getAnimeList, getUnmappedMappingList, updateMappingAnime, deleteAnime, createAnime, updateAnime, createMapping, deleteMapping } from '@/api/admin';
+import type { AdminAnime, AdminMapping, ReviewStatus } from '@/types/adminAnime';
+import type { Season } from '@/types/anime';
+import AdminAnimeItem from '@/components/admin/AdminAnimeItem.vue';
+import AdminMappingItem from '@/components/admin/AdminMappingItem.vue';
+import AnimeFormDialog from '@/components/admin/AnimeFormDialog.vue';
+import MappingFormDialog from '@/components/admin/MappingFormDialog.vue';
 import draggable from 'vuedraggable';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Plus, Filter, User } from '@element-plus/icons-vue';

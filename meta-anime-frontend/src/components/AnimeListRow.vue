@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AnimeList from './AnimeList.vue';
-import type { Season } from '../types/anime';
+import type { Season } from '@/types/anime';
 
 defineProps<{
   title?: string;

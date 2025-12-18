@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { getPlatformConfig } from '../config/platforms';
-import { type Mapping } from '../types/anime';
+import { getPlatformConfig } from '@/config/platforms';
+import { type Mapping } from '@/types/anime';
 
 const props = defineProps<{
   mapping: Mapping;

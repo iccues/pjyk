@@ -1,4 +1,4 @@
-import { type Response } from "../types/response";
+import { type Response } from "@/types/response";
 
 interface RequestOptions {
     headers?: Record<string, string>;

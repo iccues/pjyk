@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ArrowDown, Delete, Edit } from '@element-plus/icons-vue';
-import type { AdminAnime, ReviewStatus } from '../../types/adminAnime';
+import type { AdminAnime, ReviewStatus } from '@/types/adminAnime';
 import AdminMappingItem from './AdminMappingItem.vue';
 import draggable from 'vuedraggable';
 

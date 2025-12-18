@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import type { Anime } from "../types/anime.ts";
+import type { Anime } from "@/types/anime.ts";
 import AnimeScoreItem from "./AnimeScoreItem.vue";
 
 defineProps<{
