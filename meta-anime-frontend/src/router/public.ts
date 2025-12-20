@@ -1,10 +1,16 @@
 export default [
     {
         path: '/',
-        component: () => import('@/pages/public/MainPage.vue'),
-    },
-    {
-        path: '/anime/list',
-        component: () => import('@/pages/public/AnimeListPage.vue'),
+        component: () => import('@/layouts/PublicLayout.vue'),
+        children: [
+            {
+                path: '',
+                component: () => import('@/pages/public/MainPage.vue'),
+            },
+            {
+                path: 'anime/list',
+                component: () => import('@/pages/public/AnimeListPage.vue'),
+            },
+        ],
     },
 ]
