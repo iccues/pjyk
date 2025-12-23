@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getUnmappedMappingList, updateMappingAnime, createMapping, deleteMapping } from '@/api/admin'
 import type { AdminMapping } from '@/types/adminAnime'
+import type { DraggableChangeEvent } from '@/types/draggable'
 
 export function useMappingList() {
   const mappingList = ref<AdminMapping[]>([])
@@ -64,12 +65,12 @@ export function useMappingList() {
 
   // 处理拖拽到动画
   const handleMappingToAnime = (
-    evt: any,
+    evt: DraggableChangeEvent<AdminMapping>,
     animeId: number,
     onAnimeRemoveMapping?: (animeId: number, mappingId: number) => void,
     onAnimeAddMapping?: (animeId: number, mapping: AdminMapping) => void
   ) => {
-    const mapping = evt.added?.element as AdminMapping | undefined
+    const mapping = evt.added?.element
     if (mapping) {
       applyMappingChange(mapping, animeId, onAnimeRemoveMapping, onAnimeAddMapping)
     }
@@ -77,11 +78,11 @@ export function useMappingList() {
 
   // 处理拖拽到未关联列表
   const handleMappingToUnmapped = (
-    evt: any,
+    evt: DraggableChangeEvent<AdminMapping>,
     onAnimeRemoveMapping?: (animeId: number, mappingId: number) => void,
     onAnimeAddMapping?: (animeId: number, mapping: AdminMapping) => void
   ) => {
-    const mapping = evt.added?.element as AdminMapping | undefined
+    const mapping = evt.added?.element
     if (mapping) {
       applyMappingChange(mapping, null, onAnimeRemoveMapping, onAnimeAddMapping)
     }

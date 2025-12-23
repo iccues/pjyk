@@ -18,12 +18,12 @@ export interface AnimeListParams {
  * @returns 分页的动画列表
  */
 export async function getAnimeList(params?: AnimeListParams): Promise<Page<Anime>> {
-    const queryParams: any = {};
+    const queryParams: Record<string, string> = {};
 
-    if (params?.year !== undefined) queryParams.year = params.year;
+    if (params?.year !== undefined) queryParams.year = params.year.toString();
     if (params?.season !== undefined) queryParams.season = params.season;
-    if (params?.page !== undefined) queryParams.page = params.page;
-    if (params?.pageSize !== undefined) queryParams.pageSize = params.pageSize;
+    if (params?.page !== undefined) queryParams.page = params.page.toString();
+    if (params?.pageSize !== undefined) queryParams.pageSize = params.pageSize.toString();
 
     const options = Object.keys(queryParams).length > 0 ? { params: queryParams } : undefined;
     return get<Page<Anime>>('/api/anime/get_list', options);

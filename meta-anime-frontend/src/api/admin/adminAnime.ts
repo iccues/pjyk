@@ -9,9 +9,9 @@ import type { Season } from '@/types/anime';
  * @param season 可选的季度筛选
  */
 export async function getAnimeList(reviewStatus?: ReviewStatus, year?: number, season?: Season): Promise<AdminAnime[]> {
-    const params: any = {};
+    const params: Record<string, string> = {};
     if (reviewStatus !== undefined) params.reviewStatus = reviewStatus;
-    if (year !== undefined) params.year = year;
+    if (year !== undefined) params.year = year.toString();
     if (season !== undefined) params.season = season;
 
     const options = Object.keys(params).length > 0 ? { params } : undefined;

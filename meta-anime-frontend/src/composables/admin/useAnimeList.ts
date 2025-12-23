@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getAnimeList, deleteAnime, createAnime, updateAnime } from '@/api/admin'
-import type { AdminAnime, ReviewStatus } from '@/types/adminAnime'
+import { getAnimeList, deleteAnime, createAnime, updateAnime, type AnimeCreateRequest, type AnimeUpdateRequest } from '@/api/admin'
+import type { AdminAnime, AdminMapping, ReviewStatus } from '@/types/adminAnime'
 import type { Season } from '@/types/anime'
 
 export function useAnimeList() {
@@ -29,7 +29,7 @@ export function useAnimeList() {
   }
 
   // 删除动画
-  const handleDeleteAnime = async (animeId: number, onMappingsMove?: (mappings: any[]) => void) => {
+  const handleDeleteAnime = async (animeId: number, onMappingsMove?: (mappings: AdminMapping[]) => void) => {
     const anime = animeList.value.find(a => a.animeId === animeId)
     if (!anime) return
 
@@ -93,7 +93,10 @@ export function useAnimeList() {
   }
 
   // 提交表单
-  const handleSubmitForm = async (formData: any, _selectedReviewStatus?: ReviewStatus) => {
+  const handleSubmitForm = async (
+    formData: AnimeCreateRequest | (AnimeUpdateRequest & { animeId?: never }),
+    _selectedReviewStatus?: ReviewStatus
+  ) => {
     try {
       if (editingAnime.value) {
         // 编辑模式
@@ -115,7 +118,7 @@ export function useAnimeList() {
         ElMessage.success('动画更新成功')
       } else {
         // 创建模式
-        const created = await createAnime(formData)
+        const created = await createAnime(formData as AnimeCreateRequest)
 
         // 将新动画添加到列表顶部
         animeList.value.unshift(created)
@@ -167,7 +170,7 @@ export function useAnimeList() {
   }
 
   // 添加映射到指定动画
-  const addMappingToAnime = (animeId: number, mapping: any) => {
+  const addMappingToAnime = (animeId: number, mapping: AdminMapping) => {
     const anime = animeList.value.find(a => a.animeId === animeId)
     if (anime && !anime.mappings.some(m => m.mappingId === mapping.mappingId)) {
       anime.mappings.push(mapping)

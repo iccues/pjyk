@@ -47,7 +47,7 @@ const pageInfo = ref<PageInfo | null>(null);
 
 // 更新 URL Query
 const updateQuery = () => {
-  const query: any = {};
+  const query: Record<string, string> = {};
 
   if (selectedYear.value !== undefined) {
     query.year = selectedYear.value.toString();

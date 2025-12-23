@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import type { ReviewStatus } from '@/types/adminAnime'
+import type { ReviewStatus, AdminMapping } from '@/types/adminAnime'
 import type { Season } from '@/types/anime'
+import type { DraggableChangeEvent } from '@/types/draggable'
+import type { AnimeCreateRequest, AnimeUpdateRequest } from '@/api/admin'
 import AnimeListSection from '@/components/admin/AnimeListSection.vue'
 import MappingListSection from '@/components/admin/MappingListSection.vue'
 import { useAnimeList } from '@/composables/admin/useAnimeList'
@@ -67,7 +69,7 @@ const onAnimeRemoveMapping = (animeId: number, mappingId: number) => {
   removeMappingFromAnime(animeId, mappingId)
 }
 
-const onAnimeAddMapping = (animeId: number, mapping: any) => {
+const onAnimeAddMapping = (animeId: number, mapping: AdminMapping) => {
   addMappingToAnime(animeId, mapping)
 }
 
@@ -81,21 +83,21 @@ const onDeleteAnime = (animeId: number) => {
 }
 
 // 包装映射拖拽事件
-const onMappingToAnime = (evt: any, animeId: number) => {
+const onMappingToAnime = (evt: DraggableChangeEvent<AdminMapping>, animeId: number) => {
   handleMappingToAnime(evt, animeId, onAnimeRemoveMapping, onAnimeAddMapping)
 }
 
-const onMappingToUnmapped = (evt: any) => {
+const onMappingToUnmapped = (evt: DraggableChangeEvent<AdminMapping>) => {
   handleMappingToUnmapped(evt, onAnimeRemoveMapping, onAnimeAddMapping)
 }
 
 // 包装表单提交
-const onSubmitForm = (formData: any) => {
+const onSubmitForm = (formData: AnimeCreateRequest | (AnimeUpdateRequest & { animeId?: never })) => {
   handleSubmitForm(formData, selectedReviewStatus.value)
 }
 
 // 包装审核状态更新
-const onUpdateReviewStatus = (animeId: number, reviewStatus: any) => {
+const onUpdateReviewStatus = (animeId: number, reviewStatus: ReviewStatus) => {
   handleUpdateReviewStatus(animeId, reviewStatus, selectedReviewStatus.value)
 }
 </script>
