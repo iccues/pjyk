@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { fetchAnime, fetchMapping, linkMappings, calculateScores } from '@/api/admin';
 import { ElMessage } from 'element-plus';
 import { Download, Refresh, SetUp } from '@element-plus/icons-vue';
+import { SEASON_OPTIONS_REQUIRED } from '@/constants/ui-options';
 
 // 数据抓取相关
 const fetchDialogVisible = ref(false);
@@ -10,12 +11,8 @@ const fetchYear = ref(new Date().getFullYear());
 const fetchSeason = ref<'SPRING' | 'SUMMER' | 'FALL' | 'WINTER'>('SPRING');
 const fetchLoading = ref(false);
 
-const seasonOptions = [
-  { label: '冬季', value: 'WINTER' },
-  { label: '春季', value: 'SPRING' },
-  { label: '夏季', value: 'SUMMER' },
-  { label: '秋季', value: 'FALL' },
-];
+// 使用统一的季度选项（不含"全部"选项）
+const seasonOptions = SEASON_OPTIONS_REQUIRED;
 
 // 打开抓取对话框
 const handleOpenFetchDialog = () => {

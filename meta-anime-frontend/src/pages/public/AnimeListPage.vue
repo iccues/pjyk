@@ -5,6 +5,8 @@ import AnimeList from '@/components/public/AnimeList.vue';
 import type { Season } from '@/types/anime';
 import type { PageInfo } from '@/types/page';
 import { Filter } from '@element-plus/icons-vue';
+import { SEASON_OPTIONS } from '@/constants/ui-options';
+import { generateYearOptions } from '@/utils/dateUtils';
 
 const router = useRouter();
 const route = useRoute();
@@ -62,24 +64,9 @@ const updateQuery = () => {
   router.push({ query });
 };
 
-const seasonOptions = [
-  { label: '全部', value: undefined },
-  { label: '冬季', value: 'WINTER' as Season },
-  { label: '春季', value: 'SPRING' as Season },
-  { label: '夏季', value: 'SUMMER' as Season },
-  { label: '秋季', value: 'FALL' as Season }
-];
-
-// 生成年份选项（从当前年份往前推10年）
-const currentYear = new Date().getFullYear();
-const yearOptions = computed(() => {
-  const years: { label: string; value: number | undefined }[] = [{ label: '全部', value: undefined }];
-  for (let i = 0; i <= 10; i++) {
-    const year = currentYear - i;
-    years.push({ label: `${year}年`, value: year });
-  }
-  return years;
-});
+// 使用统一的常量和工具函数
+const seasonOptions = SEASON_OPTIONS;
+const yearOptions = computed(() => generateYearOptions(10));
 
 // 处理筛选变化
 const handleFilterChange = () => {

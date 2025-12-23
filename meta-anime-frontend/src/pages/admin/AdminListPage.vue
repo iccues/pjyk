@@ -1,20 +1,23 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import type { ReviewStatus } from '@/types/adminAnime'
+import type { Season } from '@/types/anime'
 import AnimeListSection from '@/components/admin/AnimeListSection.vue'
 import MappingListSection from '@/components/admin/MappingListSection.vue'
-import { useAnimeFilters } from '@/composables/admin/useAnimeFilters'
 import { useAnimeList } from '@/composables/admin/useAnimeList'
 import { useMappingList } from '@/composables/admin/useMappingList'
+import { REVIEW_STATUS_OPTIONS, SEASON_OPTIONS } from '@/constants/ui-options'
+import { generateYearOptions } from '@/utils/dateUtils'
 
-// 使用 composables
-const {
-  selectedReviewStatus,
-  selectedYear,
-  selectedSeason,
-  reviewStatusOptions,
-  seasonOptions,
-  yearOptions
-} = useAnimeFilters()
+// 筛选器状态
+const selectedReviewStatus = ref<ReviewStatus | undefined>('PENDING')
+const selectedYear = ref<number | undefined>(undefined)
+const selectedSeason = ref<Season | undefined>(undefined)
+
+// 筛选器选项
+const reviewStatusOptions = REVIEW_STATUS_OPTIONS
+const seasonOptions = SEASON_OPTIONS
+const yearOptions = computed(() => generateYearOptions(10))
 
 const {
   animeList,
