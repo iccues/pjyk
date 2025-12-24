@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { getPlatformConfig } from '../../config/platforms';
-import type { AdminMapping } from '../../types/adminAnime';
+import { getPlatformConfig } from '@/config/platforms';
+import type { AdminMapping } from '@/types/adminAnime';
 import { Delete } from '@element-plus/icons-vue';
 
 const props = defineProps<{

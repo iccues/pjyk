@@ -1,5 +1,5 @@
-import { oidcManager } from "../../auth/oidc";
-import { type Response } from "../../types/response";
+import { oidcManager } from "@/auth/oidc";
+import { type Response } from "@/types/response";
 
 interface RequestOptions {
     headers?: Record<string, string>;

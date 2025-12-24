@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AnimeListRow from "../components/AnimeListRow.vue";
+import AnimeListRow from "@/components/public/AnimeListRow.vue";
 
 // 获取当前年份和季度
 const now = new Date();
@@ -35,9 +35,14 @@ const seasonNames: Record<string, string> = {
         :year="currentYear"
         :season="currentSeason"
       />
-      <!-- 高分动画 -->
+      <!-- 本年新番 -->
       <AnimeListRow
-        title="高分动画"
+        :title="`${currentYear}年新番`"
+        :year="currentYear"
+      />
+      <!-- 历史最高 -->
+      <AnimeListRow
+        title="历史最高"
       />
     </div>
   </div>

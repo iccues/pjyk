@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { logout, oidcManager } from '../../auth/oidc';
+import { logout, oidcManager } from '@/auth/oidc';
 import type { User } from 'oidc-client-ts';
 
 const user = ref<User | null>(null);
@@ -11,7 +11,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50">
+  <div class="flex items-center justify-center min-h-[80vh]">
     <div class="bg-white rounded-lg shadow-md p-8 max-w-md w-full">
       <div v-if="user" class="text-center">
         <div class="mb-8 space-y-3">

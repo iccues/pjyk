@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { oidcManager } from '../../auth/oidc';
+import { oidcManager } from '@/auth/oidc';
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import { ElMessage } from 'element-plus';
-import { getAllPlatformConfigs } from '../../config/platforms';
+import { getAllPlatformConfigs } from '@/config/platforms';
 
 const props = defineProps<{
   visible: boolean;
