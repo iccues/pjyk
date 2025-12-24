@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import Header from "@/components/public/Header.vue";
 </script>
 
 <template>
-  <router-view />
+  <Header />
+  
+  <main class="min-h-screen pt-[72px]">
+    <router-view />
+  </main>
 
   <footer class="py-6 text-center text-sm text-gray-500 w-full">
     <p>&copy; 2025 Meta Anime. All rights reserved.</p>

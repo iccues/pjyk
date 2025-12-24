@@ -35,9 +35,14 @@ const seasonNames: Record<string, string> = {
         :year="currentYear"
         :season="currentSeason"
       />
-      <!-- 高分动画 -->
+      <!-- 本年新番 -->
       <AnimeListRow
-        title="高分动画"
+        :title="`${currentYear}年新番`"
+        :year="currentYear"
+      />
+      <!-- 历史最高 -->
+      <AnimeListRow
+        title="历史最高"
       />
     </div>
   </div>

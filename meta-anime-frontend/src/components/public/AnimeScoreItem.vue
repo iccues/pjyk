@@ -18,7 +18,7 @@ const animeUrl = computed(
 
 <template>
   <a v-if="animeUrl" :href="animeUrl" target="_blank" rel="noopener noreferrer"
-    class="flex items-center justify-between px-3 py-2 bg-white rounded-full hover:opacity-90 hover:scale-[1.02] transition-all cursor-pointer no-underline"
+    class="flex items-center justify-between px-3 py-2 bg-white rounded-full hover:opacity-80 transition-all cursor-pointer no-underline"
     @click.stop>
     <div class="flex items-center gap-2">
       <img v-if="platformConfig.logo" :src="platformConfig.logo" :alt="platformConfig.name"
