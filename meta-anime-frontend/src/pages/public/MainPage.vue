@@ -27,8 +27,8 @@ const seasonNames: Record<string, string> = {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50/50">
-    <div class="p-5 max-w-[1400px] mx-auto space-y-16 pb-20">
+  <div class="bg-gray-50/50">
+    <div class="space-y-16 pt-5 pb-20">
       <!-- 本季新番 -->
       <AnimeListRow
         :title="`${currentYear}年${seasonNames[currentSeason]}新番`"

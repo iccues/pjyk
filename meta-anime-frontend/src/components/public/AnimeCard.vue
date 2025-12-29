@@ -12,7 +12,7 @@ const flipped = ref(true);
 </script>
 
 <template>
-  <div class="w-[200px] flex flex-col gap-2">
+  <div class="w-[12.5rem] flex flex-col gap-2">
     <div
       class="relative w-full aspect-[3/4] overflow-hidden bg-gray-100 rounded-3xl transition-all duration-300 group"
       @click="flipped = !flipped">
