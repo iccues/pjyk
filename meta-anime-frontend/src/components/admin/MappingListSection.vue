@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { Plus } from '@element-plus/icons-vue'
-import draggable from 'vuedraggable'
-import AdminMappingItem from '@/components/admin/AdminMappingItem.vue'
-import MappingFormDialog from '@/components/admin/MappingFormDialog.vue'
-import type { AdminMapping } from '@/types/adminAnime'
+import { Plus } from "@element-plus/icons-vue";
+import draggable from "vuedraggable";
+import AdminMappingItem from "@/components/admin/AdminMappingItem.vue";
+import MappingFormDialog from "@/components/admin/MappingFormDialog.vue";
+import type { AdminMapping } from "@/types/adminAnime";
 
 interface Props {
-  mappingList: AdminMapping[]
-  mappingDialogVisible: boolean
+  mappingList: AdminMapping[];
+  mappingDialogVisible: boolean;
 }
 
-defineProps<Props>()
+defineProps<Props>();
 
 const emit = defineEmits<{
-  'create-mapping': []
-  'delete-mapping': [mappingId: number]
-  'mapping-change': [evt: any]
-  'close-dialog': []
-  'submit-mapping': [sourcePlatform: string, platformId: string]
-}>()
+  "create-mapping": [];
+  "delete-mapping": [mappingId: number];
+  "mapping-change": [evt: any];
+  "close-dialog": [];
+  "submit-mapping": [sourcePlatform: string, platformId: string];
+}>();
 </script>
 
 <template>

@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { Filter } from '@element-plus/icons-vue'
-import type { ReviewStatus } from '@/types/adminAnime'
-import type { Season } from '@/types/anime'
+import { Filter } from "@element-plus/icons-vue";
+import type { ReviewStatus } from "@/types/adminAnime";
+import type { Season } from "@/types/anime";
 
 interface Props {
-  selectedReviewStatus?: ReviewStatus
-  selectedYear?: number
-  selectedSeason?: Season
-  reviewStatusOptions: { label: string; value: ReviewStatus | undefined }[]
-  yearOptions: { label: string; value: number | undefined }[]
-  seasonOptions: { label: string; value: Season | undefined }[]
+  selectedReviewStatus?: ReviewStatus;
+  selectedYear?: number;
+  selectedSeason?: Season;
+  reviewStatusOptions: { label: string; value: ReviewStatus | undefined }[];
+  yearOptions: { label: string; value: number | undefined }[];
+  seasonOptions: { label: string; value: Season | undefined }[];
 }
 
-defineProps<Props>()
+defineProps<Props>();
 
 const emit = defineEmits<{
-  'update:selectedReviewStatus': [value: ReviewStatus | undefined]
-  'update:selectedYear': [value: number | undefined]
-  'update:selectedSeason': [value: Season | undefined]
-  'change': []
-}>()
+  "update:selectedReviewStatus": [value: ReviewStatus | undefined];
+  "update:selectedYear": [value: number | undefined];
+  "update:selectedSeason": [value: Season | undefined];
+  change: [];
+}>();
 </script>
 
 <template>

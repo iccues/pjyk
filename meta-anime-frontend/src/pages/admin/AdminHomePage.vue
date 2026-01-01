@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { List } from '@element-plus/icons-vue';
-import FetchDataCard from '@/components/admin/FetchDataCard.vue';
+import { List } from "@element-plus/icons-vue";
+import FetchDataCard from "@/components/admin/FetchDataCard.vue";
 </script>
 
 <template>

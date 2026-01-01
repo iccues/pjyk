@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import { ElMessage } from 'element-plus';
-import { getAllPlatformConfigs } from '@/config/platforms';
+import { ElMessage } from "element-plus";
+import { computed, ref, watch } from "vue";
+import { getAllPlatformConfigs } from "@/config/platforms";
 
 const props = defineProps<{
   visible: boolean;
@@ -13,42 +13,49 @@ const emit = defineEmits<{
 }>();
 
 const formData = ref({
-  sourcePlatform: '',
-  platformId: ''
+  sourcePlatform: "",
+  platformId: "",
 });
 
 // 从平台配置中获取平台选项
 const platformOptions = computed(() => {
-  return getAllPlatformConfigs().map(config => ({
+  return getAllPlatformConfigs().map((config) => ({
     label: config.name,
-    value: config.name
+    value: config.name,
   }));
 });
 
 // 当对话框关闭时重置表单
-watch(() => props.visible, (newVal) => {
-  if (!newVal) {
-    formData.value = {
-      sourcePlatform: '',
-      platformId: ''
-    };
-  }
-});
+watch(
+  () => props.visible,
+  (newVal) => {
+    if (!newVal) {
+      formData.value = {
+        sourcePlatform: "",
+        platformId: "",
+      };
+    }
+  },
+);
 
 const handleSubmit = () => {
   if (!formData.value.sourcePlatform) {
-    ElMessage.warning('请选择平台');
+    ElMessage.warning("请选择平台");
     return;
   }
   if (!formData.value.platformId.trim()) {
-    ElMessage.warning('请输入平台 ID');
+    ElMessage.warning("请输入平台 ID");
     return;
   }
-  emit('submit', formData.value.sourcePlatform, formData.value.platformId.trim());
+  emit(
+    "submit",
+    formData.value.sourcePlatform,
+    formData.value.platformId.trim(),
+  );
 };
 
 const handleClose = () => {
-  emit('close');
+  emit("close");
 };
 </script>
 

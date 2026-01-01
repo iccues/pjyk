@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import AnimeCard from "./AnimeCard.vue";
+import { ref, watch } from "vue";
+import { type AnimeListParams, getAnimeList } from "@/api/public/anime";
 import type { Anime } from "@/types/anime.ts";
-import type { Page, PageInfo } from '@/types/page.ts';
-import { getAnimeList, type AnimeListParams } from '@/api/public/anime';
+import type { Page, PageInfo } from "@/types/page.ts";
+import AnimeCard from "./AnimeCard.vue";
 
 const props = defineProps<AnimeListParams>();
-const emit = defineEmits<{
-  (event: 'update:pageInfo', payload: PageInfo): void;
-}>();
+const emit =
+  defineEmits<(event: "update:pageInfo", payload: PageInfo) => void>();
 
 const animes = ref<Page<Anime> | null>(null);
 const loading = ref(false);
@@ -19,9 +18,9 @@ const fetchAnimes = async () => {
     loading.value = true;
     error.value = null;
     animes.value = await getAnimeList(props);
-    emit('update:pageInfo', animes.value.page);
+    emit("update:pageInfo", animes.value.page);
   } catch (err) {
-    error.value = err instanceof Error ? err.message : '未知错误';
+    error.value = err instanceof Error ? err.message : "未知错误";
   } finally {
     loading.value = false;
   }
@@ -30,7 +29,7 @@ const fetchAnimes = async () => {
 watch(
   () => [props.year, props.season, props.page, props.pageSize],
   fetchAnimes,
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

@@ -11,29 +11,29 @@
 export interface DraggableEvent<T = unknown> {
   /** 添加元素时触发 */
   added?: {
-    element: T
-    newIndex: number
-  }
+    element: T;
+    newIndex: number;
+  };
   /** 移除元素时触发 */
   removed?: {
-    element: T
-    oldIndex: number
-  }
+    element: T;
+    oldIndex: number;
+  };
   /** 元素移动时触发（同一列表内） */
   moved?: {
-    element: T
-    oldIndex: number
-    newIndex: number
-  }
+    element: T;
+    oldIndex: number;
+    newIndex: number;
+  };
   /** 原始 Sortable.js 事件 */
-  originalEvent?: Event
+  originalEvent?: Event;
 }
 
 /**
  * 拖拽更新事件（用于 @change 事件）
  */
 export interface DraggableChangeEvent<T = unknown> {
-  added?: DraggableEvent<T>['added']
-  removed?: DraggableEvent<T>['removed']
-  moved?: DraggableEvent<T>['moved']
+  added?: DraggableEvent<T>["added"];
+  removed?: DraggableEvent<T>["removed"];
+  moved?: DraggableEvent<T>["moved"];
 }

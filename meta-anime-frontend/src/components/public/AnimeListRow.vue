@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
-import AnimeCard from "./AnimeCard.vue";
-import type { Season } from '@/types/anime';
+import { ArrowLeft, ArrowRight } from "@element-plus/icons-vue";
+import { onMounted, ref } from "vue";
+import { getAnimeList } from "@/api/public/anime";
+import type { Season } from "@/types/anime";
 import type { Anime } from "@/types/anime.ts";
-import type { Page } from '@/types/page.ts';
-import { getAnimeList } from '@/api/public/anime';
+import type { Page } from "@/types/page.ts";
+import AnimeCard from "./AnimeCard.vue";
 
 const props = defineProps<{
   title?: string;
@@ -31,7 +31,7 @@ const fetchAnimes = async () => {
       pageSize: 12,
     });
   } catch (err) {
-    error.value = err instanceof Error ? err.message : '未知错误';
+    error.value = err instanceof Error ? err.message : "未知错误";
   } finally {
     loading.value = false;
   }
@@ -49,7 +49,9 @@ const getCardWidth = (): number => {
   // 默认值
   if (!scrollContainer.value) return 220;
 
-  const firstCard = scrollContainer.value.querySelector('.flex-shrink-0') as HTMLElement;
+  const firstCard = scrollContainer.value.querySelector(
+    ".flex-shrink-0",
+  ) as HTMLElement;
   if (!firstCard) return 220;
 
   // 获取卡片宽度
@@ -73,7 +75,7 @@ const scrollLeft = () => {
   const targetScroll = (index - 2) * totalCardWidth;
   scrollContainer.value.scrollTo({
     left: targetScroll,
-    behavior: 'smooth'
+    behavior: "smooth",
   });
 };
 
@@ -84,7 +86,7 @@ const scrollRight = () => {
   const targetScroll = (index + 2) * totalCardWidth;
   scrollContainer.value.scrollTo({
     left: targetScroll,
-    behavior: 'smooth'
+    behavior: "smooth",
   });
 };
 

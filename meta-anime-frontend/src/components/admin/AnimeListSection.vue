@@ -1,39 +1,39 @@
 <script setup lang="ts">
-import { Plus } from '@element-plus/icons-vue'
-import { VList } from 'virtua/vue'
-import AdminAnimeItem from '@/components/admin/AdminAnimeItem.vue'
-import AnimeFormDialog from '@/components/admin/AnimeFormDialog.vue'
-import FilterBar from '@/components/admin/FilterBar.vue'
-import type { AdminAnime, ReviewStatus } from '@/types/adminAnime'
-import type { Season } from '@/types/anime'
+import { Plus } from "@element-plus/icons-vue";
+import { VList } from "virtua/vue";
+import AdminAnimeItem from "@/components/admin/AdminAnimeItem.vue";
+import AnimeFormDialog from "@/components/admin/AnimeFormDialog.vue";
+import FilterBar from "@/components/admin/FilterBar.vue";
+import type { AdminAnime, ReviewStatus } from "@/types/adminAnime";
+import type { Season } from "@/types/anime";
 
 interface Props {
-  animeList: AdminAnime[]
-  selectedReviewStatus?: ReviewStatus
-  selectedYear?: number
-  selectedSeason?: Season
-  reviewStatusOptions: { label: string; value: ReviewStatus | undefined }[]
-  yearOptions: { label: string; value: number | undefined }[]
-  seasonOptions: { label: string; value: Season | undefined }[]
-  dialogVisible: boolean
-  editingAnime?: AdminAnime
+  animeList: AdminAnime[];
+  selectedReviewStatus?: ReviewStatus;
+  selectedYear?: number;
+  selectedSeason?: Season;
+  reviewStatusOptions: { label: string; value: ReviewStatus | undefined }[];
+  yearOptions: { label: string; value: number | undefined }[];
+  seasonOptions: { label: string; value: Season | undefined }[];
+  dialogVisible: boolean;
+  editingAnime?: AdminAnime;
 }
 
-defineProps<Props>()
+defineProps<Props>();
 
 const emit = defineEmits<{
-  'update:selectedReviewStatus': [value: ReviewStatus | undefined]
-  'update:selectedYear': [value: number | undefined]
-  'update:selectedSeason': [value: Season | undefined]
-  'filter-change': []
-  'create-anime': []
-  'edit-anime': [anime: AdminAnime]
-  'delete-anime': [animeId: number]
-  'update-review-status': [animeId: number, reviewStatus: ReviewStatus]
-  'mapping-change': [evt: any, animeId: number]
-  'close-dialog': []
-  'submit-form': [formData: any]
-}>()
+  "update:selectedReviewStatus": [value: ReviewStatus | undefined];
+  "update:selectedYear": [value: number | undefined];
+  "update:selectedSeason": [value: Season | undefined];
+  "filter-change": [];
+  "create-anime": [];
+  "edit-anime": [anime: AdminAnime];
+  "delete-anime": [animeId: number];
+  "update-review-status": [animeId: number, reviewStatus: ReviewStatus];
+  "mapping-change": [evt: any, animeId: number];
+  "close-dialog": [];
+  "submit-form": [formData: any];
+}>();
 </script>
 
 <template>

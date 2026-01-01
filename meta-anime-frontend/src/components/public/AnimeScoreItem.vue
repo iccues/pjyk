@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { getPlatformConfig } from '@/config/platforms';
-import { type Mapping } from '@/types/anime';
+import { computed } from "vue";
+import { getPlatformConfig } from "@/config/platforms";
+import type { Mapping } from "@/types/anime";
 
 const props = defineProps<{
   mapping: Mapping;
 }>();
 
 // 根据平台名称获取配置
-const platformConfig = computed(() => getPlatformConfig(props.mapping.sourcePlatform));
+const platformConfig = computed(() =>
+  getPlatformConfig(props.mapping.sourcePlatform),
+);
 
 // 生成动画条目URL
-const animeUrl = computed(
-  () => platformConfig.value.getAnimeUrl?.(props.mapping.platformId)
+const animeUrl = computed(() =>
+  platformConfig.value.getAnimeUrl?.(props.mapping.platformId),
 );
 </script>
 

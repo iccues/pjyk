@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { login } from '@/auth/oidc';
+import { login } from "@/auth/oidc";
 </script>
 
 <template>

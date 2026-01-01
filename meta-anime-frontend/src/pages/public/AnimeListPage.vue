@@ -1,20 +1,24 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import AnimeList from '@/components/public/AnimeList.vue';
-import type { Season } from '@/types/anime';
-import type { PageInfo } from '@/types/page';
-import { Filter } from '@element-plus/icons-vue';
-import { SEASON_OPTIONS } from '@/constants/ui-options';
-import { generateYearOptions } from '@/utils/dateUtils';
+import { Filter } from "@element-plus/icons-vue";
+import { computed, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import AnimeList from "@/components/public/AnimeList.vue";
+import { SEASON_OPTIONS } from "@/constants/ui-options";
+import type { Season } from "@/types/anime";
+import type { PageInfo } from "@/types/page";
+import { generateYearOptions } from "@/utils/dateUtils";
 
 const router = useRouter();
 const route = useRoute();
 
 // 从 URL Query 初始化状态的辅助函数
-const getInitialValue = <T>(key: string, parser: (value: string) => T | undefined, defaultValue: T): T => {
+const getInitialValue = <T>(
+  key: string,
+  parser: (value: string) => T | undefined,
+  defaultValue: T,
+): T => {
   const value = route.query[key];
-  if (value && typeof value === 'string') {
+  if (value && typeof value === "string") {
     const parsed = parser(value);
     if (parsed !== undefined) {
       return parsed;
@@ -29,7 +33,7 @@ const parseYear = (value: string): number | undefined => {
 };
 
 const parseSeason = (value: string): Season | undefined => {
-  const validSeasons: Season[] = ['WINTER', 'SPRING', 'SUMMER', 'FALL'];
+  const validSeasons: Season[] = ["WINTER", "SPRING", "SUMMER", "FALL"];
   return validSeasons.includes(value as Season) ? (value as Season) : undefined;
 };
 
@@ -39,9 +43,13 @@ const parsePage = (value: string): number => {
 };
 
 // 筛选器状态 - 直接从 URL 初始化
-const selectedYear = ref<number | undefined>(getInitialValue('year', parseYear, undefined));
-const selectedSeason = ref<Season | undefined>(getInitialValue('season', parseSeason, undefined));
-const currentPage = ref(getInitialValue('page', parsePage, 0));
+const selectedYear = ref<number | undefined>(
+  getInitialValue("year", parseYear, undefined),
+);
+const selectedSeason = ref<Season | undefined>(
+  getInitialValue("season", parseSeason, undefined),
+);
+const currentPage = ref(getInitialValue("page", parsePage, 0));
 const pageSize = ref(60);
 const pageInfo = ref<PageInfo | null>(null);
 
@@ -79,7 +87,7 @@ const handlePageChange = (page: number) => {
   currentPage.value = page - 1; // Element Plus 的页码从1开始，API从0开始
   updateQuery();
   // 滚动到顶部
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: "smooth" });
 };
 </script>
 

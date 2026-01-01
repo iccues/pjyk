@@ -1,11 +1,11 @@
-import { get, put, post, del } from './adminHttp';
-import type { AdminMapping } from '@/types/adminAnime';
+import type { AdminMapping } from "@/types/adminAnime";
+import { del, get, post, put } from "./adminHttp";
 
 /**
  * 获取未关联的孤立映射列表（管理后台）
  */
 export async function getUnmappedMappingList(): Promise<AdminMapping[]> {
-    return get<AdminMapping[]>('/api/admin/get_unmapped_mapping_list');
+  return get<AdminMapping[]>("/api/admin/get_unmapped_mapping_list");
 }
 
 /**
@@ -14,13 +14,13 @@ export async function getUnmappedMappingList(): Promise<AdminMapping[]> {
  * @param animeId 动画 ID（null 表示解除关联）
  */
 export async function updateMappingAnime(
-    mappingId: number,
-    animeId: number | null
+  mappingId: number,
+  animeId: number | null,
 ): Promise<AdminMapping> {
-    return put<AdminMapping>('/api/admin/update_mapping_anime', {
-        mappingId,
-        animeId
-    });
+  return put<AdminMapping>("/api/admin/update_mapping_anime", {
+    mappingId,
+    animeId,
+  });
 }
 
 /**
@@ -29,13 +29,13 @@ export async function updateMappingAnime(
  * @param platformId 平台 ID
  */
 export async function createMapping(
-    sourcePlatform: string,
-    platformId: string
+  sourcePlatform: string,
+  platformId: string,
 ): Promise<AdminMapping> {
-    return post<AdminMapping>('/api/admin/create_mapping', {
-        sourcePlatform,
-        platformId
-    });
+  return post<AdminMapping>("/api/admin/create_mapping", {
+    sourcePlatform,
+    platformId,
+  });
 }
 
 /**
@@ -43,5 +43,5 @@ export async function createMapping(
  * @param mappingId 映射 ID
  */
 export async function deleteMapping(mappingId: number): Promise<void> {
-    return del<void>(`/api/admin/delete_mapping/${mappingId}`);
+  return del<void>(`/api/admin/delete_mapping/${mappingId}`);
 }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import logo from '@/assets/logo.svg';
+import { onMounted, onUnmounted, ref } from "vue";
+import logo from "@/assets/logo.svg";
 
 const isScrolled = ref(false);
 
@@ -9,11 +9,11 @@ const handleScroll = () => {
 };
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll);
+  window.addEventListener("scroll", handleScroll);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener("scroll", handleScroll);
 });
 </script>
 

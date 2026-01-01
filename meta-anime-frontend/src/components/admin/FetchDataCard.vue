@@ -1,14 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { fetchAnime, fetchMapping, linkMappings, calculateScores } from '@/api/admin';
-import { ElMessage } from 'element-plus';
-import { Download, Refresh, SetUp } from '@element-plus/icons-vue';
-import { SEASON_OPTIONS_REQUIRED } from '@/constants/ui-options';
+import { Download, Refresh, SetUp } from "@element-plus/icons-vue";
+import { ElMessage } from "element-plus";
+import { ref } from "vue";
+import {
+  calculateScores,
+  fetchAnime,
+  fetchMapping,
+  linkMappings,
+} from "@/api/admin";
+import { SEASON_OPTIONS_REQUIRED } from "@/constants/ui-options";
 
 // 数据抓取相关
 const fetchDialogVisible = ref(false);
 const fetchYear = ref(new Date().getFullYear());
-const fetchSeason = ref<'SPRING' | 'SUMMER' | 'FALL' | 'WINTER'>('SPRING');
+const fetchSeason = ref<"SPRING" | "SUMMER" | "FALL" | "WINTER">("SPRING");
 const fetchLoading = ref(false);
 
 // 使用统一的季度选项（不含"全部"选项）
@@ -24,10 +29,12 @@ const handleFetchAnime = async () => {
   try {
     fetchLoading.value = true;
     await fetchAnime(fetchYear.value, fetchSeason.value);
-    ElMessage.success('数据抓取任务已启动，请稍后查看结果');
+    ElMessage.success("数据抓取任务已启动，请稍后查看结果");
     fetchDialogVisible.value = false;
   } catch (e) {
-    ElMessage.error('启动失败: ' + (e instanceof Error ? e.message : '未知错误'));
+    ElMessage.error(
+      "启动失败: " + (e instanceof Error ? e.message : "未知错误"),
+    );
   } finally {
     fetchLoading.value = false;
   }
@@ -38,10 +45,12 @@ const handleFetchMapping = async () => {
   try {
     fetchLoading.value = true;
     await fetchMapping(fetchYear.value, fetchSeason.value);
-    ElMessage.success('映射抓取任务已启动，请稍后查看结果');
+    ElMessage.success("映射抓取任务已启动，请稍后查看结果");
     fetchDialogVisible.value = false;
   } catch (e) {
-    ElMessage.error('启动失败: ' + (e instanceof Error ? e.message : '未知错误'));
+    ElMessage.error(
+      "启动失败: " + (e instanceof Error ? e.message : "未知错误"),
+    );
   } finally {
     fetchLoading.value = false;
   }
@@ -52,9 +61,11 @@ const handleLinkMappings = async () => {
   try {
     fetchLoading.value = true;
     await linkMappings();
-    ElMessage.success('映射合并任务已启动，请稍后查看结果');
+    ElMessage.success("映射合并任务已启动，请稍后查看结果");
   } catch (e) {
-    ElMessage.error('启动失败: ' + (e instanceof Error ? e.message : '未知错误'));
+    ElMessage.error(
+      "启动失败: " + (e instanceof Error ? e.message : "未知错误"),
+    );
   } finally {
     fetchLoading.value = false;
   }
@@ -65,9 +76,11 @@ const handleCalculateScores = async () => {
   try {
     fetchLoading.value = true;
     await calculateScores();
-    ElMessage.success('评分计算任务已启动，请稍后查看结果');
+    ElMessage.success("评分计算任务已启动，请稍后查看结果");
   } catch (e) {
-    ElMessage.error('启动失败: ' + (e instanceof Error ? e.message : '未知错误'));
+    ElMessage.error(
+      "启动失败: " + (e instanceof Error ? e.message : "未知错误"),
+    );
   } finally {
     fetchLoading.value = false;
   }

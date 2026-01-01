@@ -9,26 +9,24 @@
 
 // 导出 Anime 相关 API
 export {
-    getAnimeList,
-    createAnime,
-    updateAnime,
-    deleteAnime,
-    type AnimeCreateRequest,
-    type AnimeUpdateRequest
-} from './adminAnime';
-
-// 导出 Mapping 相关 API
-export {
-    getUnmappedMappingList,
-    updateMappingAnime,
-    createMapping,
-    deleteMapping
-} from './adminMapping';
-
+  type AnimeCreateRequest,
+  type AnimeUpdateRequest,
+  createAnime,
+  deleteAnime,
+  getAnimeList,
+  updateAnime,
+} from "./adminAnime";
 // 导出 Fetch 相关 API
 export {
-    fetchAnime,
-    fetchMapping,
-    linkMappings,
-    calculateScores
-} from './adminFetch';
+  calculateScores,
+  fetchAnime,
+  fetchMapping,
+  linkMappings,
+} from "./adminFetch";
+// 导出 Mapping 相关 API
+export {
+  createMapping,
+  deleteMapping,
+  getUnmappedMappingList,
+  updateMappingAnime,
+} from "./adminMapping";

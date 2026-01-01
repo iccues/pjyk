@@ -4,11 +4,10 @@ import type { Anime } from "@/types/anime.ts";
 import AnimeScoreItem from "./AnimeScoreItem.vue";
 
 defineProps<{
-  anime: Anime,
-}>()
+  anime: Anime;
+}>();
 
 const flipped = ref(true);
-
 </script>
 
 <template>
