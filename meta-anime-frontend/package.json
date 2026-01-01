@@ -6,7 +6,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+
+    "fmt": "biome format ./src",
+    "fmt:fix": "biome format --write ./src",
+    "lint": "biome lint ./src",
+    "lint:fix": "biome lint --write ./src",
+    "check": "biome check ./src",
+    "check:fix": "biome check --write ./src",
+    "check:ci": "biome ci ./src"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.16",
@@ -19,6 +27,7 @@
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.3.10",
     "@types/node": "^24.6.0",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/tsconfig": "^0.8.1",
