@@ -116,13 +116,13 @@ public abstract class AbstractAnimeFetchService {
                 processAndSaveMapping(jsonNode);
             }
         } catch (WebClientResponseException e) {
-            log.error("Failed to fetch mappings from {} for year={}, season={}: {} {}",
+            log.warn("Failed to fetch mappings from {} for year={}, season={}: {} {}",
                     getPlatform(), year, season, e.getStatusCode(), e.getResponseBodyAsString());
             throw new FetchFailedException(getPlatform(),
                     String.format("year=%d, season=%s", year, season));
         } catch (Exception e) {
-            log.error("Unexpected error fetching mappings from {} for year={}, season={}",
-                    getPlatform(), year, season, e);
+            log.error("Unexpected error fetching mappings from {} for year={}, season={}: {}",
+                    getPlatform(), year, season, e.getMessage());
             throw new FetchFailedException(getPlatform(),
                     String.format("year=%d, season=%s", year, season));
         }
@@ -139,14 +139,14 @@ public abstract class AbstractAnimeFetchService {
             processAndSaveMapping(jsonNode);
             return mappingRepository.findBySourcePlatformAndPlatformId(getPlatform(), platformId);
         } catch (WebClientResponseException e) {
-            log.error("Failed to fetch mapping from {} for platformId={}: {} {}",
+            log.warn("Failed to fetch mapping from {} for platformId={}: {} {}",
                     getPlatform(), platformId, e.getStatusCode(), e.getResponseBodyAsString());
             throw new FetchFailedException(getPlatform(), platformId);
         } catch (FetchFailedException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Unexpected error fetching mapping from {} for platformId={}",
-                    getPlatform(), platformId, e);
+            log.error("Unexpected error fetching mapping from {} for platformId={}: {}",
+                    getPlatform(), platformId, e.getMessage());
             throw new FetchFailedException(getPlatform(), platformId);
         }
     }

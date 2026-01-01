@@ -23,3 +23,8 @@ mal:
 oidc:
   issuer: ${OIDC_ISSUER}
   client-id: ${OIDC_CLIENT_ID}
+
+logging:
+  level:
+    root: INFO
+    com.iccues.metaanimebackend: DEBUG

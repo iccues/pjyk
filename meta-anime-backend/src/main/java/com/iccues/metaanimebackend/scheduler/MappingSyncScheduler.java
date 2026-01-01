@@ -19,12 +19,12 @@ public class MappingSyncScheduler {
      */
     @Scheduled(cron = "0 0 4 * * ?")
     public void scheduleDailyMappingCollection() {
-        log.info("=== Starting daily mapping collection job ===");
+        log.info("=== Daily mapping collection started ===");
         try {
             mappingSyncService.collectMappingsForSync();
-            log.info("=== Daily mapping collection job completed successfully ===");
+            log.info("=== Daily mapping collection completed ===");
         } catch (Exception e) {
-            log.error("Daily mapping collection job failed", e);
+            log.error("=== Daily mapping collection failed: {} ===", e.getMessage());
         }
     }
 
@@ -33,12 +33,12 @@ public class MappingSyncScheduler {
      */
     @Scheduled(cron = "0 0 */6 * * ?")
     public void scheduleMappingSync() {
-        log.info("=== Starting periodic mapping sync job ===");
+        log.info("=== Periodic mapping sync started ===");
         try {
             mappingSyncService.processPendingMappings();
-            log.info("=== Periodic mapping sync job completed successfully ===");
+            log.info("=== Periodic mapping sync completed ===");
         } catch (Exception e) {
-            log.error("Periodic mapping sync job failed", e);
+            log.error("=== Periodic mapping sync failed: {} ===", e.getMessage());
         }
     }
 
@@ -47,13 +47,13 @@ public class MappingSyncScheduler {
      */
 //    @PostConstruct
     public void init() {
-        log.info("Initializing mapping sync scheduler - collecting and processing mappings on startup");
+        log.info("Initializing mapping sync scheduler");
         try {
             mappingSyncService.collectMappingsForSync();
             mappingSyncService.processPendingMappings();
-            log.info("Mapping sync scheduler initialized successfully");
+            log.info("Mapping sync scheduler initialized");
         } catch (Exception e) {
-            log.error("Failed to initialize mapping sync scheduler", e);
+            log.error("Failed to initialize mapping sync scheduler: {}", e.getMessage());
         }
     }
 }

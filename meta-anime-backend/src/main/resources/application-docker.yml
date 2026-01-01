@@ -1,0 +1,6 @@
+logging:
+  level:
+    root: INFO
+    com.iccues.metaanimebackend: INFO
+    org.springframework: WARN
+    org.hibernate: WARN
