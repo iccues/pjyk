@@ -1,2 +1,15 @@
-CLAUDE.md
+# Environment variables
+.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# System files
 .DS_Store
+Thumbs.db
+
+# Documentation
+CLAUDE.md

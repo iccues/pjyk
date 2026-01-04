@@ -32,7 +32,7 @@ public class RetryUtil {
         while (attempt <= maxRetries) {
             try {
                 if (attempt > 0) {
-                    log.info("Retrying {} operation, attempt {}/{}", operationName, attempt, maxRetries);
+                    log.warn("Retrying {} operation, attempt {}/{}", operationName, attempt, maxRetries);
                 }
                 return operation.get();
             } catch (WebClientResponseException e) {
@@ -61,7 +61,7 @@ public class RetryUtil {
                     sleep(retryDelayMs);
                     attempt++;
                 } else {
-                    log.error("{} operation failed after {} retries", operationName, maxRetries, e);
+                    log.error("{} operation failed after {} retries: {}", operationName, maxRetries, e.getMessage());
                     throw e;
                 }
             }
@@ -91,7 +91,7 @@ public class RetryUtil {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            log.warn("Retry sleep interrupted", e);
+            log.warn("Retry sleep interrupted");
         }
     }
 }

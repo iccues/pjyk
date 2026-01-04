@@ -3,7 +3,6 @@ package com.iccues.metaanimebackend.scheduler;
 import com.iccues.metaanimebackend.service.MappingSyncService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import jakarta.annotation.Resource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -17,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-@ActiveProfiles("test")
 public class MappingSyncSchedulerTest {
 
     @MockitoBean

@@ -11,5 +11,20 @@ spring:
     hibernate:
       ddl-auto: update
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${oidc.issuer}
+
 mal:
   client-id: ${MAL_CLIENT_ID}
+
+oidc:
+  issuer: ${OIDC_ISSUER}
+  client-id: ${OIDC_CLIENT_ID}
+
+logging:
+  level:
+    root: INFO
+    com.iccues.metaanimebackend: DEBUG

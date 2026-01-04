@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import type { FormInstance, FormRules } from 'element-plus';
-import { Picture } from '@element-plus/icons-vue';
-import type { AdminAnime } from '../../types/adminAnime';
+import { Picture } from "@element-plus/icons-vue";
+import type { FormInstance, FormRules } from "element-plus";
+import { computed, ref, watch } from "vue";
+import type { AdminAnime } from "@/types/adminAnime";
 
 interface AnimeForm {
   title: {
@@ -28,76 +28,81 @@ const emit = defineEmits<{
 const formRef = ref<FormInstance>();
 const formData = ref<AnimeForm>({
   title: {
-    titleCn: '',
-    titleNative: '',
-    titleRomaji: '',
-    titleEn: ''
+    titleCn: "",
+    titleNative: "",
+    titleRomaji: "",
+    titleEn: "",
   },
-  coverImage: '',
-  startDate: ''
+  coverImage: "",
+  startDate: "",
 });
 
 // 是否为编辑模式
 const isEditMode = computed(() => !!props.anime);
 
 // 对话框标题
-const dialogTitle = computed(() => isEditMode.value ? '编辑动画' : '创建动画');
+const dialogTitle = computed(() =>
+  isEditMode.value ? "编辑动画" : "创建动画",
+);
 
 // 表单验证规则
 const rules: FormRules<AnimeForm> = {
-  'title.titleNative': [
-    { required: true, message: '请输入原生标题', trigger: 'blur' }
+  "title.titleNative": [
+    { required: true, message: "请输入原生标题", trigger: "blur" },
   ],
   coverImage: [
     {
-      type: 'url',
-      message: '请输入有效的图片URL',
-      trigger: 'blur',
-      required: false
-    }
-  ]
+      type: "url",
+      message: "请输入有效的图片URL",
+      trigger: "blur",
+      required: false,
+    },
+  ],
 };
 
 // 监听对话框打开，初始化表单数据
-watch(() => props.visible, (visible) => {
-  if (visible) {
-    if (props.anime) {
-      // 编辑模式：填充现有数据
-      formData.value = {
-        title: {
-          titleCn: props.anime.title.titleCn || '',
-          titleNative: props.anime.title.titleNative || '',
-          titleRomaji: props.anime.title.titleRomaji || '',
-          titleEn: props.anime.title.titleEn || ''
-        },
-        coverImage: props.anime.coverImage || '',
-        startDate: props.anime.startDate || ''
-      };
-    } else {
-      // 创建模式：重置表单
-      resetForm();
+watch(
+  () => props.visible,
+  (visible) => {
+    if (visible) {
+      if (props.anime) {
+        // 编辑模式：填充现有数据
+        formData.value = {
+          title: {
+            titleCn: props.anime.title.titleCn || "",
+            titleNative: props.anime.title.titleNative || "",
+            titleRomaji: props.anime.title.titleRomaji || "",
+            titleEn: props.anime.title.titleEn || "",
+          },
+          coverImage: props.anime.coverImage || "",
+          startDate: props.anime.startDate || "",
+        };
+      } else {
+        // 创建模式：重置表单
+        resetForm();
+      }
     }
-  }
-});
+  },
+);
 
 // 重置表单
 const resetForm = () => {
   formData.value = {
     title: {
-      titleCn: '',
-      titleNative: '',
-      titleRomaji: '',
-      titleEn: ''
+      titleCn: "",
+      titleNative: "",
+      titleRomaji: "",
+      titleEn: "",
     },
-    coverImage: '',
-    startDate: ''
+    coverImage: "",
+    startDate: "",
   };
   formRef.value?.clearValidate();
 };
 
 // 关闭对话框
 const handleClose = () => {
-  emit('close');
+  emit("close");
 };
 
 // 提交表单
@@ -106,7 +111,7 @@ const handleSubmit = async () => {
 
   await formRef.value.validate((valid) => {
     if (valid) {
-      emit('submit', formData.value);
+      emit("submit", formData.value);
     }
   });
 };

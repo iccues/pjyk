@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { ArrowDown, Delete, Edit } from '@element-plus/icons-vue';
-import type { AdminAnime, ReviewStatus } from '../../types/adminAnime';
-import AdminMappingItem from './AdminMappingItem.vue';
-import draggable from 'vuedraggable';
+import { ArrowDown, Delete, Edit } from "@element-plus/icons-vue";
+import { ref } from "vue";
+import draggable from "vuedraggable";
+import type { AdminAnime, ReviewStatus } from "@/types/adminAnime";
+import AdminMappingItem from "./AdminMappingItem.vue";
 
 const props = defineProps<{
   anime: AdminAnime;
@@ -23,30 +23,30 @@ const toggleExpand = () => {
 };
 
 const handleMappingChange = (evt: any) => {
-  emit('mappingChange', evt);
+  emit("mappingChange", evt);
 };
 
 const handleDelete = (event: Event) => {
   event.stopPropagation();
-  emit('deleteAnime', props.anime.animeId);
+  emit("deleteAnime", props.anime.animeId);
 };
 
 const handleEdit = (event: Event) => {
   event.stopPropagation();
-  emit('editAnime', props.anime);
+  emit("editAnime", props.anime);
 };
 
 // 审核状态选项
 const reviewStatusOptions = [
-  { label: '待审核', value: 'PENDING' as ReviewStatus },
-  { label: '已通过', value: 'APPROVED' as ReviewStatus },
-  { label: '已拒绝', value: 'REJECTED' as ReviewStatus }
+  { label: "待审核", value: "PENDING" as ReviewStatus },
+  { label: "已通过", value: "APPROVED" as ReviewStatus },
+  { label: "已拒绝", value: "REJECTED" as ReviewStatus },
 ];
 
 // 处理审核状态变化
 const handleReviewStatusChange = (newStatus: ReviewStatus) => {
   if (newStatus !== props.anime.reviewStatus) {
-    emit('updateReviewStatus', props.anime.animeId, newStatus);
+    emit("updateReviewStatus", props.anime.animeId, newStatus);
   }
 };
 </script>

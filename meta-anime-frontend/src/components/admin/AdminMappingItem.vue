@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { getPlatformConfig } from '../../config/platforms';
-import type { AdminMapping } from '../../types/adminAnime';
-import { Delete } from '@element-plus/icons-vue';
+import { Delete } from "@element-plus/icons-vue";
+import { computed } from "vue";
+import { getPlatformConfig } from "@/config/platforms";
+import type { AdminMapping } from "@/types/adminAnime";
 
 const props = defineProps<{
   mapping: AdminMapping;
@@ -13,15 +13,17 @@ const emit = defineEmits<{
 }>();
 
 // 根据平台名称获取配置
-const platformConfig = computed(() => getPlatformConfig(props.mapping.sourcePlatform));
+const platformConfig = computed(() =>
+  getPlatformConfig(props.mapping.sourcePlatform),
+);
 
 // 生成动画条目URL
-const animeUrl = computed(
-  () => platformConfig.value.getAnimeUrl?.(props.mapping.platformId)
+const animeUrl = computed(() =>
+  platformConfig.value.getAnimeUrl?.(props.mapping.platformId),
 );
 
 const titleTooltip = computed(() => {
-  if (!props.mapping.mappingInfo) return '';
+  if (!props.mapping.mappingInfo) return "";
   const titleInfo = props.mapping.mappingInfo.title;
   let title = "";
   if (titleInfo.titleCn) {
@@ -41,7 +43,7 @@ const titleTooltip = computed(() => {
 
 const handleDelete = (e: Event) => {
   e.stopPropagation();
-  emit('deleteMapping', props.mapping.mappingId);
+  emit("deleteMapping", props.mapping.mappingId);
 };
 </script>
 

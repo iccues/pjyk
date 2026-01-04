@@ -39,13 +39,14 @@ public class MappingSyncService {
      */
     @Transactional(readOnly = true)
     public void collectMappingsForSync() {
-        log.info("Starting to collect mappings for sync");
-
         // 报告前一天未成功同步的 mappings
         if (!pendingMappings.isEmpty()) {
-            log.warn("Found {} mapping(s) that failed to sync yesterday:", pendingMappings.size());
-            for (Mapping mapping : pendingMappings) {
-                log.warn("  - {}:{}", mapping.getSourcePlatform(), mapping.getPlatformId());
+            log.error("Found {} mapping(s) that failed to sync yesterday", pendingMappings.size());
+            // 只在 DEBUG 级别输出详细列表，避免日志过多
+            if (log.isDebugEnabled()) {
+                pendingMappings.forEach(mapping ->
+                    log.debug("Failed mapping: {}:{}", mapping.getSourcePlatform(), mapping.getPlatformId())
+                );
             }
         }
 
@@ -53,7 +54,6 @@ public class MappingSyncService {
         pendingMappings.clear();
 
         List<Anime> animeList = animeRepository.findAllByReviewStatus(ReviewStatus.APPROVED);
-        log.info("Found {} approved anime(s)", animeList.size());
 
         // 在事务内收集所有需要同步的 mappings，避免懒加载异常
         pendingMappings.addAll(animeList.stream()
@@ -69,16 +69,23 @@ public class MappingSyncService {
      */
     @Async
     public void processPendingMappings() {
-        log.info("Starting to process {} pending mapping(s)", pendingMappings.size());
+        int total = pendingMappings.size();
+        long startTime = System.currentTimeMillis();
+        
+        log.info("Processing {} pending mapping(s)", total);
 
         List.copyOf(pendingMappings)
                 .parallelStream()
                 .forEach(this::syncMapping);
 
-        log.info("Mapping sync completed - Failed/Remaining: {}", pendingMappings.size());
+        int failed = pendingMappings.size();
+        int success = total - failed;
+        long duration = System.currentTimeMillis() - startTime;
+        
+        log.info("Mapping sync completed - Total: {}, Success: {}, Failed: {}, Duration: {}ms", 
+            total, success, failed, duration);
 
         scoreService.calculateAllAverageScore();
-        log.info("Average score calculation completed");
     }
 
     private boolean shouldSyncAnime(Anime anime) {
@@ -91,8 +98,6 @@ public class MappingSyncService {
         long startDate = anime.getStartDate().toEpochDay();
         long daysSinceStart = today - startDate;
 
-//        // 同步最近 90 天内开播的动漫（修正了日期计算逻辑）
-//        return daysSinceStart >= 0 && daysSinceStart < 90;
         if (daysSinceStart <= 0) {
             return false;
         }
@@ -122,9 +127,9 @@ public class MappingSyncService {
             log.debug("Syncing mapping {}:{}", platform, platformId);
             service.fetchAndSaveMapping(platformId);
             pendingMappings.remove(mapping);
-            log.info("Successfully synced mapping {}:{}", platform, platformId);
+            log.debug("Successfully synced mapping {}:{}", platform, platformId);
         } catch (Exception e) {
-            log.error("Failed to sync mapping {}:{} - {}", platform, platformId, e.getMessage(), e);
+            log.warn("Failed to sync mapping {}:{} - {}", platform, platformId, e.getMessage());
         }
     }
 }

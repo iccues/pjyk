@@ -1,19 +1,15 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import MainPage from "../pages/MainPage.vue";
-import AnimeListPage from "../pages/AnimeListPage.vue";
-import AdminHomePage from '../pages/admin/AdminHomePage.vue';
-import AdminListPage from '../pages/admin/AdminListPage.vue';
+import { createRouter, createWebHistory } from "vue-router";
+import { authGuard } from "@/auth/authGuard";
+import adminRoutes from "./admin";
+import publicRoutes from "./public";
 
-const routes = [
-    { path: '/', component: MainPage },
-    { path: '/anime/list', component: AnimeListPage },
-    { path: '/admin', component: AdminHomePage },
-    { path: '/admin/list', component: AdminListPage }
-]
+const routes = [...publicRoutes, ...adminRoutes];
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes
-})
+  history: createWebHistory(),
+  routes,
+});
 
-export default router
+router.beforeEach(authGuard);
+
+export default router;

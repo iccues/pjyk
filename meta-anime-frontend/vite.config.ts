@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -17,6 +18,11 @@ export default defineConfig(({ mode }) => ({
       resolvers: [ElementPlusResolver()],
     }),
   ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    }
+  },
   server: {
     proxy: mode === 'development' ? {
       '/api': {
@@ -25,17 +31,14 @@ export default defineConfig(({ mode }) => ({
       }
     } : undefined
   },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'element-plus': ['element-plus'],
-          'vue-vendor': ['vue', 'vue-router'],
-          'draggable': ['vuedraggable'],
-          'virtua': ['virtua']
-        }
-      }
+  test: {
+    server: {
+      deps: {
+        inline: ['element-plus'],
+      },
     },
-    chunkSizeWarningLimit: 600
-  }
+    environment: 'happy-dom',
+    globals: true,
+    css: true,
+  },
 }))

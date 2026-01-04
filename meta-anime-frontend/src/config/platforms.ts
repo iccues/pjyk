@@ -1,40 +1,46 @@
+import anilistLogo from "@/assets/logo/anilist.png";
+import bangumiLogo from "@/assets/logo/bangumi.png";
+import myAnimeListLogo from "@/assets/logo/myanimelist.png";
+
 /**
  * 平台配置接口
  */
 export interface PlatformConfig {
-    name: string;
-    logo?: string;
-    baseUrl?: string;
-    /**
-     * 生成动画条目URL的函数
-     * @param platformId 平台上的动画ID
-     * @returns 完整的URL
-     */
-    getAnimeUrl?: (platformId: string) => string;
+  name: string;
+  logo?: string;
+  baseUrl?: string;
+  /**
+   * 生成动画条目URL的函数
+   * @param platformId 平台上的动画ID
+   * @returns 完整的URL
+   */
+  getAnimeUrl?: (platformId: string) => string;
 }
 
 /**
  * 平台配置映射表
  */
 const platformConfigs: Record<string, PlatformConfig> = {
-    'AniList': {
-        name: 'AniList',
-        logo: '/src/assets/logo/anilist.png',
-        baseUrl: 'https://anilist.co',
-        getAnimeUrl: (platformId: string) => `https://anilist.co/anime/${platformId}`
-    },
-    'Bangumi': {
-        name: 'Bangumi',
-        logo: '/src/assets/logo/bangumi.png',
-        baseUrl: 'https://bgm.tv',
-        getAnimeUrl: (platformId: string) => `https://bgm.tv/subject/${platformId}`
-    },
-    'MyAnimeList': {
-        name: 'MyAnimeList',
-        logo: '/src/assets/logo/myanimelist.png',
-        baseUrl: 'https://myanimelist.net',
-        getAnimeUrl: (platformId: string) => `https://myanimelist.net/anime/${platformId}`
-    }
+  AniList: {
+    name: "AniList",
+    logo: anilistLogo,
+    baseUrl: "https://anilist.co",
+    getAnimeUrl: (platformId: string) =>
+      `https://anilist.co/anime/${platformId}`,
+  },
+  Bangumi: {
+    name: "Bangumi",
+    logo: bangumiLogo,
+    baseUrl: "https://bgm.tv",
+    getAnimeUrl: (platformId: string) => `https://bgm.tv/subject/${platformId}`,
+  },
+  MyAnimeList: {
+    name: "MyAnimeList",
+    logo: myAnimeListLogo,
+    baseUrl: "https://myanimelist.net",
+    getAnimeUrl: (platformId: string) =>
+      `https://myanimelist.net/anime/${platformId}`,
+  },
 };
 
 /**
@@ -43,7 +49,7 @@ const platformConfigs: Record<string, PlatformConfig> = {
  * @returns 平台配置对象
  */
 export function getPlatformConfig(platformName: string): PlatformConfig {
-    return platformConfigs[platformName] || { name: platformName };
+  return platformConfigs[platformName] || { name: platformName };
 }
 
 /**
@@ -51,7 +57,7 @@ export function getPlatformConfig(platformName: string): PlatformConfig {
  * @returns 平台名称数组
  */
 export function getAllPlatforms(): string[] {
-    return Object.keys(platformConfigs);
+  return Object.keys(platformConfigs);
 }
 
 /**
@@ -59,5 +65,5 @@ export function getAllPlatforms(): string[] {
  * @returns 平台配置数组
  */
 export function getAllPlatformConfigs(): PlatformConfig[] {
-    return Object.values(platformConfigs);
+  return Object.values(platformConfigs);
 }

@@ -1,0 +1,61 @@
+services:
+  # PostgreSQL 数据库
+  postgres:
+    image: postgres:17.7
+    container_name: meta-anime-postgres
+    environment:
+      POSTGRES_DB: meta-anime
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - meta-anime-network
+
+  # 后端服务
+  backend:
+    build:
+      context: ./meta-anime-backend
+      dockerfile: Dockerfile
+    container_name: meta-anime-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/meta-anime
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      MAL_CLIENT_ID: ${MAL_CLIENT_ID}
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      OIDC_ISSUER: ${OIDC_ISSUER}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - meta-anime-network
+    restart: unless-stopped
+
+  # 前端服务
+  frontend:
+    build:
+      context: ./meta-anime-frontend
+      dockerfile: Dockerfile
+    container_name: meta-anime-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - meta-anime-network
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+    driver: local
+
+networks:
+  meta-anime-network:
+    driver: bridge
