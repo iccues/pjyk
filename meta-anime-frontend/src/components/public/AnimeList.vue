@@ -27,7 +27,7 @@ const fetchAnimes = async () => {
 };
 
 watch(
-  () => [props.year, props.season, props.page, props.pageSize],
+  () => [props.year, props.season, props.page, props.pageSize, props.sortBy],
   fetchAnimes,
   { immediate: true },
 );

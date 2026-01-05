@@ -1,4 +1,4 @@
-import type { Anime, Season } from "@/types/anime";
+import type { Anime, Season, SortBy } from "@/types/anime";
 import type { Page } from "@/types/page";
 import { get } from "./http";
 
@@ -10,6 +10,7 @@ export interface AnimeListParams {
   season?: Season;
   page?: number;
   pageSize?: number;
+  sortBy?: SortBy;
 }
 
 /**
@@ -27,6 +28,7 @@ export async function getAnimeList(
   if (params?.page !== undefined) queryParams.page = params.page.toString();
   if (params?.pageSize !== undefined)
     queryParams.pageSize = params.pageSize.toString();
+  if (params?.sortBy !== undefined) queryParams.sortBy = params.sortBy;
 
   const options =
     Object.keys(queryParams).length > 0 ? { params: queryParams } : undefined;

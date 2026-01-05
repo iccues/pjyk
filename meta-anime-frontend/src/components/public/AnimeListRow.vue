@@ -2,7 +2,7 @@
 import { ArrowLeft, ArrowRight } from "@element-plus/icons-vue";
 import { onMounted, ref } from "vue";
 import { getAnimeList } from "@/api/public/anime";
-import type { Season } from "@/types/anime";
+import type { Season, SortBy } from "@/types/anime";
 import type { Anime } from "@/types/anime.ts";
 import type { Page } from "@/types/page.ts";
 import AnimeCard from "./AnimeCard.vue";
@@ -11,6 +11,7 @@ const props = defineProps<{
   title?: string;
   year?: number;
   season?: Season;
+  sortBy?: SortBy;
 }>();
 
 const animes = ref<Page<Anime> | null>(null);
@@ -28,6 +29,7 @@ const fetchAnimes = async () => {
     animes.value = await getAnimeList({
       year: props.year,
       season: props.season,
+      sortBy: props.sortBy,
       pageSize: 12,
     });
   } catch (err) {

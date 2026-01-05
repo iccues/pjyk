@@ -35,10 +35,12 @@ const seasonNames: Record<string, string> = {
         :year="currentYear"
         :season="currentSeason"
       />
-      <!-- 本年新番 -->
+      <!-- 当季最高人气 -->
       <AnimeListRow
-        :title="`${currentYear}年新番`"
+        :title="`${currentYear}年${seasonNames[currentSeason]}最高人气`"
         :year="currentYear"
+        :season="currentSeason"
+        sort-by="POPULARITY"
       />
       <!-- 历史最高 -->
       <AnimeListRow

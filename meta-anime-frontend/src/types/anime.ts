@@ -21,3 +21,5 @@ export interface AnimeTitles {
 }
 
 export type Season = "WINTER" | "SPRING" | "SUMMER" | "FALL";
+
+export type SortBy = "SCORE" | "POPULARITY";
