@@ -429,6 +429,16 @@ public class AbstractAnimeFetchServiceTest {
         }
 
         @Override
+        protected double extractRawPopularity(JsonNode jsonNode) {
+            return jsonNode.path("popularity").asDouble(0.0);
+        }
+
+        @Override
+        protected double normalizePopularity(double rawPopularity) {
+            return rawPopularity;
+        }
+
+        @Override
         protected List<JsonNode> fetchMappingJson(int year, Season season) {
             if (shouldThrowWebClientException) {
                 throw WebClientResponseException.create(
