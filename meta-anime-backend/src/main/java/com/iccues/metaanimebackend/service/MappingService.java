@@ -19,6 +19,8 @@ public class MappingService {
             existing.setNormalizedScore(m.getNormalizedScore());
             existing.setMappingInfo(m.getMappingInfo());
             existing.setUpdateTime(m.getUpdateTime());
+            existing.setRawPopularity(m.getRawPopularity());
+            existing.setNormalizedPopularity(m.getNormalizedPopularity());
             repo.save(existing);
         } else {
             repo.save(m);

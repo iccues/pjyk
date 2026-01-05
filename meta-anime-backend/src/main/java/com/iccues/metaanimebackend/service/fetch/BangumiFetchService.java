@@ -55,6 +55,16 @@ public class BangumiFetchService extends AbstractAnimeFetchService {
     }
 
     @Override
+    protected double extractRawPopularity(JsonNode jsonNode) {
+        return jsonNode.path("rating").path("total").asDouble();
+    }
+
+    @Override
+    protected double normalizePopularity(double rawPopularity) {
+        return rawPopularity;
+    }
+
+    @Override
     protected List<JsonNode> fetchMappingJson(int year, Season season) {
         JsonNode firstPage = fetchPage(year, season, 0);
         if (firstPage == null) {

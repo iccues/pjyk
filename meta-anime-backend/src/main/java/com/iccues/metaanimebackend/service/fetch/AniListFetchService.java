@@ -61,6 +61,16 @@ public class AniListFetchService extends AbstractAnimeFetchService {
     }
 
     @Override
+    protected double extractRawPopularity(JsonNode jsonNode) {
+        return jsonNode.path("popularity").asDouble();
+    }
+
+    @Override
+    protected double normalizePopularity(double rawPopularity) {
+        return rawPopularity;
+    }
+
+    @Override
     protected List<JsonNode> fetchMappingJson(int year, Season season) {
         JsonNode firstPage = fetchPage(year, season, 1);
         if (firstPage == null) {
@@ -104,6 +114,7 @@ public class AniListFetchService extends AbstractAnimeFetchService {
                         color
                       }
                       averageScore
+                      popularity
                       startDate {
                         year
                         month
@@ -161,6 +172,7 @@ public class AniListFetchService extends AbstractAnimeFetchService {
                       color
                     }
                     averageScore
+                    popularity
                     startDate {
                       year
                       month

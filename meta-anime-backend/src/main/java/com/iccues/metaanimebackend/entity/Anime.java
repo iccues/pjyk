@@ -30,6 +30,8 @@ public class Anime {
 
     Double averageScore;
 
+    Double popularity;
+
     @Enumerated(EnumType.STRING)
     ReviewStatus reviewStatus = ReviewStatus.PENDING;
 
