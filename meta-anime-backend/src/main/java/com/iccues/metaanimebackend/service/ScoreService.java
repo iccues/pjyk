@@ -22,6 +22,7 @@ public class ScoreService {
 
         for (Anime anime : list) {
             calculateAverageScore(anime);
+            calculatePopularity(anime);
         }
     }
 
@@ -52,5 +53,17 @@ public class ScoreService {
             case AniList -> 1;
             case MyAnimeList -> 1;
         };
+    }
+
+    @Transactional
+    public void calculatePopularity(Anime anime) {
+        double totalPopularity = 0.0;
+        for (Mapping mapping : anime.getMappings()) {
+            Double normalizedPopularity = mapping.getNormalizedPopularity();
+            if (normalizedPopularity != null && normalizedPopularity > 0) {
+                totalPopularity += normalizedPopularity;
+            }
+        }
+        anime.setPopularity(totalPopularity);
     }
 }

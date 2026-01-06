@@ -237,6 +237,89 @@ public class AnimeSpecTest {
         assertEquals("2024春季-已审核", result.getFirst().getTitle().getTitleNative());
     }
 
+    @Test
+    public void testOrderByPopularityNullLast() {
+        // 准备测试数据：不同的人气度，包括 null
+        Anime anime1 = createAnime("低人气", LocalDate.of(2024, 1, 15), ReviewStatus.APPROVED);
+        anime1.setPopularity(100.0);
+
+        Anime anime2 = createAnime("高人气", LocalDate.of(2024, 1, 16), ReviewStatus.APPROVED);
+        anime2.setPopularity(500.0);
+
+        Anime anime3 = createAnime("中人气", LocalDate.of(2024, 1, 17), ReviewStatus.APPROVED);
+        anime3.setPopularity(300.0);
+
+        Anime anime4 = createAnime("无人气数据", LocalDate.of(2024, 1, 18), ReviewStatus.APPROVED);
+        // popularity 为 null
+
+        animeRepository.save(anime1);
+        animeRepository.save(anime2);
+        animeRepository.save(anime3);
+        animeRepository.save(anime4);
+
+        // 查询并排序
+        Specification<Anime> spec = AnimeSpec.orderByPopularityNullLast();
+        List<Anime> result = animeRepository.findAll(spec);
+
+        // 验证结果：应该按人气度降序排列，null 在最后
+        assertEquals(4, result.size());
+        assertEquals("高人气", result.get(0).getTitle().getTitleNative());
+        assertEquals(500.0, result.get(0).getPopularity());
+
+        assertEquals("中人气", result.get(1).getTitle().getTitleNative());
+        assertEquals(300.0, result.get(1).getPopularity());
+
+        assertEquals("低人气", result.get(2).getTitle().getTitleNative());
+        assertEquals(100.0, result.get(2).getPopularity());
+
+        assertEquals("无人气数据", result.get(3).getTitle().getTitleNative());
+        assertNull(result.get(3).getPopularity());
+    }
+
+    @Test
+    public void testOrderBy_WithScoreSortBy() {
+        // 准备测试数据
+        Anime anime1 = createAnime("低分", LocalDate.of(2024, 1, 15), ReviewStatus.APPROVED);
+        anime1.setAverageScore(70.0);
+
+        Anime anime2 = createAnime("高分", LocalDate.of(2024, 1, 16), ReviewStatus.APPROVED);
+        anime2.setAverageScore(90.0);
+
+        animeRepository.save(anime1);
+        animeRepository.save(anime2);
+
+        // 使用 SCORE 排序
+        Specification<Anime> spec = AnimeSpec.orderBy(com.iccues.metaanimebackend.entity.SortBy.SCORE);
+        List<Anime> result = animeRepository.findAll(spec);
+
+        // 验证结果：应该按评分降序排列
+        assertEquals(2, result.size());
+        assertEquals("高分", result.get(0).getTitle().getTitleNative());
+        assertEquals("低分", result.get(1).getTitle().getTitleNative());
+    }
+
+    @Test
+    public void testOrderBy_WithPopularitySortBy() {
+        // 准备测试数据
+        Anime anime1 = createAnime("低人气", LocalDate.of(2024, 1, 15), ReviewStatus.APPROVED);
+        anime1.setPopularity(100.0);
+
+        Anime anime2 = createAnime("高人气", LocalDate.of(2024, 1, 16), ReviewStatus.APPROVED);
+        anime2.setPopularity(500.0);
+
+        animeRepository.save(anime1);
+        animeRepository.save(anime2);
+
+        // 使用 POPULARITY 排序
+        Specification<Anime> spec = AnimeSpec.orderBy(com.iccues.metaanimebackend.entity.SortBy.POPULARITY);
+        List<Anime> result = animeRepository.findAll(spec);
+
+        // 验证结果：应该按人气度降序排列
+        assertEquals(2, result.size());
+        assertEquals("高人气", result.get(0).getTitle().getTitleNative());
+        assertEquals("低人气", result.get(1).getTitle().getTitleNative());
+    }
+
     // 辅助方法：创建测试用的 Anime
     private Anime createAnime(String titleNative, LocalDate startDate, ReviewStatus reviewStatus) {
         AnimeTitles titles = new AnimeTitles();

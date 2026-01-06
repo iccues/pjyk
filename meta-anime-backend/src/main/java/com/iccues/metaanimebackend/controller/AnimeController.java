@@ -6,6 +6,7 @@ import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.LocalDateRange;
 import com.iccues.metaanimebackend.entity.ReviewStatus;
 import com.iccues.metaanimebackend.entity.Season;
+import com.iccues.metaanimebackend.entity.SortBy;
 import com.iccues.metaanimebackend.mapper.AnimeMapper;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
 import com.iccues.metaanimebackend.service.SeasonService;
@@ -39,14 +40,15 @@ class AnimeController {
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) Season season,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "50") int pageSize) {
+            @RequestParam(defaultValue = "50") int pageSize,
+            @RequestParam(defaultValue = "SCORE") SortBy sortBy) {
 
 
         LocalDateRange dateRange = seasonService.getStartDateRange(year, season);
         Specification<Anime> spec = Specification.allOf(
                 AnimeSpec.startDateBetween(dateRange),
                 AnimeSpec.reviewStatusEquals(ReviewStatus.APPROVED),
-                AnimeSpec.orderByScoreNullLast()
+                AnimeSpec.orderBy(sortBy)
         );
         PageRequest pageRequest = PageRequest.of(page, pageSize);
         Page<Anime> animePage = animeRepository.findAll(spec, pageRequest);

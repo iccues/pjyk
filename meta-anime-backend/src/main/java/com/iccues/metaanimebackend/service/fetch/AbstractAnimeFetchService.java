@@ -44,8 +44,10 @@ public abstract class AbstractAnimeFetchService {
     protected abstract String extractPlatformId(JsonNode jsonNode);
 
     protected abstract double extractRawScore(JsonNode jsonNode);
-
     protected abstract double normalizeScore(double rawScore);
+
+    protected abstract double extractRawPopularity(JsonNode jsonNode);
+    protected abstract double normalizePopularity(double rawPopularity);
 
     protected MappingInfo extractMappingInfo(JsonNode jsonNode) {
         return new MappingInfo(
@@ -104,6 +106,11 @@ public abstract class AbstractAnimeFetchService {
                 mapping.setNormalizedScore(normalizedScore);
             }
         }
+
+        double rawPopularity = extractRawPopularity(jsonNode);
+        double normalizedPopularity = normalizePopularity(rawPopularity);
+        mapping.setRawPopularity(normalizedPopularity);
+        mapping.setNormalizedPopularity(normalizedPopularity);
 
         mappingService.saveOrUpdate(mapping);
     }

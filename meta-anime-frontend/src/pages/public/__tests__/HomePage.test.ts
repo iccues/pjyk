@@ -43,7 +43,7 @@ describe("HomePage.vue", () => {
     expect(currentSeasonRow!.props("season")).toBe("WINTER");
   });
 
-  it("应该渲染本年新番", () => {
+  it("应该渲染当季最高人气", () => {
     const wrapper = mount(HomePage, {
       global: {
         stubs: {
@@ -53,11 +53,12 @@ describe("HomePage.vue", () => {
     });
 
     const rows = wrapper.findAllComponents({ name: "AnimeListRow" });
-    const currentYearRow = rows[1];
+    const popularityRow = rows[1];
 
-    expect(currentYearRow!.props("title")).toBe("2026年新番");
-    expect(currentYearRow!.props("year")).toBe(2026);
-    expect(currentYearRow!.props("season")).toBeUndefined();
+    expect(popularityRow!.props("title")).toBe("2026年冬季最高人气");
+    expect(popularityRow!.props("year")).toBe(2026);
+    expect(popularityRow!.props("season")).toBe("WINTER");
+    expect(popularityRow!.props("sortBy")).toBe("POPULARITY");
   });
 
   it("应该渲染历史最高", () => {

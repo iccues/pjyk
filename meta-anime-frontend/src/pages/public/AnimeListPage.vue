@@ -3,8 +3,8 @@ import { Filter } from "@element-plus/icons-vue";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AnimeList from "@/components/public/AnimeList.vue";
-import { SEASON_OPTIONS } from "@/constants/ui-options";
-import type { Season } from "@/types/anime";
+import { SEASON_OPTIONS, SORT_BY_OPTIONS } from "@/constants/ui-options";
+import type { Season, SortBy } from "@/types/anime";
 import type { PageInfo } from "@/types/page";
 import { generateYearOptions } from "@/utils/dateUtils";
 
@@ -37,6 +37,11 @@ const parseSeason = (value: string): Season | undefined => {
   return validSeasons.includes(value as Season) ? (value as Season) : undefined;
 };
 
+const parseSortBy = (value: string): SortBy | undefined => {
+  const validSortBy: SortBy[] = ["SCORE", "POPULARITY"];
+  return validSortBy.includes(value as SortBy) ? (value as SortBy) : undefined;
+};
+
 const parsePage = (value: string): number => {
   const num = parseInt(value);
   return isNaN(num) || num < 0 ? 0 : num;
@@ -48,6 +53,9 @@ const selectedYear = ref<number | undefined>(
 );
 const selectedSeason = ref<Season | undefined>(
   getInitialValue("season", parseSeason, undefined),
+);
+const selectedSortBy = ref<SortBy>(
+  getInitialValue("sortBy", parseSortBy, "SCORE"),
 );
 const currentPage = ref(getInitialValue("page", parsePage, 0));
 const pageSize = ref(60);
@@ -65,6 +73,10 @@ const updateQuery = () => {
     query.season = selectedSeason.value;
   }
 
+  if (selectedSortBy.value !== "SCORE") {
+    query.sortBy = selectedSortBy.value;
+  }
+
   if (currentPage.value > 0) {
     query.page = currentPage.value.toString();
   }
@@ -74,6 +86,7 @@ const updateQuery = () => {
 
 // 使用统一的常量和工具函数
 const seasonOptions = SEASON_OPTIONS;
+const sortByOptions = SORT_BY_OPTIONS;
 const yearOptions = computed(() => generateYearOptions(10));
 
 // 处理筛选变化
@@ -129,12 +142,28 @@ const handlePageChange = (page: number) => {
             :value="option.value"
           />
         </el-select>
+
+        <el-select
+          v-model="selectedSortBy"
+          placeholder="排序方式"
+          size="medium"
+          class="!w-40"
+          @change="handleFilterChange"
+        >
+          <el-option
+            v-for="option in sortByOptions"
+            :key="option.label"
+            :label="option.label"
+            :value="option.value"
+          />
+        </el-select>
       </div>
     </div>
 
     <AnimeList
       :year="selectedYear"
       :season="selectedSeason"
+      :sort-by="selectedSortBy"
       :page="currentPage"
       :page-size="pageSize"
       v-on:update:page-info="pageInfo_ => {
