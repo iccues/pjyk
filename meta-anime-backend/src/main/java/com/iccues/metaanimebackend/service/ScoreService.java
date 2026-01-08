@@ -1,5 +1,6 @@
 package com.iccues.metaanimebackend.service;
 
+import com.iccues.metaanimebackend.config.PlatformConfigProperties;
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.Mapping;
 import com.iccues.metaanimebackend.entity.Platform;
@@ -15,6 +16,9 @@ public class ScoreService {
 
     @Resource
     AnimeRepository animeRepository;
+
+    @Resource
+    PlatformConfigProperties platformConfigProperties;
 
     @Transactional
     public void calculateAllAverageScore() {
@@ -48,12 +52,9 @@ public class ScoreService {
     }
 
     private int getWeight(Platform platform) {
-        return switch (platform) {
-            case Bangumi -> 2;
-            case AniList -> 1;
-            case MyAnimeList -> 1;
-        };
+        return platformConfigProperties.getConfig(platform).getScoreWeight();
     }
+
 
     @Transactional
     public void calculatePopularity(Anime anime) {

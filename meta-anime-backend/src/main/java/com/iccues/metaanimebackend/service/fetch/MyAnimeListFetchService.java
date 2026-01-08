@@ -62,12 +62,7 @@ public class MyAnimeListFetchService extends AbstractAnimeFetchService {
 
     @Override
     protected double extractRawPopularity(JsonNode jsonNode) {
-        return jsonNode.path("popularity").asDouble();
-    }
-
-    @Override
-    protected double normalizePopularity(double rawPopularity) {
-        return rawPopularity;
+        return jsonNode.path("num_scoring_users").asDouble();
     }
 
     @Override
@@ -112,7 +107,7 @@ public class MyAnimeListFetchService extends AbstractAnimeFetchService {
                 () -> myAnimeListWebClient.get()
                         .uri(uriBuilder -> uriBuilder
                                 .path("/anime/season/{year}/{season}")
-                                .queryParam("fields", "id,alternative_titles,main_picture,start_date,mean,popularity,media_type")
+                                .queryParam("fields", "id,alternative_titles,main_picture,start_date,mean,num_scoring_users,media_type")
                                 .queryParam("limit", pageSize)
                                 .queryParam("offset", page * pageSize)
                                 .build(year, season.toLowerName()))
@@ -129,7 +124,7 @@ public class MyAnimeListFetchService extends AbstractAnimeFetchService {
                 () -> myAnimeListWebClient.get()
                         .uri(uriBuilder -> uriBuilder
                                 .path("/anime/{anime_id}")
-                                .queryParam("fields", "id,alternative_titles,main_picture,start_date,mean,popularity,media_type")
+                                .queryParam("fields", "id,alternative_titles,main_picture,start_date,mean,num_scoring_users,media_type")
                                 .build(platformId))
                         .retrieve()
                         .bodyToMono(JsonNode.class)

@@ -1,6 +1,7 @@
 package com.iccues.metaanimebackend.service.fetch;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.iccues.metaanimebackend.config.PlatformConfigProperties;
 import com.iccues.metaanimebackend.entity.MappingInfo;
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.Mapping;
@@ -32,6 +33,8 @@ public abstract class AbstractAnimeFetchService {
     protected AnimeRepository animeRepository;
     @Resource
     protected MappingRepository mappingRepository;
+    @Resource
+    protected PlatformConfigProperties platformConfigProperties;
 
     protected abstract Platform getPlatform();
 
@@ -47,7 +50,12 @@ public abstract class AbstractAnimeFetchService {
     protected abstract double normalizeScore(double rawScore);
 
     protected abstract double extractRawPopularity(JsonNode jsonNode);
-    protected abstract double normalizePopularity(double rawPopularity);
+
+    public double normalizePopularity(double rawPopularity) {
+        double multiplier = platformConfigProperties.getConfig(getPlatform()).getPopularityMultiplier();
+        return rawPopularity * multiplier;
+    }
+
 
     protected MappingInfo extractMappingInfo(JsonNode jsonNode) {
         return new MappingInfo(

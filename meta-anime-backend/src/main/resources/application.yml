@@ -28,3 +28,14 @@ logging:
   level:
     root: INFO
     com.iccues.metaanimebackend: DEBUG
+
+platform:
+  bangumi:
+    popularity-multiplier: 166.7
+    score-weight: 2
+  anilist:
+    popularity-multiplier: 11.1
+    score-weight: 1
+  myanimelist:
+    popularity-multiplier: 1.0
+    score-weight: 1

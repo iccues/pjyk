@@ -66,11 +66,6 @@ public class AniListFetchService extends AbstractAnimeFetchService {
     }
 
     @Override
-    protected double normalizePopularity(double rawPopularity) {
-        return rawPopularity;
-    }
-
-    @Override
     protected List<JsonNode> fetchMappingJson(int year, Season season) {
         JsonNode firstPage = fetchPage(year, season, 1);
         if (firstPage == null) {
