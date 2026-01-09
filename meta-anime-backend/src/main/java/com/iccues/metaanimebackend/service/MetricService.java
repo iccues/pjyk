@@ -1,5 +1,6 @@
 package com.iccues.metaanimebackend.service;
 
+import com.iccues.metaanimebackend.config.PlatformConfigProperties;
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.Mapping;
 import com.iccues.metaanimebackend.entity.Platform;
@@ -11,13 +12,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class ScoreService {
+public class MetricService {
 
     @Resource
     AnimeRepository animeRepository;
 
+    @Resource
+    PlatformConfigProperties platformConfigProperties;
+
     @Transactional
-    public void calculateAllAverageScore() {
+    public void calculateAllMetric() {
         List<Anime> list = animeRepository.findAll();
 
         for (Anime anime : list) {
@@ -33,7 +37,7 @@ public class ScoreService {
 
         for (Mapping mapping : anime.getMappings()) {
             Double normalizedScore = mapping.getNormalizedScore();
-            if (normalizedScore != null && normalizedScore > 0) {
+            if (normalizedScore != null) {
                 int weight = getWeight(mapping.getSourcePlatform());
                 totalScore += normalizedScore * weight;
                 totalWeight += weight;
@@ -48,12 +52,9 @@ public class ScoreService {
     }
 
     private int getWeight(Platform platform) {
-        return switch (platform) {
-            case Bangumi -> 2;
-            case AniList -> 1;
-            case MyAnimeList -> 1;
-        };
+        return platformConfigProperties.getConfig(platform).getScoreWeight();
     }
+
 
     @Transactional
     public void calculatePopularity(Anime anime) {

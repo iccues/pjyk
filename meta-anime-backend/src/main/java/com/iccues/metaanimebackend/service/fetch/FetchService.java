@@ -2,7 +2,7 @@ package com.iccues.metaanimebackend.service.fetch;
 
 import com.iccues.metaanimebackend.entity.Platform;
 import com.iccues.metaanimebackend.entity.Season;
-import com.iccues.metaanimebackend.service.ScoreService;
+import com.iccues.metaanimebackend.service.MetricService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -20,13 +20,13 @@ public class FetchService {
     MyAnimeListFetchService myAnimeListFetchService;
 
     @Resource
-    ScoreService scoreService;
+    MetricService metricService;
 
     @Async
     public void fetchAnime(int year, Season season) {
         fetchMapping(year, season);
         linkMappings();
-        calculateAllAverageScore();
+        calculateAllMetric();
     }
 
     @Async
@@ -62,8 +62,8 @@ public class FetchService {
     }
 
     @Async
-    public void calculateAllAverageScore() {
-        scoreService.calculateAllAverageScore();
+    public void calculateAllMetric() {
+        metricService.calculateAllMetric();
     }
 
     public AbstractAnimeFetchService getFetchService(Platform platform) {

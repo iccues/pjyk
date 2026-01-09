@@ -18,7 +18,7 @@ export {
 } from "./adminAnime";
 // 导出 Fetch 相关 API
 export {
-  calculateScores,
+  calculateMetric,
   fetchAnime,
   fetchMapping,
   linkMappings,

@@ -3,7 +3,7 @@ package com.iccues.metaanimebackend.service.fetch;
 import com.iccues.metaanimebackend.entity.Platform;
 import com.iccues.metaanimebackend.entity.Season;
 import com.iccues.metaanimebackend.exception.FetchFailedException;
-import com.iccues.metaanimebackend.service.ScoreService;
+import com.iccues.metaanimebackend.service.MetricService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +26,7 @@ public class FetchServiceTest {
     private MyAnimeListFetchService myAnimeListFetchService;
 
     @Mock
-    private ScoreService scoreService;
+    private MetricService metricService;
 
     @InjectMocks
     private FetchService fetchService;
@@ -77,10 +77,10 @@ public class FetchServiceTest {
     }
 
     @Test
-    public void testCalculateAllAverageScore_CallsScoreService() {
-        fetchService.calculateAllAverageScore();
+    public void testCalculateAllMetricService() {
+        fetchService.calculateAllMetric();
 
-        verify(scoreService, times(1)).calculateAllAverageScore();
+        verify(metricService, times(1)).calculateAllMetric();
     }
 
     @Test
@@ -98,7 +98,7 @@ public class FetchServiceTest {
         verify(aniListFetchService, times(1)).linkAllOrphanedMappings();
         verify(myAnimeListFetchService, times(1)).linkAllOrphanedMappings();
 
-        verify(scoreService, times(1)).calculateAllAverageScore();
+        verify(metricService, times(1)).calculateAllMetric();
     }
 
 

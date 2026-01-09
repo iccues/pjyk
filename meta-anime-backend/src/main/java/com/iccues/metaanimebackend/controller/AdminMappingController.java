@@ -11,7 +11,7 @@ import com.iccues.metaanimebackend.exception.ResourceNotFoundException;
 import com.iccues.metaanimebackend.mapper.AdminAnimeMapper;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
 import com.iccues.metaanimebackend.repo.MappingRepository;
-import com.iccues.metaanimebackend.service.ScoreService;
+import com.iccues.metaanimebackend.service.MetricService;
 import com.iccues.metaanimebackend.service.fetch.AbstractAnimeFetchService;
 import com.iccues.metaanimebackend.service.fetch.FetchService;
 import jakarta.annotation.Resource;
@@ -34,7 +34,7 @@ public class AdminMappingController {
     AdminAnimeMapper adminAnimeMapper;
 
     @Resource
-    ScoreService scoreService;
+    MetricService metricService;
 
     @Resource
     FetchService fetchService;
@@ -78,10 +78,10 @@ public class AdminMappingController {
         AdminMappingDTO mappingDTO = adminAnimeMapper.toMappingDto(savedMapping);
 
         if (currentAnime != null) {
-            scoreService.calculateAverageScore(currentAnime);
+            metricService.calculateAverageScore(currentAnime);
         }
         if (savedMapping.getAnime() != null) {
-            scoreService.calculateAverageScore(savedMapping.getAnime());
+            metricService.calculateAverageScore(savedMapping.getAnime());
         }
         return Response.ok(mappingDTO);
     }
@@ -109,7 +109,7 @@ public class AdminMappingController {
 
         // 如果之前关联了动画，重新计算该动画的平均分
         if (relatedAnime != null) {
-            scoreService.calculateAverageScore(relatedAnime);
+            metricService.calculateAverageScore(relatedAnime);
         }
 
         return Response.ok(null);

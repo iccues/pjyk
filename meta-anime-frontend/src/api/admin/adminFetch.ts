@@ -38,6 +38,6 @@ export async function linkMappings(): Promise<string> {
 /**
  * 计算所有动画的平均评分
  */
-export async function calculateScores(): Promise<string> {
-  return post<string>("/api/admin/fetch/calculate_scores");
+export async function calculateMetric(): Promise<string> {
+  return post<string>("/api/admin/fetch/calculate_metric");
 }

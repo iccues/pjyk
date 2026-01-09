@@ -56,18 +56,8 @@ public class AniListFetchService extends AbstractAnimeFetchService {
     }
 
     @Override
-    protected double normalizeScore(double rawScore) {
-        return rawScore;
-    }
-
-    @Override
     protected double extractRawPopularity(JsonNode jsonNode) {
         return jsonNode.path("popularity").asDouble();
-    }
-
-    @Override
-    protected double normalizePopularity(double rawPopularity) {
-        return rawPopularity;
     }
 
     @Override

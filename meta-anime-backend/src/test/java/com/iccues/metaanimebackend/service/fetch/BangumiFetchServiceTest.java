@@ -2,11 +2,14 @@ package com.iccues.metaanimebackend.service.fetch;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.iccues.metaanimebackend.config.PlatformConfig;
+import com.iccues.metaanimebackend.config.PlatformConfigProperties;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
 import com.iccues.metaanimebackend.entity.Platform;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,9 +20,23 @@ public class BangumiFetchServiceTest {
     private ObjectMapper objectMapper;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         service = new BangumiFetchService();
         objectMapper = new ObjectMapper();
+
+        // 设置 platformConfigProperties
+        PlatformConfigProperties configProperties = new PlatformConfigProperties();
+        PlatformConfig bangumiConfig = new PlatformConfig();
+        bangumiConfig.setScoreMean(6.0);
+        bangumiConfig.setScoreStd(1.0);
+
+        Field bangumiField = PlatformConfigProperties.class.getDeclaredField("bangumi");
+        bangumiField.setAccessible(true);
+        bangumiField.set(configProperties, bangumiConfig);
+
+        Field configField = AbstractAnimeFetchService.class.getDeclaredField("platformConfigProperties");
+        configField.setAccessible(true);
+        configField.set(service, configProperties);
     }
 
     @Test
@@ -121,27 +138,31 @@ public class BangumiFetchServiceTest {
 
     @Test
     public void testNormalizeScore() {
-        // Bangumi 评分是 1-10，归一化到 0-100
+        // Bangumi: mean=6.0, std=1.0
+        // z = (8.5 - 6.0) / 1.0 = 2.5
+        // normalized = 50 + (2.5 * (100 / 6.0)) = 50 + 41.67 = 91.67
         double result = service.normalizeScore(8.5);
 
-        // (8.5 - 1) / 9 * 100 = 7.5 / 9 * 100 = 83.333...
-        assertEquals(83.333, result, 0.01);
+        assertEquals(91.67, result, 0.01);
     }
 
     @Test
     public void testNormalizeScore_MinValue() {
-        // 最低分 1 分
-        double result = service.normalizeScore(1.0);
+        // z = (1.0 - 6.0) / 1.0 = -5.0
+        // normalized = 50 + (-5.0 * (100 / 6.0)) = 50 - 83.33 = -33.33
+        Double result = service.normalizeScore(1.0);
 
-        assertEquals(0.0, result, 0.001);
+        assertNotNull(result);
+        assertEquals(-33.33, result, 0.01);
     }
 
     @Test
     public void testNormalizeScore_MaxValue() {
-        // 最高分 10 分
+        // z = (10.0 - 6.0) / 1.0 = 4.0
+        // normalized = 50 + (4.0 * (100 / 6.0)) = 50 + 66.67 = 116.67
         double result = service.normalizeScore(10.0);
 
-        assertEquals(100.0, result, 0.001);
+        assertEquals(116.67, result, 0.01);
     }
 
     @Test

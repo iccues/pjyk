@@ -3,7 +3,7 @@ import { Download, Refresh, SetUp } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { ref } from "vue";
 import {
-  calculateScores,
+  calculateMetric,
   fetchAnime,
   fetchMapping,
   linkMappings,
@@ -71,12 +71,12 @@ const handleLinkMappings = async () => {
   }
 };
 
-// 计算评分
+// 计算动漫指标
 const handleCalculateScores = async () => {
   try {
     fetchLoading.value = true;
-    await calculateScores();
-    ElMessage.success("评分计算任务已启动，请稍后查看结果");
+    await calculateMetric();
+    ElMessage.success("指标计算任务已启动，请稍后查看结果");
   } catch (e) {
     ElMessage.error(
       "启动失败: " + (e instanceof Error ? e.message : "未知错误"),
@@ -121,7 +121,7 @@ const handleCalculateScores = async () => {
           @click="handleCalculateScores"
           :loading="fetchLoading"
         >
-          计算平均评分
+          计算动漫指标
         </el-button>
       </div>
     </el-card>
@@ -155,7 +155,7 @@ const handleCalculateScores = async () => {
           </el-select>
         </el-form-item>
         <el-alert
-          title="完整抓取将依次执行：抓取映射 → 合并映射 → 计算评分"
+          title="完整抓取将依次执行：抓取映射 → 合并映射 → 计算指标"
           type="info"
           :closable="false"
           class="mb-4"

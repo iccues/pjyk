@@ -35,7 +35,7 @@ class MappingSyncServiceTest {
     private FetchService fetchService;
 
     @Mock
-    private ScoreService scoreService;
+    private MetricService metricService;
 
     @Mock
     private AbstractAnimeFetchService malFetchService;
@@ -288,7 +288,7 @@ class MappingSyncServiceTest {
         when(fetchService.getFetchService(Platform.MyAnimeList)).thenReturn(malFetchService);
         when(malFetchService.fetchAndSaveMapping(anyString()))
                 .thenReturn(anime1.getMappings().getFirst(), anime2.getMappings().getFirst());
-        doNothing().when(scoreService).calculateAllAverageScore();
+        doNothing().when(metricService).calculateAllMetric();
 
         // 执行测试
         mappingSyncService.processPendingMappings();
@@ -297,7 +297,7 @@ class MappingSyncServiceTest {
         verify(fetchService, times(2)).getFetchService(Platform.MyAnimeList);
         verify(malFetchService, times(1)).fetchAndSaveMapping("12345");
         verify(malFetchService, times(1)).fetchAndSaveMapping("67890");
-        verify(scoreService, times(1)).calculateAllAverageScore();
+        verify(metricService, times(1)).calculateAllMetric();
         assertEquals(0, pendingMappings.size()); // 全部处理完成
     }
 
@@ -310,14 +310,14 @@ class MappingSyncServiceTest {
         List<Mapping> pendingMappings = getPendingMappings();
         assertTrue(pendingMappings.isEmpty());
 
-        doNothing().when(scoreService).calculateAllAverageScore();
+        doNothing().when(metricService).calculateAllMetric();
 
         // 执行测试
         mappingSyncService.processPendingMappings();
 
         // 验证结果
         verify(fetchService, never()).getFetchService(any());
-        verify(scoreService, times(1)).calculateAllAverageScore();
+        verify(metricService, times(1)).calculateAllMetric();
     }
 
     // ==================== 辅助方法 ====================

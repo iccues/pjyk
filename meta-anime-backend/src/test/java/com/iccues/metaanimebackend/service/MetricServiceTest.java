@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-public class ScoreServiceTest {
+public class MetricServiceTest {
 
     @Resource
-    ScoreService scoreService;
+    MetricService metricService;
 
     @Resource
     AnimeRepository animeRepository;
@@ -42,7 +42,7 @@ public class ScoreServiceTest {
         anime.addMapping(mapping2);
         anime.addMapping(mapping3);
 
-        scoreService.calculateAverageScore(anime);
+        metricService.calculateAverageScore(anime);
 
         // (8.0*1 + 9.0*1 + 7.0*1) / (1+1+1) = 24/3 = 8.0
         assertEquals(8.0, anime.getAverageScore(), 0.0001);
@@ -65,7 +65,7 @@ public class ScoreServiceTest {
         anime.addMapping(bangumiMapping);
         anime.addMapping(malMapping);
 
-        scoreService.calculateAverageScore(anime);
+        metricService.calculateAverageScore(anime);
 
         // (9.0*2 + 6.0*1) / (2+1) = 24/3 = 8.0
         assertEquals(8.0, anime.getAverageScore(), 0.0001);
@@ -94,7 +94,7 @@ public class ScoreServiceTest {
         anime.addMapping(mal);
         anime.addMapping(anilist);
 
-        scoreService.calculateAverageScore(anime);
+        metricService.calculateAverageScore(anime);
 
         // (8.0*2 + 7.0*1 + 9.0*1) / (2+1+1) = 32/4 = 8.0
         assertEquals(8.0, anime.getAverageScore(), 0.0001);
@@ -115,7 +115,7 @@ public class ScoreServiceTest {
         anime.addMapping(mapping1);
         anime.addMapping(mapping2);
 
-        scoreService.calculateAverageScore(anime);
+        metricService.calculateAverageScore(anime);
 
         assertNull(anime.getAverageScore());
     }
@@ -135,9 +135,10 @@ public class ScoreServiceTest {
         anime.addMapping(mapping1);
         anime.addMapping(mapping2);
 
-        scoreService.calculateAverageScore(anime);
+        metricService.calculateAverageScore(anime);
 
-        assertNull(anime.getAverageScore());
+        // 0 分参与计算: (0.0*2 + 0.0*1) / (2+1) = 0.0
+        assertEquals(0.0, anime.getAverageScore(), 0.0001);
     }
 
     @Test
@@ -154,7 +155,7 @@ public class ScoreServiceTest {
         mapping2.setSourcePlatform(Platform.MyAnimeList);
         mapping2.setNormalizedScore(null);
 
-        // 0 分数，应该被忽略
+        // 0 分数，参与计算，权重 1
         Mapping mapping3 = new Mapping();
         mapping3.setSourcePlatform(Platform.AniList);
         mapping3.setNormalizedScore(0.0);
@@ -169,24 +170,24 @@ public class ScoreServiceTest {
         anime.addMapping(mapping3);
         anime.addMapping(mapping4);
 
-        scoreService.calculateAverageScore(anime);
+        metricService.calculateAverageScore(anime);
 
-        // 只有 mapping1 (8.0*2) 和 mapping4 (9.0*1) 应该被计算
-        // (8.0*2 + 9.0*1) / (2+1) = 25/3 = 8.333...
-        assertEquals(8.333333333333334, anime.getAverageScore(), 0.0001);
+        // mapping1 (8.0*2) + mapping3 (0.0*1) + mapping4 (9.0*1), null 被忽略
+        // (8.0*2 + 0.0*1 + 9.0*1) / (2+1+1) = 25/4 = 6.25
+        assertEquals(6.25, anime.getAverageScore(), 0.0001);
     }
 
     @Test
     public void testCalculateAverageScore_WithNoMappings() {
         Anime anime = new Anime();
 
-        scoreService.calculateAverageScore(anime);
+        metricService.calculateAverageScore(anime);
 
         assertNull(anime.getAverageScore());
     }
 
     @Test
-    public void testCalculateAllAverageScore() {
+    public void testCalculateAllMetric() {
         // 创建并保存带有 mapping 的测试 anime
         Anime anime1 = new Anime();
         Mapping mapping1 = new Mapping();
@@ -207,7 +208,7 @@ public class ScoreServiceTest {
         anime1 = animeRepository.save(anime1);
         anime2 = animeRepository.save(anime2);
 
-        scoreService.calculateAllAverageScore();
+        metricService.calculateAllMetric();
 
         // 重新加载以获取更新后的值
         Anime reloadedAnime1 = animeRepository.findById(anime1.getAnimeId()).orElseThrow();
@@ -237,10 +238,10 @@ public class ScoreServiceTest {
         anime.addMapping(mapping1);
         anime.addMapping(mapping2);
 
-        scoreService.calculateAverageScore(anime);
+        metricService.calculateAverageScore(anime);
 
-        // 负分数应该被忽略，只计算 mapping2
-        assertEquals(8.0, anime.getAverageScore(), 0.0001);
+        // 负分参与计算: (-1.0*2 + 8.0*1) / (2+1) = 6/3 = 2.0
+        assertEquals(2.0, anime.getAverageScore(), 0.0001);
     }
 
     @Test
@@ -253,7 +254,7 @@ public class ScoreServiceTest {
 
         anime.addMapping(mapping);
 
-        scoreService.calculateAverageScore(anime);
+        metricService.calculateAverageScore(anime);
 
         assertEquals(7.5, anime.getAverageScore(), 0.0001);
     }
@@ -269,7 +270,7 @@ public class ScoreServiceTest {
 
         anime.addMapping(bangumi);
 
-        scoreService.calculateAverageScore(anime);
+        metricService.calculateAverageScore(anime);
 
         // (7.5*2) / 2 = 7.5
         assertEquals(7.5, anime.getAverageScore(), 0.0001);

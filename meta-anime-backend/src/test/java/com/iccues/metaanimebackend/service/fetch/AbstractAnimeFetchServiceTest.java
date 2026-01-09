@@ -2,6 +2,8 @@ package com.iccues.metaanimebackend.service.fetch;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.iccues.metaanimebackend.config.PlatformConfig;
+import com.iccues.metaanimebackend.config.PlatformConfigProperties;
 import com.iccues.metaanimebackend.entity.MappingInfo;
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
@@ -42,6 +44,9 @@ public class AbstractAnimeFetchServiceTest {
     @Mock
     private MappingRepository mappingRepository;
 
+    @Mock
+    private PlatformConfigProperties platformConfigProperties;
+
     private TestAnimeFetchService testService;
     private ObjectMapper objectMapper;
 
@@ -52,7 +57,15 @@ public class AbstractAnimeFetchServiceTest {
         testService.animeService = animeService;
         testService.animeRepository = animeRepository;
         testService.mappingRepository = mappingRepository;
+        testService.platformConfigProperties = platformConfigProperties;
         objectMapper = new ObjectMapper();
+
+        // 配置 platformConfigProperties mock
+        PlatformConfig bangumiConfig = new PlatformConfig();
+        bangumiConfig.setScoreMean(6.0);
+        bangumiConfig.setScoreStd(1.0);
+        bangumiConfig.setPopularityMultiplier(100.0);
+        lenient().when(platformConfigProperties.getConfig(Platform.Bangumi)).thenReturn(bangumiConfig);
     }
 
     @Test
@@ -423,19 +436,8 @@ public class AbstractAnimeFetchServiceTest {
         }
 
         @Override
-        protected double normalizeScore(double rawScore) {
-            // 简单的归一化：假设满分10分
-            return rawScore * 10;
-        }
-
-        @Override
         protected double extractRawPopularity(JsonNode jsonNode) {
             return jsonNode.path("popularity").asDouble(0.0);
-        }
-
-        @Override
-        protected double normalizePopularity(double rawPopularity) {
-            return rawPopularity;
         }
 
         @Override
