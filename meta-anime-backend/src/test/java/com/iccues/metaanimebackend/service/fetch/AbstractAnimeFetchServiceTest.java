@@ -13,8 +13,8 @@ import com.iccues.metaanimebackend.entity.Season;
 import com.iccues.metaanimebackend.exception.FetchFailedException;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
 import com.iccues.metaanimebackend.repo.MappingRepository;
-import com.iccues.metaanimebackend.service.AnimeService;
-import com.iccues.metaanimebackend.service.MappingService;
+import com.iccues.metaanimebackend.service.AnimeRepoService;
+import com.iccues.metaanimebackend.service.MappingRepoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,10 +33,10 @@ import static org.mockito.Mockito.*;
 public class AbstractAnimeFetchServiceTest {
 
     @Mock
-    private MappingService mappingService;
+    private MappingRepoService mappingRepoService;
 
     @Mock
-    private AnimeService animeService;
+    private AnimeRepoService animeRepoService;
 
     @Mock
     private AnimeRepository animeRepository;
@@ -53,8 +53,8 @@ public class AbstractAnimeFetchServiceTest {
     @BeforeEach
     public void setUp() {
         testService = new TestAnimeFetchService();
-        testService.mappingService = mappingService;
-        testService.animeService = animeService;
+        testService.mappingRepoService = mappingRepoService;
+        testService.animeRepoService = animeRepoService;
         testService.animeRepository = animeRepository;
         testService.mappingRepository = mappingRepository;
         testService.platformConfigProperties = platformConfigProperties;
@@ -103,7 +103,7 @@ public class AbstractAnimeFetchServiceTest {
         newAnime.setTitle(titles);
         newAnime.setStartDate(LocalDate.of(2024, 4, 1));
 
-        when(animeService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
+        when(animeRepoService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
                 .thenReturn(newAnime);
         when(animeRepository.save(any(Anime.class))).thenReturn(newAnime);
 
@@ -129,7 +129,7 @@ public class AbstractAnimeFetchServiceTest {
         existingAnime.setStartDate(LocalDate.of(2024, 4, 1));
         existingAnime.setCoverImage("https://example.com/old.jpg");
 
-        when(animeService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
+        when(animeRepoService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
                 .thenReturn(existingAnime);
         when(animeRepository.save(any(Anime.class))).thenReturn(existingAnime);
 
@@ -156,7 +156,7 @@ public class AbstractAnimeFetchServiceTest {
         Anime anime = new Anime();
         anime.setTitle(titles);
 
-        when(animeService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
+        when(animeRepoService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
                 .thenReturn(anime);
         when(animeRepository.save(any(Anime.class))).thenReturn(anime);
 
@@ -201,7 +201,7 @@ public class AbstractAnimeFetchServiceTest {
         Anime anime = new Anime();
         anime.setTitle(titles);
 
-        when(animeService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
+        when(animeRepoService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
                 .thenReturn(anime);
         when(animeRepository.save(any(Anime.class))).thenReturn(anime);
 
@@ -228,7 +228,7 @@ public class AbstractAnimeFetchServiceTest {
         testService.processAndSaveMapping(jsonNode);
 
         // 验证：应该调用 saveOrUpdate
-        verify(mappingService, times(1)).saveOrUpdate(any(Mapping.class));
+        verify(mappingRepoService, times(1)).saveOrUpdate(any(Mapping.class));
     }
 
     @Test
@@ -247,7 +247,7 @@ public class AbstractAnimeFetchServiceTest {
         testService.processAndSaveMapping(jsonNode);
 
         // 验证：应该调用 saveOrUpdate
-        verify(mappingService, times(1)).saveOrUpdate(any(Mapping.class));
+        verify(mappingRepoService, times(1)).saveOrUpdate(any(Mapping.class));
     }
 
     @Test
@@ -276,7 +276,7 @@ public class AbstractAnimeFetchServiceTest {
         testService.fetchAndSaveMappings(2024, Season.SPRING);
 
         // 验证：应该处理所有节点
-        verify(mappingService, times(2)).saveOrUpdate(any(Mapping.class));
+        verify(mappingRepoService, times(2)).saveOrUpdate(any(Mapping.class));
     }
 
     @Test
@@ -309,7 +309,7 @@ public class AbstractAnimeFetchServiceTest {
         // 验证
         assertNotNull(result);
         assertEquals("12345", result.getPlatformId());
-        verify(mappingService, times(1)).saveOrUpdate(any(Mapping.class));
+        verify(mappingRepoService, times(1)).saveOrUpdate(any(Mapping.class));
     }
 
     @Test
@@ -321,7 +321,7 @@ public class AbstractAnimeFetchServiceTest {
         assertThrows(FetchFailedException.class, () -> testService.fetchAndSaveMapping("99999"));
 
         // 验证：不应该调用 saveOrUpdate
-        verify(mappingService, never()).saveOrUpdate(any(Mapping.class));
+        verify(mappingRepoService, never()).saveOrUpdate(any(Mapping.class));
     }
 
     @Test
@@ -337,7 +337,7 @@ public class AbstractAnimeFetchServiceTest {
         assertTrue(exception.getMessage().contains("Bangumi"));
 
         // 验证：不应该调用 saveOrUpdate
-        verify(mappingService, never()).saveOrUpdate(any(Mapping.class));
+        verify(mappingRepoService, never()).saveOrUpdate(any(Mapping.class));
     }
 
     @Test
@@ -353,7 +353,7 @@ public class AbstractAnimeFetchServiceTest {
         assertTrue(exception.getMessage().contains("Bangumi"));
 
         // 验证：不应该调用 saveOrUpdate
-        verify(mappingService, never()).saveOrUpdate(any(Mapping.class));
+        verify(mappingRepoService, never()).saveOrUpdate(any(Mapping.class));
     }
 
     @Test
@@ -370,7 +370,7 @@ public class AbstractAnimeFetchServiceTest {
         assertTrue(exception.getMessage().contains("12345"));
 
         // 验证：不应该调用 saveOrUpdate
-        verify(mappingService, never()).saveOrUpdate(any(Mapping.class));
+        verify(mappingRepoService, never()).saveOrUpdate(any(Mapping.class));
     }
 
     @Test
@@ -387,7 +387,7 @@ public class AbstractAnimeFetchServiceTest {
         assertTrue(exception.getMessage().contains("12345"));
 
         // 验证：不应该调用 saveOrUpdate
-        verify(mappingService, never()).saveOrUpdate(any(Mapping.class));
+        verify(mappingRepoService, never()).saveOrUpdate(any(Mapping.class));
     }
 
     // 测试用的具体实现类

@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class AnimeService {
+public class AnimeRepoService {
 
     @Resource
     AnimeRepository repo;

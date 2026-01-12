@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-public class MappingServiceTest {
+public class MappingRepoServiceTest {
 
     @Resource
     private MappingRepository mappingRepository;
@@ -29,7 +29,7 @@ public class MappingServiceTest {
     private AnimeRepository animeRepository;
 
     @Resource
-    private MappingService mappingService;
+    private MappingRepoService mappingRepoService;
 
     private MappingInfo testMappingInfo;
 
@@ -56,7 +56,7 @@ public class MappingServiceTest {
         newMapping.setMappingInfo(testMappingInfo);
         newMapping.setUpdateTime(Instant.now());
 
-        mappingService.saveOrUpdate(newMapping);
+        mappingRepoService.saveOrUpdate(newMapping);
 
         Mapping saved = mappingRepository.findBySourcePlatformAndPlatformId(Platform.MyAnimeList, "12345");
         assertNotNull(saved);
@@ -93,7 +93,7 @@ public class MappingServiceTest {
         Instant newUpdateTime = Instant.now();
         updateMapping.setUpdateTime(newUpdateTime);
 
-        mappingService.saveOrUpdate(updateMapping);
+        mappingRepoService.saveOrUpdate(updateMapping);
 
         Mapping updated = mappingRepository.findBySourcePlatformAndPlatformId(Platform.MyAnimeList, "12345");
         assertNotNull(updated);
@@ -127,7 +127,7 @@ public class MappingServiceTest {
         updateMapping.setRawScore(8.5);
         updateMapping.setUpdateTime(Instant.now());
 
-        mappingService.saveOrUpdate(updateMapping);
+        mappingRepoService.saveOrUpdate(updateMapping);
 
         Mapping updated = mappingRepository.findBySourcePlatformAndPlatformId(Platform.MyAnimeList, "12345");
         assertNotNull(updated);
@@ -150,8 +150,8 @@ public class MappingServiceTest {
         bangumiMapping.setRawScore(7.8);
         bangumiMapping.setUpdateTime(Instant.now());
 
-        mappingService.saveOrUpdate(malMapping);
-        mappingService.saveOrUpdate(bangumiMapping);
+        mappingRepoService.saveOrUpdate(malMapping);
+        mappingRepoService.saveOrUpdate(bangumiMapping);
 
         Mapping savedMal = mappingRepository.findBySourcePlatformAndPlatformId(Platform.MyAnimeList, "12345");
         Mapping savedBangumi = mappingRepository.findBySourcePlatformAndPlatformId(Platform.Bangumi, "67890");
@@ -178,7 +178,7 @@ public class MappingServiceTest {
         updateMapping.setNormalizedScore(null);
         updateMapping.setUpdateTime(Instant.now());
 
-        mappingService.saveOrUpdate(updateMapping);
+        mappingRepoService.saveOrUpdate(updateMapping);
 
         Mapping updated = mappingRepository.findBySourcePlatformAndPlatformId(Platform.MyAnimeList, "12345");
         assertNotNull(updated);
@@ -201,7 +201,7 @@ public class MappingServiceTest {
         updateMapping.setMappingInfo(null);
         updateMapping.setUpdateTime(Instant.now());
 
-        mappingService.saveOrUpdate(updateMapping);
+        mappingRepoService.saveOrUpdate(updateMapping);
 
         Mapping updated = mappingRepository.findBySourcePlatformAndPlatformId(Platform.MyAnimeList, "12345");
         assertNotNull(updated);
@@ -222,8 +222,8 @@ public class MappingServiceTest {
         mapping2.setRawScore(7.8);
         mapping2.setUpdateTime(Instant.now());
 
-        mappingService.saveOrUpdate(mapping1);
-        mappingService.saveOrUpdate(mapping2);
+        mappingRepoService.saveOrUpdate(mapping1);
+        mappingRepoService.saveOrUpdate(mapping2);
 
         Mapping saved1 = mappingRepository.findBySourcePlatformAndPlatformId(Platform.MyAnimeList, "12345");
         Mapping saved2 = mappingRepository.findBySourcePlatformAndPlatformId(Platform.MyAnimeList, "67890");
@@ -243,7 +243,7 @@ public class MappingServiceTest {
         initialMapping.setRawScore(8.0);
         initialMapping.setUpdateTime(Instant.now());
 
-        mappingService.saveOrUpdate(initialMapping);
+        mappingRepoService.saveOrUpdate(initialMapping);
 
         Mapping update1 = new Mapping();
         update1.setSourcePlatform(Platform.MyAnimeList);
@@ -251,7 +251,7 @@ public class MappingServiceTest {
         update1.setRawScore(8.5);
         update1.setUpdateTime(Instant.parse("2024-01-01T00:00:00Z"));
 
-        mappingService.saveOrUpdate(update1);
+        mappingRepoService.saveOrUpdate(update1);
 
         Mapping update2 = new Mapping();
         update2.setSourcePlatform(Platform.MyAnimeList);
@@ -259,7 +259,7 @@ public class MappingServiceTest {
         update2.setRawScore(9.0);
         update2.setUpdateTime(Instant.parse("2024-01-02T00:00:00Z"));
 
-        mappingService.saveOrUpdate(update2);
+        mappingRepoService.saveOrUpdate(update2);
 
         Mapping finalMapping = mappingRepository.findBySourcePlatformAndPlatformId(Platform.MyAnimeList, "12345");
         assertNotNull(finalMapping);
@@ -277,7 +277,7 @@ public class MappingServiceTest {
         newMapping.setNormalizedScore(0.0);
         newMapping.setUpdateTime(Instant.now());
 
-        mappingService.saveOrUpdate(newMapping);
+        mappingRepoService.saveOrUpdate(newMapping);
 
         Mapping saved = mappingRepository.findBySourcePlatformAndPlatformId(Platform.MyAnimeList, "12345");
         assertNotNull(saved);
@@ -292,14 +292,14 @@ public class MappingServiceTest {
         mapping1.setPlatformId("12345");
         mapping1.setRawScore(8.5);
         mapping1.setUpdateTime(Instant.now());
-        mappingService.saveOrUpdate(mapping1);
+        mappingRepoService.saveOrUpdate(mapping1);
 
         Mapping mapping2 = new Mapping();
         mapping2.setSourcePlatform(Platform.MyAnimeList);
         mapping2.setPlatformId("12345");
         mapping2.setRawScore(9.0);
         mapping2.setUpdateTime(Instant.now());
-        mappingService.saveOrUpdate(mapping2);
+        mappingRepoService.saveOrUpdate(mapping2);
 
         long count = mappingRepository.count();
         assertEquals(1, count);
@@ -315,7 +315,7 @@ public class MappingServiceTest {
         initialMapping.setPlatformId("12345");
         initialMapping.setRawScore(8.0);
         initialMapping.setUpdateTime(Instant.now());
-        mappingService.saveOrUpdate(initialMapping);
+        mappingRepoService.saveOrUpdate(initialMapping);
 
         Mapping saved = mappingRepository.findBySourcePlatformAndPlatformId(Platform.MyAnimeList, "12345");
         assertEquals(0, saved.getVersion());
@@ -325,7 +325,7 @@ public class MappingServiceTest {
         updateMapping.setPlatformId("12345");
         updateMapping.setRawScore(8.5);
         updateMapping.setUpdateTime(Instant.now());
-        mappingService.saveOrUpdate(updateMapping);
+        mappingRepoService.saveOrUpdate(updateMapping);
 
         Mapping updated = mappingRepository.findBySourcePlatformAndPlatformId(Platform.MyAnimeList, "12345");
         assertEquals(1, updated.getVersion());
