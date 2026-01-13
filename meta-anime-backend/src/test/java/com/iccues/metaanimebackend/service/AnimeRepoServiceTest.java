@@ -2,6 +2,7 @@ package com.iccues.metaanimebackend.service;
 
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
+import com.iccues.metaanimebackend.entity.MappingInfo;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.AfterEach;
@@ -95,43 +96,43 @@ public class AnimeRepoServiceTest {
     }
 
     @Test
-    public void testFindAnime_NoMatchingAnime_CreatesNew() {
-        LocalDate testDate = LocalDate.of(2024, 1, 15);
+    public void testCreateAnime_WithAllFields() {
+        AnimeTitles titles = new AnimeTitles();
+        titles.setTitleNative("進撃の巨人");
+        titles.setTitleRomaji("Shingeki no Kyojin");
+        titles.setTitleEn("Attack on Titan");
 
-        AnimeTitles existingTitles = new AnimeTitles();
-        existingTitles.setTitleNative("進撃の巨人");
+        MappingInfo mappingInfo = new MappingInfo(
+                titles,
+                "https://example.com/cover.jpg",
+                LocalDate.of(2024, 1, 15)
+        );
 
-        Anime existingAnime = new Anime();
-        existingAnime.setStartDate(testDate);
-        existingAnime.setTitle(existingTitles);
-        animeRepository.save(existingAnime);
-
-        AnimeTitles newTitles = new AnimeTitles();
-        newTitles.setTitleNative("鬼滅の刃");
-        newTitles.setTitleRomaji("Kimetsu no Yaiba");
-
-        Anime result = animeRepoService.findAnime(testDate, newTitles);
+        Anime result = animeRepoService.createAnime(mappingInfo);
 
         assertNotNull(result);
-        assertNull(result.getAnimeId());
-        assertEquals(testDate, result.getStartDate());
-        assertEquals("鬼滅の刃", result.getTitle().getTitleNative());
-        assertEquals("Kimetsu no Yaiba", result.getTitle().getTitleRomaji());
+        assertNull(result.getAnimeId()); // 未保存到数据库
+        assertEquals(LocalDate.of(2024, 1, 15), result.getStartDate());
+        assertEquals("進撃の巨人", result.getTitle().getTitleNative());
+        assertEquals("Shingeki no Kyojin", result.getTitle().getTitleRomaji());
+        assertEquals("Attack on Titan", result.getTitle().getTitleEn());
+        assertEquals("https://example.com/cover.jpg", result.getCoverImage());
     }
 
     @Test
-    public void testFindAnime_EmptyDatabase_CreatesNew() {
-        LocalDate testDate = LocalDate.of(2024, 1, 15);
+    public void testCreateAnime_WithMinimalFields() {
+        AnimeTitles titles = new AnimeTitles();
+        titles.setTitleNative("One Piece");
 
-        AnimeTitles newTitles = new AnimeTitles();
-        newTitles.setTitleNative("One Piece");
+        MappingInfo mappingInfo = new MappingInfo(titles, null, null);
 
-        Anime result = animeRepoService.findAnime(testDate, newTitles);
+        Anime result = animeRepoService.createAnime(mappingInfo);
 
         assertNotNull(result);
         assertNull(result.getAnimeId());
-        assertEquals(testDate, result.getStartDate());
-        assertEquals(newTitles, result.getTitle());
+        assertNull(result.getStartDate());
+        assertNull(result.getCoverImage());
+        assertEquals("One Piece", result.getTitle().getTitleNative());
     }
 
     @Test
@@ -186,19 +187,6 @@ public class AnimeRepoServiceTest {
         assertEquals("Shingeki no Kyojin", result.getTitle().getTitleRomaji());
         assertEquals("Attack on Titan", result.getTitle().getTitleEn());
         assertEquals("进击的巨人", result.getTitle().getTitleCn());
-    }
-
-    @Test
-    public void testFindAnime_NullDate_CreatesNewWithoutQuery() {
-        AnimeTitles newTitles = new AnimeTitles();
-        newTitles.setTitleNative("Test Anime");
-
-        Anime result = animeRepoService.findAnime(null, newTitles);
-
-        assertNotNull(result);
-        assertNull(result.getAnimeId());
-        assertNull(result.getStartDate());
-        assertEquals(newTitles, result.getTitle());
     }
 
     @Test

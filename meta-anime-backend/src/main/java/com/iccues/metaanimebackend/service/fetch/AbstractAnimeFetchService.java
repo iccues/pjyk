@@ -79,15 +79,16 @@ public abstract class AbstractAnimeFetchService {
 
     @Transactional
     Anime findOrCreateAnime(MappingInfo mappingInfo) {
-        LocalDate startDate = mappingInfo.getStartDate();
-        AnimeTitles titles = mappingInfo.getTitle();
+        Anime existing = animeRepoService.findAnime(
+                mappingInfo.getStartDate(),
+                mappingInfo.getTitle()
+        );
 
-        Anime anime = animeRepoService.findAnime(startDate, titles);
-
-        if (anime.getCoverImage() == null) {
-            anime.setCoverImage(mappingInfo.getCoverImage());
+        if (existing != null) {
+            return existing;
         }
 
+        Anime anime = animeRepoService.createAnime(mappingInfo);
         return animeRepository.save(anime);
     }
 

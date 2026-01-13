@@ -98,13 +98,16 @@ public class AbstractAnimeFetchServiceTest {
         titles.setTitleNative("New Anime");
         MappingInfo mappingInfo = new MappingInfo(titles, "https://example.com/new.jpg", LocalDate.of(2024, 4, 1));
 
-        // Mock animeService 返回一个新动画（没有封面）
+        // Mock animeRepoService.findAnime 返回 null（找不到现有动画）
+        when(animeRepoService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
+                .thenReturn(null);
+
+        // Mock animeRepoService.createAnime 返回新创建的动画
         Anime newAnime = new Anime();
         newAnime.setTitle(titles);
         newAnime.setStartDate(LocalDate.of(2024, 4, 1));
-
-        when(animeRepoService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
-                .thenReturn(newAnime);
+        newAnime.setCoverImage("https://example.com/new.jpg");
+        when(animeRepoService.createAnime(any(MappingInfo.class))).thenReturn(newAnime);
         when(animeRepository.save(any(Anime.class))).thenReturn(newAnime);
 
         // 调用方法
@@ -113,6 +116,7 @@ public class AbstractAnimeFetchServiceTest {
         // 验证结果
         assertNotNull(result);
         assertEquals("https://example.com/new.jpg", result.getCoverImage());
+        verify(animeRepoService, times(1)).createAnime(mappingInfo);
         verify(animeRepository, times(1)).save(newAnime);
     }
 
@@ -123,7 +127,7 @@ public class AbstractAnimeFetchServiceTest {
         titles.setTitleNative("Existing Anime");
         MappingInfo mappingInfo = new MappingInfo(titles, "https://example.com/new.jpg", LocalDate.of(2024, 4, 1));
 
-        // Mock animeService 返回一个已有封面的动画
+        // Mock animeRepoService.findAnime 返回一个已有封面的动画
         Anime existingAnime = new Anime();
         existingAnime.setTitle(titles);
         existingAnime.setStartDate(LocalDate.of(2024, 4, 1));
@@ -131,15 +135,15 @@ public class AbstractAnimeFetchServiceTest {
 
         when(animeRepoService.findAnime(any(LocalDate.class), any(AnimeTitles.class)))
                 .thenReturn(existingAnime);
-        when(animeRepository.save(any(Anime.class))).thenReturn(existingAnime);
 
         // 调用方法
         Anime result = testService.findOrCreateAnime(mappingInfo);
 
-        // 验证结果：封面不应该被覆盖
+        // 验证结果：应该直接返回现有的 Anime，不调用 save
         assertNotNull(result);
         assertEquals("https://example.com/old.jpg", result.getCoverImage());
-        verify(animeRepository, times(1)).save(existingAnime);
+        verify(animeRepository, never()).save(any(Anime.class));
+        verify(animeRepoService, never()).createAnime(any(MappingInfo.class));
     }
 
     @Test
@@ -152,7 +156,7 @@ public class AbstractAnimeFetchServiceTest {
         // 准备未关联的 Mapping
         Mapping mapping = new Mapping(Platform.Bangumi, "12345", mappingInfo);
 
-        // Mock anime
+        // Mock anime - findAnime 返回现有的 Anime
         Anime anime = new Anime();
         anime.setTitle(titles);
 
@@ -163,22 +167,8 @@ public class AbstractAnimeFetchServiceTest {
         // 调用方法
         testService.linkMappingToAnime(mapping);
 
-        // 验证：findOrCreateAnime 调用一次，linkMappingToAnime 又调用一次，共2次
-        verify(animeRepository, times(2)).save(anime);
-    }
-
-    @Test
-    public void testLinkMappingToAnime_AlreadyLinkedMapping() {
-        // 准备已关联的 Mapping
-        Anime existingAnime = new Anime();
-        Mapping mapping = new Mapping();
-        mapping.setAnime(existingAnime);
-
-        // 调用方法
-        testService.linkMappingToAnime(mapping);
-
-        // 验证：不应该调用 save（因为已经关联）
-        verify(animeRepository, never()).save(any(Anime.class));
+        // 验证：findOrCreateAnime 找到现有 Anime 不调用 save，linkMappingToAnime 调用一次，共1次
+        verify(animeRepository, times(1)).save(anime);
     }
 
     @Test
@@ -197,7 +187,7 @@ public class AbstractAnimeFetchServiceTest {
         when(mappingRepository.findAllBySourcePlatformAndAnimeIsNull(Platform.Bangumi))
                 .thenReturn(orphanedMappings);
 
-        // Mock anime service
+        // Mock anime service - findAnime 返回现有的 Anime
         Anime anime = new Anime();
         anime.setTitle(titles);
 
@@ -208,8 +198,8 @@ public class AbstractAnimeFetchServiceTest {
         // 调用方法
         testService.linkAllOrphanedMappings();
 
-        // 验证：每个 mapping 调用 linkMappingToAnime，每次都会调用 save 2次（findOrCreateAnime + linkMappingToAnime），共4次
-        verify(animeRepository, times(4)).save(any(Anime.class));
+        // 验证：每个 mapping 调用 linkMappingToAnime，findOrCreateAnime 找到现有 Anime 不调用 save，linkMappingToAnime 调用一次，共2次
+        verify(animeRepository, times(2)).save(any(Anime.class));
     }
 
     @Test
