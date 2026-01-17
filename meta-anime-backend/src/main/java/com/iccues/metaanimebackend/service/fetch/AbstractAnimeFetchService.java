@@ -12,8 +12,8 @@ import com.iccues.metaanimebackend.entity.Season;
 import com.iccues.metaanimebackend.exception.FetchFailedException;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
 import com.iccues.metaanimebackend.repo.MappingRepository;
-import com.iccues.metaanimebackend.service.MappingService;
-import com.iccues.metaanimebackend.service.AnimeService;
+import com.iccues.metaanimebackend.service.MappingRepoService;
+import com.iccues.metaanimebackend.service.AnimeRepoService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,10 +25,10 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractAnimeFetchService {
     @Resource
-    protected MappingService mappingService;
+    protected MappingRepoService mappingRepoService;
 
     @Resource
-    protected AnimeService animeService;
+    protected AnimeRepoService animeRepoService;
 
     @Resource
     protected AnimeRepository animeRepository;
@@ -82,7 +82,7 @@ public abstract class AbstractAnimeFetchService {
         LocalDate startDate = mappingInfo.getStartDate();
         AnimeTitles titles = mappingInfo.getTitle();
 
-        Anime anime = animeService.findAnime(startDate, titles);
+        Anime anime = animeRepoService.findAnime(startDate, titles);
 
         if (anime.getCoverImage() == null) {
             anime.setCoverImage(mappingInfo.getCoverImage());
@@ -128,7 +128,7 @@ public abstract class AbstractAnimeFetchService {
         mapping.setRawPopularity(normalizedPopularity);
         mapping.setNormalizedPopularity(normalizedPopularity);
 
-        mappingService.saveOrUpdate(mapping);
+        mappingRepoService.saveOrUpdate(mapping);
     }
 
     @Transactional

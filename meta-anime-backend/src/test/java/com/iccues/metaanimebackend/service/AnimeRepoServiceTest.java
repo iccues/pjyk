@@ -16,13 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-public class AnimeServiceTest {
+public class AnimeRepoServiceTest {
 
     @Resource
     private AnimeRepository animeRepository;
 
     @Resource
-    private AnimeService animeService;
+    private AnimeRepoService animeRepoService;
 
     @AfterEach
     public void cleanup() {
@@ -42,7 +42,7 @@ public class AnimeServiceTest {
         anime.setTitle(titles);
         animeRepository.save(anime);
 
-        List<Anime> result = animeService.findAnimeAroundDate(testDate);
+        List<Anime> result = animeRepoService.findAnimeAroundDate(testDate);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -51,7 +51,7 @@ public class AnimeServiceTest {
 
     @Test
     public void testFindAnimeAroundDate_WithNullDate() {
-        List<Anime> result = animeService.findAnimeAroundDate(null);
+        List<Anime> result = animeRepoService.findAnimeAroundDate(null);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -61,7 +61,7 @@ public class AnimeServiceTest {
     public void testFindAnimeAroundDate_WithNoResults() {
         LocalDate testDate = LocalDate.of(2024, 1, 15);
 
-        List<Anime> result = animeService.findAnimeAroundDate(testDate);
+        List<Anime> result = animeRepoService.findAnimeAroundDate(testDate);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -85,7 +85,7 @@ public class AnimeServiceTest {
         newTitles.setTitleNative("進撃の巨人");
         newTitles.setTitleCn("进击的巨人");
 
-        Anime result = animeService.findAnime(testDate, newTitles);
+        Anime result = animeRepoService.findAnime(testDate, newTitles);
 
         assertNotNull(result);
         assertEquals(existingAnime.getAnimeId(), result.getAnimeId());
@@ -110,7 +110,7 @@ public class AnimeServiceTest {
         newTitles.setTitleNative("鬼滅の刃");
         newTitles.setTitleRomaji("Kimetsu no Yaiba");
 
-        Anime result = animeService.findAnime(testDate, newTitles);
+        Anime result = animeRepoService.findAnime(testDate, newTitles);
 
         assertNotNull(result);
         assertNull(result.getAnimeId());
@@ -126,7 +126,7 @@ public class AnimeServiceTest {
         AnimeTitles newTitles = new AnimeTitles();
         newTitles.setTitleNative("One Piece");
 
-        Anime result = animeService.findAnime(testDate, newTitles);
+        Anime result = animeRepoService.findAnime(testDate, newTitles);
 
         assertNotNull(result);
         assertNull(result.getAnimeId());
@@ -155,7 +155,7 @@ public class AnimeServiceTest {
         AnimeTitles searchTitles = new AnimeTitles();
         searchTitles.setTitleNative("鬼滅の刃");
 
-        Anime result = animeService.findAnime(testDate, searchTitles);
+        Anime result = animeRepoService.findAnime(testDate, searchTitles);
 
         assertNotNull(result);
         assertEquals(anime2.getAnimeId(), result.getAnimeId());
@@ -179,7 +179,7 @@ public class AnimeServiceTest {
         newTitles.setTitleNative("進撃の巨人");
         newTitles.setTitleCn("进击的巨人");
 
-        Anime result = animeService.findAnime(testDate, newTitles);
+        Anime result = animeRepoService.findAnime(testDate, newTitles);
 
         assertNotNull(result);
         assertEquals("進撃の巨人", result.getTitle().getTitleNative());
@@ -193,7 +193,7 @@ public class AnimeServiceTest {
         AnimeTitles newTitles = new AnimeTitles();
         newTitles.setTitleNative("Test Anime");
 
-        Anime result = animeService.findAnime(null, newTitles);
+        Anime result = animeRepoService.findAnime(null, newTitles);
 
         assertNotNull(result);
         assertNull(result.getAnimeId());
@@ -233,7 +233,7 @@ public class AnimeServiceTest {
         anime4.setTitle(titles4);
         animeRepository.save(anime4);
 
-        List<Anime> result = animeService.findAnimeAroundDate(centerDate);
+        List<Anime> result = animeRepoService.findAnimeAroundDate(centerDate);
 
         assertEquals(3, result.size());
     }
@@ -253,7 +253,7 @@ public class AnimeServiceTest {
         AnimeTitles newTitles = new AnimeTitles();
         newTitles.setTitleNative("Attack on Titan Season 2");
 
-        Anime result = animeService.findAnime(testDate, newTitles);
+        Anime result = animeRepoService.findAnime(testDate, newTitles);
 
         assertNotNull(result);
         assertEquals(existingAnime.getAnimeId(), result.getAnimeId());
