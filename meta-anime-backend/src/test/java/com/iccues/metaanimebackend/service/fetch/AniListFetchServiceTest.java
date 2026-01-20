@@ -137,9 +137,9 @@ public class AniListFetchServiceTest {
                 """;
         JsonNode jsonNode = objectMapper.readTree(jsonString);
 
-        double result = service.extractRawScore(jsonNode);
+        Double result = service.extractRawScore(jsonNode);
 
-        assertEquals(0.0, result, 0.001);
+        assertNull(result);
     }
 
     @Test

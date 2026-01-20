@@ -45,7 +45,7 @@ public class BangumiFetchService extends AbstractAnimeFetchService {
     }
 
     @Override
-    protected double extractRawScore(JsonNode jsonNode) {
+    protected Double extractRawScore(JsonNode jsonNode) {
         return jsonNode.path("rating").path("score").asDouble();
     }
 

@@ -51,8 +51,12 @@ public class MyAnimeListFetchService extends AbstractAnimeFetchService {
     }
 
     @Override
-    protected double extractRawScore(JsonNode jsonNode) {
-        return jsonNode.path("mean").asDouble();
+    protected Double extractRawScore(JsonNode jsonNode) {
+        double score = jsonNode.path("mean").asDouble();
+        if (score <= 0.0) {
+            return null;
+        }
+        return score;
     }
 
     @Override

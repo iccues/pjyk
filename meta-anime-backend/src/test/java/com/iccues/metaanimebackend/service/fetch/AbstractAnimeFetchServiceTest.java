@@ -298,7 +298,7 @@ public class AbstractAnimeFetchServiceTest {
         }
 
         @Override
-        protected double extractRawScore(JsonNode jsonNode) {
+        protected Double extractRawScore(JsonNode jsonNode) {
             return jsonNode.path("score").asDouble(0.0);
         }
 
