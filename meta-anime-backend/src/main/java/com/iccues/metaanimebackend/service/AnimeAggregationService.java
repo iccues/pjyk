@@ -12,19 +12,24 @@ import java.util.List;
 public class AnimeAggregationService {
     @Resource
     MetricService metricService;
+    @Resource
+    InfoService infoService;
 
     public void addMappingWithMetrics(Anime anime, Mapping mapping) {
         Anime oldAnime = mapping.getAnime();
         anime.addMapping(mapping);
         metricService.calculateMetric(anime);
+        infoService.aggregateInfo(anime);
         if (oldAnime != null && !oldAnime.equals(anime)) {
             metricService.calculateMetric(oldAnime);
+            infoService.aggregateInfo(oldAnime);
         }
     }
 
     public void removeMappingWithMetrics(Anime anime, Mapping mapping) {
         anime.removeMapping(mapping);
         metricService.calculateMetric(anime);
+        infoService.aggregateInfo(anime);
     }
 
     public void addMappingIfAbsent(Anime anime, Mapping mapping) {

@@ -19,6 +19,9 @@ public class AnimeAggregationServiceTest {
     @Mock
     private MetricService metricService;
 
+    @Mock
+    private InfoService infoService;
+
     @InjectMocks
     private AnimeAggregationService animeAggregationService;
 
@@ -54,8 +57,9 @@ public class AnimeAggregationServiceTest {
         assertTrue(anime1.getMappings().contains(mapping1));
         assertEquals(anime1, mapping1.getAnime());
 
-        // 验证 metricService.calculateMetric() 被调用一次
+        // 验证 metricService.calculateMetric() 和 infoService.aggregateInfo() 被调用一次
         verify(metricService, times(1)).calculateMetric(anime1);
+        verify(infoService, times(1)).aggregateInfo(anime1);
     }
 
     @Test
@@ -71,9 +75,11 @@ public class AnimeAggregationServiceTest {
         assertTrue(anime2.getMappings().contains(mapping1));
         assertEquals(anime2, mapping1.getAnime());
 
-        // 验证两个 anime 的指标都被重新计算
+        // 验证两个 anime 的指标和信息都被重新计算
         verify(metricService, times(1)).calculateMetric(anime2);
         verify(metricService, times(1)).calculateMetric(anime1);
+        verify(infoService, times(1)).aggregateInfo(anime2);
+        verify(infoService, times(1)).aggregateInfo(anime1);
     }
 
     @Test
@@ -88,8 +94,9 @@ public class AnimeAggregationServiceTest {
         assertTrue(anime1.getMappings().contains(mapping1));
         assertEquals(anime1, mapping1.getAnime());
 
-        // 验证只计算一次指标（因为 oldAnime == anime）
+        // 验证只计算一次指标和信息（因为 oldAnime == anime）
         verify(metricService, times(1)).calculateMetric(anime1);
+        verify(infoService, times(1)).aggregateInfo(anime1);
     }
 
     // ==================== removeMappingWithMetrics 测试 ====================
@@ -106,8 +113,9 @@ public class AnimeAggregationServiceTest {
         assertFalse(anime1.getMappings().contains(mapping1));
         assertNull(mapping1.getAnime());
 
-        // 验证 metricService.calculateMetric() 被调用
+        // 验证 metricService.calculateMetric() 和 infoService.aggregateInfo() 被调用
         verify(metricService, times(1)).calculateMetric(anime1);
+        verify(infoService, times(1)).aggregateInfo(anime1);
     }
 
     // ==================== addMappingIfAbsent 测试 ====================
@@ -121,8 +129,9 @@ public class AnimeAggregationServiceTest {
         assertTrue(anime1.getMappings().contains(mapping1));
         assertEquals(anime1, mapping1.getAnime());
 
-        // 验证指标被计算
+        // 验证指标和信息被计算
         verify(metricService, times(1)).calculateMetric(anime1);
+        verify(infoService, times(1)).aggregateInfo(anime1);
     }
 
     @Test
@@ -159,8 +168,9 @@ public class AnimeAggregationServiceTest {
         assertTrue(anime1.getMappings().contains(mapping1));
         assertEquals(anime1, mapping1.getAnime());
 
-        // 验证指标被计算一次
+        // 验证指标和信息被计算一次
         verify(metricService, times(1)).calculateMetric(anime1);
+        verify(infoService, times(1)).aggregateInfo(anime1);
     }
 
     @Test
@@ -179,8 +189,9 @@ public class AnimeAggregationServiceTest {
         assertEquals(anime1, mapping1.getAnime());
         assertNull(oldBangumiMapping.getAnime());
 
-        // 验证指标被计算两次（移除时一次，添加时一次）
+        // 验证指标和信息被计算两次（移除时一次，添加时一次）
         verify(metricService, times(2)).calculateMetric(anime1);
+        verify(infoService, times(2)).aggregateInfo(anime1);
     }
 
     // ==================== mergeAnime 测试 ====================
@@ -211,10 +222,12 @@ public class AnimeAggregationServiceTest {
         assertEquals(anime1, mapping2.getAnime());
         assertEquals(anime1, mapping3.getAnime());
 
-        // 验证指标被计算（每次添加都会计算，但 addMappingWithMetrics 会为移动的 mapping 计算两次：旧 anime 和新 anime）
+        // 验证指标和信息被计算（每次添加都会计算，但 addMappingWithMetrics 会为移动的 mapping 计算两次：旧 anime 和新 anime）
         // mapping2 和 mapping3 从 anime2 移动到 anime1，每个都会触发 2 次计算（anime1 一次，anime2 一次）
         verify(metricService, times(2)).calculateMetric(anime1);
         verify(metricService, times(2)).calculateMetric(anime2);
+        verify(infoService, times(2)).aggregateInfo(anime1);
+        verify(infoService, times(2)).aggregateInfo(anime2);
     }
 
     @Test
@@ -248,6 +261,8 @@ public class AnimeAggregationServiceTest {
         // mapping2 会被添加，触发 2 次计算（anime1 一次，anime2 一次）
         verify(metricService, times(1)).calculateMetric(anime1);
         verify(metricService, times(1)).calculateMetric(anime2);
+        verify(infoService, times(1)).aggregateInfo(anime1);
+        verify(infoService, times(1)).aggregateInfo(anime2);
     }
 
     @Test

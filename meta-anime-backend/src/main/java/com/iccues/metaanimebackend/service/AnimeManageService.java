@@ -44,7 +44,7 @@ public class AnimeManageService {
         Specification<Anime> spec = Specification.allOf(
                 AnimeSpec.reviewStatusEquals(reviewStatus),
                 AnimeSpec.startDateBetween(dateRange),
-                AnimeSpec.orderById()
+                AnimeSpec.orderByScoreNullLast()
         );
         return animeRepository.findAll(spec);
     }

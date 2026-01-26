@@ -131,7 +131,7 @@ public class TitleBasedLinkServiceTest {
         List<Mapping> orphanedMappings = List.of(mapping1, mapping2);
 
         // Mock repository
-        when(mappingRepository.findAllByAnimeIsNull())
+        when(mappingRepository.findAllByAnimeIsNullAndMappingInfo_StartDateIsNotNull())
                 .thenReturn(orphanedMappings);
 
         // Mock anime service - findAnime 返回现有的 Anime

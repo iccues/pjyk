@@ -41,7 +41,7 @@ public class TitleBasedLinkService {
 
     @Transactional
     public void linkMappingToAnime(Mapping mapping) {
-        if (mapping.getAnime() == null) {
+        if (mapping.getAnime() == null && mapping.getMappingInfo().getStartDate() != null) {
             Anime anime = findOrCreateAnime(mapping.getMappingInfo());
             animeAggregationService.addMappingIfAbsent(anime, mapping);
             animeRepository.save(anime);
@@ -50,7 +50,7 @@ public class TitleBasedLinkService {
 
     @Transactional
     public void linkAllOrphanedMappings() {
-        List<Mapping> mappings = mappingRepository.findAllByAnimeIsNull();
+        List<Mapping> mappings = mappingRepository.findAllByAnimeIsNullAndMappingInfo_StartDateIsNotNull();
         for (Mapping mapping : mappings) {
             linkMappingToAnime(mapping);
         }

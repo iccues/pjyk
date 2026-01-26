@@ -12,6 +12,5 @@ public interface MappingRepository extends JpaRepository<Mapping, Long> {
     Mapping findBySourcePlatformAndPlatformId(Platform sourcePlatform, String platformId);
 
     List<Mapping> findAllByAnimeIsNull();
-
-    List<Mapping> findAllBySourcePlatformAndAnimeIsNull(Platform sourcePlatform);
+    List<Mapping> findAllByAnimeIsNullAndMappingInfo_StartDateIsNotNull();
 }
