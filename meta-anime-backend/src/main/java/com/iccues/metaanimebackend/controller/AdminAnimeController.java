@@ -61,4 +61,11 @@ public class AdminAnimeController {
         animeManageService.deleteAnime(animeId);
         return Response.ok(null);
     }
+
+    @ResponseBody
+    @DeleteMapping("/delete_non_approved_animes")
+    public Response<Void> deleteNonApprovedAnimes() {
+        animeManageService.deleteNonApprovedAnimes();
+        return Response.ok(null);
+    }
 }

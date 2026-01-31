@@ -36,7 +36,7 @@ public class Anime {
     ReviewStatus reviewStatus = ReviewStatus.PENDING;
 
     @OneToMany(mappedBy = "anime",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             fetch = FetchType.LAZY)
     List<Mapping> mappings = new ArrayList<>();
 

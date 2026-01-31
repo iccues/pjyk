@@ -85,4 +85,10 @@ public class AnimeManageService {
 
         animeRepository.delete(anime);
     }
+
+    @Transactional
+    public void deleteNonApprovedAnimes() {
+        animeRepository.deleteAllByReviewStatusIsNot(ReviewStatus.APPROVED);
+        mappingRepository.deleteAllByAnimeIsNull();
+    }
 }

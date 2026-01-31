@@ -13,4 +13,6 @@ public interface MappingRepository extends JpaRepository<Mapping, Long> {
 
     List<Mapping> findAllByAnimeIsNull();
     List<Mapping> findAllByAnimeIsNullAndMappingInfo_StartDateIsNotNull();
+
+    void deleteAllByAnimeIsNull();
 }
