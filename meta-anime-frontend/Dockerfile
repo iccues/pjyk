@@ -1,19 +1,25 @@
 # 多阶段构建 - 构建阶段
 FROM node:25.2.1 AS build
 
+# 安装并启用 corepack
+RUN npm install -g corepack --force && corepack enable
+
 WORKDIR /app
 
 # 复制 package 文件
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml ./
+
+# 准备 pnpm
+RUN corepack prepare --activate
 
 # 安装依赖
-RUN npm ci
+RUN pnpm install --frozen-lockfile
 
 # 复制源代码
 COPY . .
 
 # 构建生产版本
-RUN npm run build
+RUN pnpm run build
 
 # 生产阶段 - 使用 nginx 提供静态文件
 FROM nginx:1.29.4

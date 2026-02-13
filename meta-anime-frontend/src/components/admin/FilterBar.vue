@@ -31,8 +31,11 @@ const emit = defineEmits<{
       :model-value="selectedReviewStatus"
       placeholder="审核状态"
       size="small"
-      style="width: 110px;"
-      @update:model-value="emit('update:selectedReviewStatus', $event); emit('change')"
+      style="width: 110px"
+      @update:model-value="
+        emit('update:selectedReviewStatus', $event);
+        emit('change');
+      "
     >
       <el-option
         v-for="option in reviewStatusOptions"
@@ -46,9 +49,12 @@ const emit = defineEmits<{
       :model-value="selectedYear"
       placeholder="年份"
       size="small"
-      style="width: 100px;"
+      style="width: 100px"
       clearable
-      @update:model-value="emit('update:selectedYear', $event); emit('change')"
+      @update:model-value="
+        emit('update:selectedYear', $event);
+        emit('change');
+      "
     >
       <el-option
         v-for="option in yearOptions"
@@ -62,9 +68,12 @@ const emit = defineEmits<{
       :model-value="selectedSeason"
       placeholder="季度"
       size="small"
-      style="width: 100px;"
+      style="width: 100px"
       clearable
-      @update:model-value="emit('update:selectedSeason', $event); emit('change')"
+      @update:model-value="
+        emit('update:selectedSeason', $event);
+        emit('change');
+      "
     >
       <el-option
         v-for="option in seasonOptions"

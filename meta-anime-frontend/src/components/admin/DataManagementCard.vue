@@ -28,9 +28,7 @@ const handleDeleteNonApprovedAnimes = async () => {
       // 用户取消操作
       return;
     }
-    ElMessage.error(
-      "删除失败: " + (e instanceof Error ? e.message : "未知错误"),
-    );
+    ElMessage.error("删除失败: " + (e instanceof Error ? e.message : "未知错误"));
   } finally {
     loading.value = false;
   }
@@ -56,9 +54,7 @@ const handleDeleteNonApprovedAnimes = async () => {
       >
         删除未通过动画
       </el-button>
-      <p class="text-sm text-gray-500 mt-3">
-        删除所有 PENDING 和 REJECTED 状态的动画及其映射
-      </p>
+      <p class="text-sm text-gray-500 mt-3">删除所有 PENDING 和 REJECTED 状态的动画及其映射</p>
     </div>
   </el-card>
 </template>

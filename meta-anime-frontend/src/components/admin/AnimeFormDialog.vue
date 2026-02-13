@@ -41,15 +41,11 @@ const formData = ref<AnimeForm>({
 const isEditMode = computed(() => !!props.anime);
 
 // 对话框标题
-const dialogTitle = computed(() =>
-  isEditMode.value ? "编辑动画" : "创建动画",
-);
+const dialogTitle = computed(() => (isEditMode.value ? "编辑动画" : "创建动画"));
 
 // 表单验证规则
 const rules: FormRules<AnimeForm> = {
-  "title.titleNative": [
-    { required: true, message: "请输入原生标题", trigger: "blur" },
-  ],
+  "title.titleNative": [{ required: true, message: "请输入原生标题", trigger: "blur" }],
   coverImage: [
     {
       type: "url",
@@ -135,11 +131,7 @@ const handleSubmit = async () => {
       <el-divider content-position="left">标题信息</el-divider>
 
       <el-form-item label="中文标题" prop="title.titleCn">
-        <el-input
-          v-model="formData.title.titleCn"
-          placeholder="请输入中文标题"
-          clearable
-        />
+        <el-input v-model="formData.title.titleCn" placeholder="请输入中文标题" clearable />
       </el-form-item>
 
       <el-form-item label="原生标题" prop="title.titleNative" required>
@@ -151,29 +143,17 @@ const handleSubmit = async () => {
       </el-form-item>
 
       <el-form-item label="罗马音标题" prop="title.titleRomaji">
-        <el-input
-          v-model="formData.title.titleRomaji"
-          placeholder="请输入罗马音标题"
-          clearable
-        />
+        <el-input v-model="formData.title.titleRomaji" placeholder="请输入罗马音标题" clearable />
       </el-form-item>
 
       <el-form-item label="英文标题" prop="title.titleEn">
-        <el-input
-          v-model="formData.title.titleEn"
-          placeholder="请输入英文标题"
-          clearable
-        />
+        <el-input v-model="formData.title.titleEn" placeholder="请输入英文标题" clearable />
       </el-form-item>
 
       <el-divider content-position="left">其他信息</el-divider>
 
       <el-form-item label="封面图片" prop="coverImage">
-        <el-input
-          v-model="formData.coverImage"
-          placeholder="请输入封面图片 URL"
-          clearable
-        />
+        <el-input v-model="formData.coverImage" placeholder="请输入封面图片 URL" clearable />
       </el-form-item>
 
       <el-form-item v-if="formData.coverImage" label="封面预览">
@@ -184,7 +164,9 @@ const handleSubmit = async () => {
           :preview-src-list="[formData.coverImage]"
         >
           <template #error>
-            <div class="flex flex-col items-center justify-center w-full h-full bg-gray-100 text-gray-400 text-xs">
+            <div
+              class="flex flex-col items-center justify-center w-full h-full bg-gray-100 text-gray-400 text-xs"
+            >
               <el-icon class="text-2xl mb-1"><Picture /></el-icon>
               <span>加载失败</span>
             </div>
@@ -199,7 +181,7 @@ const handleSubmit = async () => {
           placeholder="请选择开始日期"
           format="YYYY-MM-DD"
           value-format="YYYY-MM-DD"
-          style="width: 100%;"
+          style="width: 100%"
         />
       </el-form-item>
     </el-form>

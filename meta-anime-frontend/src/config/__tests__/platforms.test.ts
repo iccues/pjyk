@@ -1,9 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import {
-  getAllPlatformConfigs,
-  getAllPlatforms,
-  getPlatformConfig,
-} from "../platforms";
+import { getAllPlatformConfigs, getAllPlatforms, getPlatformConfig } from "../platforms";
 
 // Mock logo imports
 vi.mock("@/assets/logo/anilist.png", () => ({ default: "/mock/anilist.png" }));

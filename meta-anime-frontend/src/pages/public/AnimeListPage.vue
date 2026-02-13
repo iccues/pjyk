@@ -69,9 +69,11 @@ const handlePageChange = (page: number) => {
 
     <AnimeList
       v-bind="animeListParams"
-      v-on:update:page-info="pageInfo_ => {
-        pageInfo = pageInfo_;
-      }"
+      v-on:update:page-info="
+        (pageInfo_) => {
+          pageInfo = pageInfo_;
+        }
+      "
     />
 
     <div v-if="pageInfo" class="flex justify-center mt-8">
@@ -84,7 +86,6 @@ const handlePageChange = (page: number) => {
         @current-change="handlePageChange"
       />
     </div>
-
   </div>
 </template>
 

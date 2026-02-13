@@ -1,9 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  formatDate,
-  generateYearOptions,
-  isValidDateFormat,
-} from "../dateUtils";
+import { formatDate, generateYearOptions, isValidDateFormat } from "../dateUtils";
 
 describe("dateUtils", () => {
   describe("generateYearOptions", () => {

@@ -43,9 +43,7 @@ const seasonNames: Record<string, string> = {
         sort-by="POPULARITY"
       />
       <!-- 历史最高 -->
-      <AnimeListRow
-        title="历史最高"
-      />
+      <AnimeListRow title="历史最高" />
     </div>
   </div>
 </template>

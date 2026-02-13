@@ -28,12 +28,7 @@ const emit = defineEmits<{
         <h2 class="text-xl font-semibold text-gray-800 m-0">未关联映射</h2>
         <el-tag type="warning">{{ mappingList.length }}</el-tag>
       </div>
-      <el-button
-        type="primary"
-        size="small"
-        :icon="Plus"
-        @click="emit('create-mapping')"
-      >
+      <el-button type="primary" size="small" :icon="Plus" @click="emit('create-mapping')">
         新建映射
       </el-button>
     </div>

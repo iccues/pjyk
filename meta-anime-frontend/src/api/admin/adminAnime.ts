@@ -36,9 +36,7 @@ export interface AnimeCreateRequest {
   startDate?: string;
 }
 
-export async function createAnime(
-  request: AnimeCreateRequest,
-): Promise<AdminAnime> {
+export async function createAnime(request: AnimeCreateRequest): Promise<AdminAnime> {
   return post<AdminAnime>("/api/admin/create_anime", request);
 }
 
@@ -58,9 +56,7 @@ export interface AnimeUpdateRequest {
   reviewStatus?: ReviewStatus;
 }
 
-export async function updateAnime(
-  request: AnimeUpdateRequest,
-): Promise<AdminAnime> {
+export async function updateAnime(request: AnimeUpdateRequest): Promise<AdminAnime> {
   return put<AdminAnime>("/api/admin/update_anime", request);
 }
 

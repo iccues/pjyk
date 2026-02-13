@@ -18,12 +18,7 @@ export {
   updateAnime,
 } from "./adminAnime";
 // 导出 Fetch 相关 API
-export {
-  calculateMetric,
-  fetchAnime,
-  fetchMapping,
-  linkMappings,
-} from "./adminFetch";
+export { calculateMetric, fetchAnime, fetchMapping, linkMappings } from "./adminFetch";
 // 导出 Mapping 相关 API
 export {
   createMapping,

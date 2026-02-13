@@ -74,52 +74,34 @@ async function request<T>(
 /**
  * GET 请求
  */
-export async function get<T>(
-  url: string,
-  options?: RequestOptions,
-): Promise<T> {
+export async function get<T>(url: string, options?: RequestOptions): Promise<T> {
   return request<T>(url, "GET", undefined, options);
 }
 
 /**
  * POST 请求
  */
-export async function post<T>(
-  url: string,
-  body?: unknown,
-  options?: RequestOptions,
-): Promise<T> {
+export async function post<T>(url: string, body?: unknown, options?: RequestOptions): Promise<T> {
   return request<T>(url, "POST", body, options);
 }
 
 /**
  * PUT 请求
  */
-export async function put<T>(
-  url: string,
-  body?: unknown,
-  options?: RequestOptions,
-): Promise<T> {
+export async function put<T>(url: string, body?: unknown, options?: RequestOptions): Promise<T> {
   return request<T>(url, "PUT", body, options);
 }
 
 /**
  * DELETE 请求
  */
-export async function del<T>(
-  url: string,
-  options?: RequestOptions,
-): Promise<T> {
+export async function del<T>(url: string, options?: RequestOptions): Promise<T> {
   return request<T>(url, "DELETE", undefined, options);
 }
 
 /**
  * PATCH 请求
  */
-export async function patch<T>(
-  url: string,
-  body?: unknown,
-  options?: RequestOptions,
-): Promise<T> {
+export async function patch<T>(url: string, body?: unknown, options?: RequestOptions): Promise<T> {
   return request<T>(url, "PATCH", body, options);
 }

@@ -60,9 +60,7 @@ export const queryToFilters = (query: LocationQuery): AnimeFilterParams => {
 /**
  * Convert AnimeFilterParams to URL query params
  */
-export const filtersToQuery = (
-  filters: AnimeFilterParams,
-): Record<string, string> => {
+export const filtersToQuery = (filters: AnimeFilterParams): Record<string, string> => {
   const query: Record<string, string> = {};
 
   if (filters.year !== undefined) {

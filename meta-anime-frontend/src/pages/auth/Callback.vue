@@ -15,5 +15,5 @@ onMounted(async () => {
 });
 </script>
 <template>
-    <div>加载中...</div>
+  <div>加载中...</div>
 </template>
