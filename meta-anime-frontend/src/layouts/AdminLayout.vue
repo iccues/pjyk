@@ -13,7 +13,7 @@ import { User } from "@element-plus/icons-vue";
           class="text-lg font-bold text-gray-800 hover:text-blue-600 transition-colors no-underline"
           title="返回前台首页"
         >
-          Meta Anime
+          有希计划
         </router-link>
 
         <router-link
