@@ -2,12 +2,7 @@
 import { Download, Refresh, SetUp } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { ref } from "vue";
-import {
-  calculateScores,
-  fetchAnime,
-  fetchMapping,
-  linkMappings,
-} from "@/api/admin";
+import { calculateMetric, fetchAnime, fetchMapping, linkMappings } from "@/api/admin";
 import { SEASON_OPTIONS_REQUIRED } from "@/constants/ui-options";
 
 // 数据抓取相关
@@ -32,9 +27,7 @@ const handleFetchAnime = async () => {
     ElMessage.success("数据抓取任务已启动，请稍后查看结果");
     fetchDialogVisible.value = false;
   } catch (e) {
-    ElMessage.error(
-      "启动失败: " + (e instanceof Error ? e.message : "未知错误"),
-    );
+    ElMessage.error("启动失败: " + (e instanceof Error ? e.message : "未知错误"));
   } finally {
     fetchLoading.value = false;
   }
@@ -48,9 +41,7 @@ const handleFetchMapping = async () => {
     ElMessage.success("映射抓取任务已启动，请稍后查看结果");
     fetchDialogVisible.value = false;
   } catch (e) {
-    ElMessage.error(
-      "启动失败: " + (e instanceof Error ? e.message : "未知错误"),
-    );
+    ElMessage.error("启动失败: " + (e instanceof Error ? e.message : "未知错误"));
   } finally {
     fetchLoading.value = false;
   }
@@ -63,24 +54,20 @@ const handleLinkMappings = async () => {
     await linkMappings();
     ElMessage.success("映射合并任务已启动，请稍后查看结果");
   } catch (e) {
-    ElMessage.error(
-      "启动失败: " + (e instanceof Error ? e.message : "未知错误"),
-    );
+    ElMessage.error("启动失败: " + (e instanceof Error ? e.message : "未知错误"));
   } finally {
     fetchLoading.value = false;
   }
 };
 
-// 计算评分
+// 计算动漫指标
 const handleCalculateScores = async () => {
   try {
     fetchLoading.value = true;
-    await calculateScores();
-    ElMessage.success("评分计算任务已启动，请稍后查看结果");
+    await calculateMetric();
+    ElMessage.success("指标计算任务已启动，请稍后查看结果");
   } catch (e) {
-    ElMessage.error(
-      "启动失败: " + (e instanceof Error ? e.message : "未知错误"),
-    );
+    ElMessage.error("启动失败: " + (e instanceof Error ? e.message : "未知错误"));
   } finally {
     fetchLoading.value = false;
   }
@@ -99,20 +86,10 @@ const handleCalculateScores = async () => {
       </template>
       <div class="">
         <p class="text-gray-600 mb-4">从外部平台抓取动画数据</p>
-        <el-button
-          type="primary"
-          size="large"
-          :icon="Download"
-          @click="handleOpenFetchDialog"
-        >
+        <el-button type="primary" size="large" :icon="Download" @click="handleOpenFetchDialog">
           抓取动画数据
         </el-button>
-        <el-button
-          size="large"
-          :icon="Refresh"
-          @click="handleLinkMappings"
-          :loading="fetchLoading"
-        >
+        <el-button size="large" :icon="Refresh" @click="handleLinkMappings" :loading="fetchLoading">
           连接映射数据
         </el-button>
         <el-button
@@ -121,31 +98,19 @@ const handleCalculateScores = async () => {
           @click="handleCalculateScores"
           :loading="fetchLoading"
         >
-          计算平均评分
+          计算动漫指标
         </el-button>
       </div>
     </el-card>
 
     <!-- 数据抓取对话框 -->
-    <el-dialog
-      v-model="fetchDialogVisible"
-      title="抓取动画数据"
-      width="500px"
-    >
+    <el-dialog v-model="fetchDialogVisible" title="抓取动画数据" width="500px">
       <el-form label-width="80px">
         <el-form-item label="年份">
-          <el-input-number
-            v-model="fetchYear"
-            :min="2000"
-            :max="2099"
-            style="width: 100%"
-          />
+          <el-input-number v-model="fetchYear" :min="2000" :max="2099" style="width: 100%" />
         </el-form-item>
         <el-form-item label="季度">
-          <el-select
-            v-model="fetchSeason"
-            style="width: 100%"
-          >
+          <el-select v-model="fetchSeason" style="width: 100%">
             <el-option
               v-for="option in seasonOptions"
               :key="option.value"
@@ -155,7 +120,7 @@ const handleCalculateScores = async () => {
           </el-select>
         </el-form-item>
         <el-alert
-          title="完整抓取将依次执行：抓取映射 → 合并映射 → 计算评分"
+          title="完整抓取将依次执行：抓取映射 → 合并映射 → 计算指标"
           type="info"
           :closable="false"
           class="mb-4"
@@ -164,17 +129,8 @@ const handleCalculateScores = async () => {
       <template #footer>
         <div class="flex justify-end gap-2">
           <el-button @click="fetchDialogVisible = false">取消</el-button>
-          <el-button
-            @click="handleFetchMapping"
-            :loading="fetchLoading"
-          >
-            仅抓取映射
-          </el-button>
-          <el-button
-            type="primary"
-            @click="handleFetchAnime"
-            :loading="fetchLoading"
-          >
+          <el-button @click="handleFetchMapping" :loading="fetchLoading"> 仅抓取映射 </el-button>
+          <el-button type="primary" @click="handleFetchAnime" :loading="fetchLoading">
             完整抓取
           </el-button>
         </div>

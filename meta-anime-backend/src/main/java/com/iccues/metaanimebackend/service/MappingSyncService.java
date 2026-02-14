@@ -29,7 +29,7 @@ public class MappingSyncService {
     FetchService fetchService;
 
     @Resource
-    ScoreService scoreService;
+    MetricService metricService;
 
     List<Mapping> pendingMappings = Collections.synchronizedList(new ArrayList<>());
 
@@ -84,8 +84,6 @@ public class MappingSyncService {
         
         log.info("Mapping sync completed - Total: {}, Success: {}, Failed: {}, Duration: {}ms", 
             total, success, failed, duration);
-
-        scoreService.calculateAllAverageScore();
     }
 
     private boolean shouldSyncAnime(Anime anime) {

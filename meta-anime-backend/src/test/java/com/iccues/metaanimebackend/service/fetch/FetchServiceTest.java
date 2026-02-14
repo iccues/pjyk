@@ -3,7 +3,8 @@ package com.iccues.metaanimebackend.service.fetch;
 import com.iccues.metaanimebackend.entity.Platform;
 import com.iccues.metaanimebackend.entity.Season;
 import com.iccues.metaanimebackend.exception.FetchFailedException;
-import com.iccues.metaanimebackend.service.ScoreService;
+import com.iccues.metaanimebackend.service.TitleBasedLinkService;
+import com.iccues.metaanimebackend.service.MetricService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +27,10 @@ public class FetchServiceTest {
     private MyAnimeListFetchService myAnimeListFetchService;
 
     @Mock
-    private ScoreService scoreService;
+    private TitleBasedLinkService titleBasedLinkService;
+
+    @Mock
+    private MetricService metricService;
 
     @InjectMocks
     private FetchService fetchService;
@@ -68,19 +72,17 @@ public class FetchServiceTest {
     }
 
     @Test
-    public void testLinkMappings_CallsAllServices() {
+    public void testLinkMappings_CallsLinkService() {
         fetchService.linkMappings();
 
-        verify(bangumiFetchService, times(1)).linkAllOrphanedMappings();
-        verify(aniListFetchService, times(1)).linkAllOrphanedMappings();
-        verify(myAnimeListFetchService, times(1)).linkAllOrphanedMappings();
+        verify(titleBasedLinkService, times(1)).linkAllOrphanedMappings();
     }
 
     @Test
-    public void testCalculateAllAverageScore_CallsScoreService() {
-        fetchService.calculateAllAverageScore();
+    public void testCalculateAllMetricService() {
+        fetchService.calculateAllMetric();
 
-        verify(scoreService, times(1)).calculateAllAverageScore();
+        verify(metricService, times(1)).calculateAllMetric();
     }
 
     @Test
@@ -94,13 +96,11 @@ public class FetchServiceTest {
         verify(aniListFetchService, times(1)).fetchAndSaveMappings(year, season);
         verify(myAnimeListFetchService, times(1)).fetchAndSaveMappings(year, season);
 
-        verify(bangumiFetchService, times(1)).linkAllOrphanedMappings();
-        verify(aniListFetchService, times(1)).linkAllOrphanedMappings();
-        verify(myAnimeListFetchService, times(1)).linkAllOrphanedMappings();
+        verify(titleBasedLinkService, times(1)).linkAllOrphanedMappings();
 
-        verify(scoreService, times(1)).calculateAllAverageScore();
+        // calculateAllMetric() 已被注释，因为在 linkMappings 过程中已经通过 AnimeMergeService 计算了指标
+        verify(metricService, never()).calculateAllMetric();
     }
-
 
     @Test
     public void testFetchMapping_BangumiFailsButOthersContinue() {
@@ -199,66 +199,15 @@ public class FetchServiceTest {
     }
 
     @Test
-    public void testLinkMappings_BangumiFailsButOthersContinue() {
-        // Mock Bangumi to throw exception
-        doThrow(new RuntimeException("Bangumi link failed"))
-                .when(bangumiFetchService).linkAllOrphanedMappings();
+    public void testLinkMappings_HandleException() {
+        // Mock LinkService to throw exception
+        doThrow(new RuntimeException("Link failed"))
+                .when(titleBasedLinkService).linkAllOrphanedMappings();
 
         // Execute - should not throw exception
         fetchService.linkMappings();
 
-        // Verify all services were called
-        verify(bangumiFetchService, times(1)).linkAllOrphanedMappings();
-        verify(aniListFetchService, times(1)).linkAllOrphanedMappings();
-        verify(myAnimeListFetchService, times(1)).linkAllOrphanedMappings();
-    }
-
-    @Test
-    public void testLinkMappings_AniListFailsButOthersContinue() {
-        // Mock AniList to throw exception
-        doThrow(new RuntimeException("AniList link failed"))
-                .when(aniListFetchService).linkAllOrphanedMappings();
-
-        // Execute - should not throw exception
-        fetchService.linkMappings();
-
-        // Verify all services were called
-        verify(bangumiFetchService, times(1)).linkAllOrphanedMappings();
-        verify(aniListFetchService, times(1)).linkAllOrphanedMappings();
-        verify(myAnimeListFetchService, times(1)).linkAllOrphanedMappings();
-    }
-
-    @Test
-    public void testLinkMappings_MyAnimeListFailsButOthersContinue() {
-        // Mock MyAnimeList to throw exception
-        doThrow(new RuntimeException("MyAnimeList link failed"))
-                .when(myAnimeListFetchService).linkAllOrphanedMappings();
-
-        // Execute - should not throw exception
-        fetchService.linkMappings();
-
-        // Verify all services were called
-        verify(bangumiFetchService, times(1)).linkAllOrphanedMappings();
-        verify(aniListFetchService, times(1)).linkAllOrphanedMappings();
-        verify(myAnimeListFetchService, times(1)).linkAllOrphanedMappings();
-    }
-
-    @Test
-    public void testLinkMappings_AllPlatformsFail() {
-        // Mock all services to throw exceptions
-        doThrow(new RuntimeException("Bangumi link failed"))
-                .when(bangumiFetchService).linkAllOrphanedMappings();
-        doThrow(new RuntimeException("AniList link failed"))
-                .when(aniListFetchService).linkAllOrphanedMappings();
-        doThrow(new RuntimeException("MyAnimeList link failed"))
-                .when(myAnimeListFetchService).linkAllOrphanedMappings();
-
-        // Execute - should not throw exception even when all fail
-        fetchService.linkMappings();
-
-        // Verify all services were called
-        verify(bangumiFetchService, times(1)).linkAllOrphanedMappings();
-        verify(aniListFetchService, times(1)).linkAllOrphanedMappings();
-        verify(myAnimeListFetchService, times(1)).linkAllOrphanedMappings();
+        // Verify service was called
+        verify(titleBasedLinkService, times(1)).linkAllOrphanedMappings();
     }
 }

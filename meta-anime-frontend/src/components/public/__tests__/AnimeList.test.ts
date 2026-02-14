@@ -190,9 +190,7 @@ describe("AnimeList.vue", () => {
     await flushPromises();
 
     expect(wrapper.emitted("update:pageInfo")).toBeTruthy();
-    expect(wrapper.emitted("update:pageInfo")?.[0]).toEqual([
-      mockAnimeData.page,
-    ]);
+    expect(wrapper.emitted("update:pageInfo")?.[0]).toEqual([mockAnimeData.page]);
   });
 
   it("应该在 props 变化时重新获取数据", async () => {

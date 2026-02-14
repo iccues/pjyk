@@ -25,8 +25,7 @@ const platformConfigs: Record<string, PlatformConfig> = {
     name: "AniList",
     logo: anilistLogo,
     baseUrl: "https://anilist.co",
-    getAnimeUrl: (platformId: string) =>
-      `https://anilist.co/anime/${platformId}`,
+    getAnimeUrl: (platformId: string) => `https://anilist.co/anime/${platformId}`,
   },
   Bangumi: {
     name: "Bangumi",
@@ -38,8 +37,7 @@ const platformConfigs: Record<string, PlatformConfig> = {
     name: "MyAnimeList",
     logo: myAnimeListLogo,
     baseUrl: "https://myanimelist.net",
-    getAnimeUrl: (platformId: string) =>
-      `https://myanimelist.net/anime/${platformId}`,
+    getAnimeUrl: (platformId: string) => `https://myanimelist.net/anime/${platformId}`,
   },
 };
 

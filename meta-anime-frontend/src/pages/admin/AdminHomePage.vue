@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { List } from "@element-plus/icons-vue";
+import DataManagementCard from "@/components/admin/DataManagementCard.vue";
 import FetchDataCard from "@/components/admin/FetchDataCard.vue";
+import "element-plus/dist/index.css";
 </script>
 
 <template>
@@ -26,5 +28,8 @@ import FetchDataCard from "@/components/admin/FetchDataCard.vue";
 
     <!-- 数据抓取卡片 -->
     <FetchDataCard />
+
+    <!-- 数据管理卡片 -->
+    <DataManagementCard />
   </div>
 </template>

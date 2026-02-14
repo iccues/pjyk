@@ -36,9 +36,9 @@ public class AdminFetchController {
     }
 
     @ResponseBody
-    @PostMapping("/calculate_scores")
-    public Response<String> calculateScores() {
-        fetchService.calculateAllAverageScore();
+    @PostMapping("/calculate_metric")
+    public Response<String> calculateMetric() {
+        fetchService.calculateAllMetric();
         return Response.ok("评分计算任务已启动");
     }
 }

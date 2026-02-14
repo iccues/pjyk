@@ -8,11 +8,7 @@ import {
   getAnimeList,
   updateAnime,
 } from "@/api/admin";
-import type {
-  AdminAnime,
-  AdminMapping,
-  ReviewStatus,
-} from "@/types/adminAnime";
+import type { AdminAnime, AdminMapping, ReviewStatus } from "@/types/adminAnime";
 import type { Season } from "@/types/anime";
 
 export function useAnimeList() {
@@ -23,11 +19,7 @@ export function useAnimeList() {
   const editingAnime = ref<AdminAnime | undefined>(undefined);
 
   // 加载动画列表
-  const loadAnimeList = async (
-    reviewStatus?: ReviewStatus,
-    year?: number,
-    season?: Season,
-  ) => {
+  const loadAnimeList = async (reviewStatus?: ReviewStatus, year?: number, season?: Season) => {
     try {
       loading.value = true;
       const animes = await getAnimeList(reviewStatus, year, season);
@@ -81,9 +73,7 @@ export function useAnimeList() {
       ElMessage.success("删除成功");
     } catch (e) {
       if (e === "cancel") return;
-      ElMessage.error(
-        "删除失败: " + (e instanceof Error ? e.message : "未知错误"),
-      );
+      ElMessage.error("删除失败: " + (e instanceof Error ? e.message : "未知错误"));
     }
   };
 
@@ -119,9 +109,7 @@ export function useAnimeList() {
         });
 
         // 更新列表中的动画数据
-        const idx = animeList.value.findIndex(
-          (a) => a.animeId === editingAnime.value!.animeId,
-        );
+        const idx = animeList.value.findIndex((a) => a.animeId === editingAnime.value!.animeId);
         if (idx !== -1) {
           // 保留 mappings，只更新其他字段
           animeList.value[idx] = {
@@ -143,9 +131,7 @@ export function useAnimeList() {
 
       handleCloseDialog();
     } catch (e) {
-      ElMessage.error(
-        "操作失败: " + (e instanceof Error ? e.message : "未知错误"),
-      );
+      ElMessage.error("操作失败: " + (e instanceof Error ? e.message : "未知错误"));
     }
   };
 
@@ -182,19 +168,14 @@ export function useAnimeList() {
         }
       }
     } catch (e) {
-      ElMessage.error(
-        "更新失败: " + (e instanceof Error ? e.message : "未知错误"),
-      );
+      ElMessage.error("更新失败: " + (e instanceof Error ? e.message : "未知错误"));
     }
   };
 
   // 添加映射到指定动画
   const addMappingToAnime = (animeId: number, mapping: AdminMapping) => {
     const anime = animeList.value.find((a) => a.animeId === animeId);
-    if (
-      anime &&
-      !anime.mappings.some((m) => m.mappingId === mapping.mappingId)
-    ) {
+    if (anime && !anime.mappings.some((m) => m.mappingId === mapping.mappingId)) {
       anime.mappings.push(mapping);
     }
   };

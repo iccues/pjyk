@@ -2,6 +2,7 @@ package com.iccues.metaanimebackend.service;
 
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
+import com.iccues.metaanimebackend.entity.MappingInfo;
 import com.iccues.metaanimebackend.repo.AnimeRepository;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class AnimeService {
+public class AnimeRepoService {
 
     @Resource
     AnimeRepository repo;
@@ -39,9 +40,15 @@ public class AnimeService {
             }
         }
 
+        return null;
+    }
+
+    @Transactional
+    public Anime createAnime(MappingInfo mappingInfo) {
         Anime anime = new Anime();
-        anime.setStartDate(date);
-        anime.setTitle(titles);
+        anime.setStartDate(mappingInfo.getStartDate());
+        anime.setTitle(mappingInfo.getTitle());
+        anime.setCoverImage(mappingInfo.getCoverImage());
         return anime;
     }
 }

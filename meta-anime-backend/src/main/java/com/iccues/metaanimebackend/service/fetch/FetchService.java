@@ -2,7 +2,8 @@ package com.iccues.metaanimebackend.service.fetch;
 
 import com.iccues.metaanimebackend.entity.Platform;
 import com.iccues.metaanimebackend.entity.Season;
-import com.iccues.metaanimebackend.service.ScoreService;
+import com.iccues.metaanimebackend.service.TitleBasedLinkService;
+import com.iccues.metaanimebackend.service.MetricService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -20,13 +21,14 @@ public class FetchService {
     MyAnimeListFetchService myAnimeListFetchService;
 
     @Resource
-    ScoreService scoreService;
+    TitleBasedLinkService titleBasedLinkService;
+    @Resource
+    MetricService metricService;
 
     @Async
     public void fetchAnime(int year, Season season) {
         fetchMapping(year, season);
         linkMappings();
-        calculateAllAverageScore();
     }
 
     @Async
@@ -47,23 +49,17 @@ public class FetchService {
 
     @Async
     public void linkMappings() {
-        safeLinkMappings(bangumiFetchService, Platform.Bangumi);
-        safeLinkMappings(aniListFetchService, Platform.AniList);
-        safeLinkMappings(myAnimeListFetchService, Platform.MyAnimeList);
-    }
-
-    private void safeLinkMappings(AbstractAnimeFetchService service, Platform platform) {
         try {
-            service.linkAllOrphanedMappings();
-            log.debug("{} link mappings completed", platform);
+            titleBasedLinkService.linkAllOrphanedMappings();
+            log.debug("link mappings completed");
         } catch (Exception e) {
-            log.error("{} link mappings failed: {}", platform, e.getMessage());
+            log.error("link mappings failed: {}", e.getMessage());
         }
     }
 
     @Async
-    public void calculateAllAverageScore() {
-        scoreService.calculateAllAverageScore();
+    public void calculateAllMetric() {
+        metricService.calculateAllMetric();
     }
 
     public AbstractAnimeFetchService getFetchService(Platform platform) {

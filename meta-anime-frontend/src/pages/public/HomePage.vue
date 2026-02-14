@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AnimeListRow from "@/components/public/AnimeListRow.vue";
+import { SEASON_NAME_MAP } from "@/constants/ui-options";
 
 // 获取当前年份和季度
 const now = new Date();
@@ -16,14 +17,6 @@ const getCurrentSeason = (): "WINTER" | "SPRING" | "SUMMER" | "FALL" => {
 };
 
 const currentSeason = getCurrentSeason();
-
-// 季度名称映射
-const seasonNames: Record<string, string> = {
-  WINTER: "冬季",
-  SPRING: "春季",
-  SUMMER: "夏季",
-  FALL: "秋季",
-};
 </script>
 
 <template>
@@ -31,19 +24,19 @@ const seasonNames: Record<string, string> = {
     <div class="space-y-16 pt-5 pb-20">
       <!-- 本季新番 -->
       <AnimeListRow
-        :title="`${currentYear}年${seasonNames[currentSeason]}新番`"
+        :title="`${currentYear}年${SEASON_NAME_MAP[currentSeason]}新番`"
         :year="currentYear"
         :season="currentSeason"
       />
-      <!-- 本年新番 -->
+      <!-- 当季最高人气 -->
       <AnimeListRow
-        :title="`${currentYear}年新番`"
+        :title="`${currentYear}年${SEASON_NAME_MAP[currentSeason]}最高人气`"
         :year="currentYear"
+        :season="currentSeason"
+        sort-by="POPULARITY"
       />
       <!-- 历史最高 -->
-      <AnimeListRow
-        title="历史最高"
-      />
+      <AnimeListRow title="历史最高" />
     </div>
   </div>
 </template>

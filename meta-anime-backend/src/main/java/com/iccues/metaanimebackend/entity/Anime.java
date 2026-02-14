@@ -30,15 +30,20 @@ public class Anime {
 
     Double averageScore;
 
+    Double popularity;
+
     @Enumerated(EnumType.STRING)
     ReviewStatus reviewStatus = ReviewStatus.PENDING;
 
     @OneToMany(mappedBy = "anime",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             fetch = FetchType.LAZY)
     List<Mapping> mappings = new ArrayList<>();
 
     public void addMapping(Mapping mapping) {
+        if (mapping.getAnime() != null) {
+            mapping.getAnime().removeMapping(mapping);
+        }
         this.mappings.add(mapping);
         mapping.setAnime(this);
     }
@@ -46,5 +51,14 @@ public class Anime {
     public void removeMapping(Mapping mapping) {
         this.mappings.remove(mapping);
         mapping.setAnime(null);
+    }
+
+    public Mapping getMappingByPlatform(Platform platform) {
+        for (Mapping mapping : getMappings()) {
+            if (mapping.getSourcePlatform() == platform) {
+                return mapping;
+            }
+        }
+        return null;
     }
 }

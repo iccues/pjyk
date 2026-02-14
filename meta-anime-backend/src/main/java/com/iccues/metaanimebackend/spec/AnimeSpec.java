@@ -3,6 +3,7 @@ package com.iccues.metaanimebackend.spec;
 import com.iccues.metaanimebackend.entity.Anime;
 import com.iccues.metaanimebackend.entity.LocalDateRange;
 import com.iccues.metaanimebackend.entity.ReviewStatus;
+import com.iccues.metaanimebackend.entity.SortBy;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -34,6 +35,23 @@ public class AnimeSpec {
                     criteriaBuilder.asc(criteriaBuilder.isNull(root.get("averageScore"))),
                     criteriaBuilder.desc(root.get("averageScore")));
             return criteriaBuilder.conjunction();
+        };
+    }
+
+    public static Specification<Anime> orderByPopularityNullLast() {
+        return (root, query, criteriaBuilder) -> {
+            if (query == null) return null;
+            query.orderBy(
+                    criteriaBuilder.asc(criteriaBuilder.isNull(root.get("popularity"))),
+                    criteriaBuilder.desc(root.get("popularity")));
+            return criteriaBuilder.conjunction();
+        };
+    }
+
+    public static Specification<Anime> orderBy(SortBy sortBy) {
+        return switch (sortBy) {
+            case SortBy.SCORE -> orderByScoreNullLast();
+            case SortBy.POPULARITY -> orderByPopularityNullLast();
         };
     }
 

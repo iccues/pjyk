@@ -36,7 +36,7 @@ public class BangumiFetchService extends AbstractAnimeFetchService {
 
     @Override
     protected String extractCoverImage(JsonNode jsonNode) {
-        return jsonNode.path("images").path("large").asText();
+        return jsonNode.path("images").path("common").asText();
     }
 
     @Override
@@ -45,13 +45,13 @@ public class BangumiFetchService extends AbstractAnimeFetchService {
     }
 
     @Override
-    protected double extractRawScore(JsonNode jsonNode) {
+    protected Double extractRawScore(JsonNode jsonNode) {
         return jsonNode.path("rating").path("score").asDouble();
     }
 
     @Override
-    protected double normalizeScore(double rawScore) {
-        return (rawScore - 1) / 9 * 100;
+    protected double extractRawPopularity(JsonNode jsonNode) {
+        return jsonNode.path("rating").path("total").asDouble();
     }
 
     @Override

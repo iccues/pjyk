@@ -164,6 +164,71 @@ public class AnimeControllerTest {
                 .andExpect(jsonPath("$.data.content[2].averageScore").value(7.0));
     }
 
+    @Test
+    public void testGetAnimeList_SortByScore() throws Exception {
+        // 准备测试数据
+        Anime anime1 = createAnimeWithPopularity("动画1", LocalDate.of(2024, 1, 15), 7.0, 500.0);
+        Anime anime2 = createAnimeWithPopularity("动画2", LocalDate.of(2024, 1, 16), 9.0, 100.0);
+        Anime anime3 = createAnimeWithPopularity("动画3", LocalDate.of(2024, 1, 17), 8.0, 300.0);
+        animeRepository.save(anime1);
+        animeRepository.save(anime2);
+        animeRepository.save(anime3);
+
+        // 使用 sortBy=SCORE 参数
+        mockMvc.perform(get("/api/anime/get_list")
+                        .param("sortBy", "SCORE"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.content", hasSize(3)))
+                // 验证按评分降序排列
+                .andExpect(jsonPath("$.data.content[0].title.titleNative").value("动画2"))
+                .andExpect(jsonPath("$.data.content[0].averageScore").value(9.0))
+                .andExpect(jsonPath("$.data.content[1].title.titleNative").value("动画3"))
+                .andExpect(jsonPath("$.data.content[1].averageScore").value(8.0))
+                .andExpect(jsonPath("$.data.content[2].title.titleNative").value("动画1"))
+                .andExpect(jsonPath("$.data.content[2].averageScore").value(7.0));
+    }
+
+    @Test
+    public void testGetAnimeList_SortByPopularity() throws Exception {
+        // 准备测试数据：人气度和评分不一致
+        Anime anime1 = createAnimeWithPopularity("低人气高分", LocalDate.of(2024, 1, 15), 9.0, 100.0);
+        Anime anime2 = createAnimeWithPopularity("高人气低分", LocalDate.of(2024, 1, 16), 7.0, 500.0);
+        Anime anime3 = createAnimeWithPopularity("中人气中分", LocalDate.of(2024, 1, 17), 8.0, 300.0);
+        animeRepository.save(anime1);
+        animeRepository.save(anime2);
+        animeRepository.save(anime3);
+
+        // 使用 sortBy=POPULARITY 参数
+        mockMvc.perform(get("/api/anime/get_list")
+                        .param("sortBy", "POPULARITY"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.content", hasSize(3)))
+                // 验证按人气度降序排列（而不是评分）
+                .andExpect(jsonPath("$.data.content[0].title.titleNative").value("高人气低分"))
+                .andExpect(jsonPath("$.data.content[1].title.titleNative").value("中人气中分"))
+                .andExpect(jsonPath("$.data.content[2].title.titleNative").value("低人气高分"));
+    }
+
+    @Test
+    public void testGetAnimeList_DefaultSortByScore() throws Exception {
+        // 准备测试数据
+        Anime anime1 = createAnimeWithPopularity("低分高人气", LocalDate.of(2024, 1, 15), 7.0, 500.0);
+        Anime anime2 = createAnimeWithPopularity("高分低人气", LocalDate.of(2024, 1, 16), 9.0, 100.0);
+        animeRepository.save(anime1);
+        animeRepository.save(anime2);
+
+        // 不传 sortBy 参数，应该默认按评分排序
+        mockMvc.perform(get("/api/anime/get_list"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.content", hasSize(2)))
+                // 验证默认按评分降序排列
+                .andExpect(jsonPath("$.data.content[0].title.titleNative").value("高分低人气"))
+                .andExpect(jsonPath("$.data.content[1].title.titleNative").value("低分高人气"));
+    }
+
     // 辅助方法：创建测试用的 Anime
     private Anime createAnime(String titleNative, LocalDate startDate, Double score) {
         AnimeTitles titles = new AnimeTitles();
@@ -174,6 +239,13 @@ public class AnimeControllerTest {
         anime.setStartDate(startDate);
         anime.setAverageScore(score);
         anime.setReviewStatus(ReviewStatus.APPROVED);
+        return anime;
+    }
+
+    // 辅助方法：创建带人气度的测试 Anime
+    private Anime createAnimeWithPopularity(String titleNative, LocalDate startDate, Double score, Double popularity) {
+        Anime anime = createAnime(titleNative, startDate, score);
+        anime.setPopularity(popularity);
         return anime;
     }
 }

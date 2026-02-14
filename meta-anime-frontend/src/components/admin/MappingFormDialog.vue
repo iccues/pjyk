@@ -47,11 +47,7 @@ const handleSubmit = () => {
     ElMessage.warning("请输入平台 ID");
     return;
   }
-  emit(
-    "submit",
-    formData.value.sourcePlatform,
-    formData.value.platformId.trim(),
-  );
+  emit("submit", formData.value.sourcePlatform, formData.value.platformId.trim());
 };
 
 const handleClose = () => {
@@ -60,19 +56,10 @@ const handleClose = () => {
 </script>
 
 <template>
-  <el-dialog
-    :model-value="visible"
-    title="创建新映射"
-    width="500px"
-    @close="handleClose"
-  >
+  <el-dialog :model-value="visible" title="创建新映射" width="500px" @close="handleClose">
     <el-form :model="formData" label-width="100px">
       <el-form-item label="平台" required>
-        <el-select
-          v-model="formData.sourcePlatform"
-          placeholder="请选择平台"
-          style="width: 100%"
-        >
+        <el-select v-model="formData.sourcePlatform" placeholder="请选择平台" style="width: 100%">
           <el-option
             v-for="option in platformOptions"
             :key="option.value"
@@ -83,10 +70,7 @@ const handleClose = () => {
       </el-form-item>
 
       <el-form-item label="平台 ID" required>
-        <el-input
-          v-model="formData.platformId"
-          placeholder="请输入平台 ID"
-        />
+        <el-input v-model="formData.platformId" placeholder="请输入平台 ID" />
       </el-form-item>
     </el-form>
 

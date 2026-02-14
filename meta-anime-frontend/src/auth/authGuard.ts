@@ -1,5 +1,4 @@
 import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
-import { oidcManager } from "./oidc";
 
 export async function authGuard(
   to: RouteLocationNormalized,
@@ -10,6 +9,7 @@ export async function authGuard(
     return next();
   }
 
+  const { oidcManager } = await import("./oidc");
   const user = await oidcManager.getUser();
   if (!user || user.expired) {
     return next({

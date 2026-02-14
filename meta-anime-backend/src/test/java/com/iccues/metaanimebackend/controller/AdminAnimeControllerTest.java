@@ -280,6 +280,90 @@ public class AdminAnimeControllerTest {
                 .andExpect(jsonPath("$.data", hasSize(0)));
     }
 
+    @Test
+    public void testDeleteNonApprovedAnimes_Success() throws Exception {
+        // 准备测试数据
+        Anime approved = createAnime("已审核", LocalDate.of(2024, 1, 15), ReviewStatus.APPROVED);
+        Anime pending = createAnime("待审核", LocalDate.of(2024, 1, 16), ReviewStatus.PENDING);
+        Anime rejected = createAnime("已拒绝", LocalDate.of(2024, 1, 17), ReviewStatus.REJECTED);
+
+        approved = animeRepository.save(approved);
+        pending = animeRepository.save(pending);
+        rejected = animeRepository.save(rejected);
+
+        // 验证初始状态
+        assertEquals(3, animeRepository.count());
+
+        // 执行删除请求
+        mockMvc.perform(delete("/api/admin/delete_non_approved_animes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+
+        // 验证：只有 APPROVED 状态的动画保留
+        assertEquals(1, animeRepository.count());
+        assertTrue(animeRepository.existsById(approved.getAnimeId()));
+        assertFalse(animeRepository.existsById(pending.getAnimeId()));
+        assertFalse(animeRepository.existsById(rejected.getAnimeId()));
+    }
+
+    @Test
+    public void testDeleteNonApprovedAnimes_WithMappings() throws Exception {
+        // 创建 PENDING 动画并关联映射
+        Anime pendingAnime = createAnime("待审核", LocalDate.of(2024, 1, 15), ReviewStatus.PENDING);
+        pendingAnime = animeRepository.save(pendingAnime);
+
+        com.iccues.metaanimebackend.entity.Mapping mapping = new com.iccues.metaanimebackend.entity.Mapping();
+        mapping.setSourcePlatform(Platform.MyAnimeList);
+        mapping.setPlatformId("12345");
+        mapping.setAnime(pendingAnime);
+        mapping = mappingRepository.save(mapping);
+
+        Long mappingId = mapping.getMappingId();
+
+        // 执行删除请求
+        mockMvc.perform(delete("/api/admin/delete_non_approved_animes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+
+        // 验证：动画和映射都被删除
+        assertEquals(0, animeRepository.count());
+        assertFalse(mappingRepository.existsById(mappingId));
+    }
+
+    @Test
+    public void testDeleteNonApprovedAnimes_EmptyDatabase() throws Exception {
+        // 不创建任何数据
+        assertEquals(0, animeRepository.count());
+
+        // 执行删除请求（不应该报错）
+        mockMvc.perform(delete("/api/admin/delete_non_approved_animes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+
+        // 验证：仍然为空
+        assertEquals(0, animeRepository.count());
+    }
+
+    @Test
+    public void testDeleteNonApprovedAnimes_OnlyApproved() throws Exception {
+        // 只创建 APPROVED 状态的动画
+        Anime approved1 = createAnime("已审核1", LocalDate.of(2024, 1, 15), ReviewStatus.APPROVED);
+        Anime approved2 = createAnime("已审核2", LocalDate.of(2024, 1, 16), ReviewStatus.APPROVED);
+
+        approved1 = animeRepository.save(approved1);
+        approved2 = animeRepository.save(approved2);
+
+        // 执行删除请求
+        mockMvc.perform(delete("/api/admin/delete_non_approved_animes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+
+        // 验证：所有 APPROVED 动画都保留
+        assertEquals(2, animeRepository.count());
+        assertTrue(animeRepository.existsById(approved1.getAnimeId()));
+        assertTrue(animeRepository.existsById(approved2.getAnimeId()));
+    }
+
     // 辅助方法：创建测试用的 Anime
     private Anime createAnime(String titleNative, LocalDate startDate, ReviewStatus reviewStatus) {
         AnimeTitles titles = new AnimeTitles();

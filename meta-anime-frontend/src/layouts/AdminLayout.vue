@@ -4,14 +4,16 @@ import { User } from "@element-plus/icons-vue";
 
 <template>
   <div class="h-screen flex flex-col">
-    <header class="flex justify-between items-center px-6 py-4 bg-white shadow-sm border-b border-gray-100">
+    <header
+      class="flex justify-between items-center px-6 py-4 bg-white shadow-sm border-b border-gray-100"
+    >
       <div class="flex items-center gap-8">
         <router-link
           to="/"
           class="text-lg font-bold text-gray-800 hover:text-blue-600 transition-colors no-underline"
           title="返回前台首页"
         >
-          Meta Anime
+          有希计划
         </router-link>
 
         <router-link

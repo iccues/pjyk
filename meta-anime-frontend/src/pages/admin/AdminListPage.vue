@@ -10,6 +10,7 @@ import type { AdminMapping, ReviewStatus } from "@/types/adminAnime";
 import type { Season } from "@/types/anime";
 import type { DraggableChangeEvent } from "@/types/draggable";
 import { generateYearOptions } from "@/utils/dateUtils";
+import "element-plus/dist/index.css";
 
 // 筛选器状态
 const selectedReviewStatus = ref<ReviewStatus | undefined>("PENDING");
@@ -53,21 +54,13 @@ const {
 
 // 处理筛选变化
 const handleFilterChange = () => {
-  loadAnimeList(
-    selectedReviewStatus.value,
-    selectedYear.value,
-    selectedSeason.value,
-  );
+  loadAnimeList(selectedReviewStatus.value, selectedYear.value, selectedSeason.value);
 };
 
 // 初始化加载数据
 onMounted(async () => {
   await Promise.all([
-    loadAnimeList(
-      selectedReviewStatus.value,
-      selectedYear.value,
-      selectedSeason.value,
-    ),
+    loadAnimeList(selectedReviewStatus.value, selectedYear.value, selectedSeason.value),
     loadMappingList(),
   ]);
 });
@@ -91,10 +84,7 @@ const onDeleteAnime = (animeId: number) => {
 };
 
 // 包装映射拖拽事件
-const onMappingToAnime = (
-  evt: DraggableChangeEvent<AdminMapping>,
-  animeId: number,
-) => {
+const onMappingToAnime = (evt: DraggableChangeEvent<AdminMapping>, animeId: number) => {
   handleMappingToAnime(evt, animeId, onAnimeRemoveMapping, onAnimeAddMapping);
 };
 
@@ -117,14 +107,7 @@ const onUpdateReviewStatus = (animeId: number, reviewStatus: ReviewStatus) => {
 
 <template>
   <div class="flex flex-col h-full p-5 max-w-[1800px] mx-auto overflow-hidden" v-loading="loading">
-    <el-alert
-      v-if="error"
-      :title="error"
-      type="error"
-      center
-      show-icon
-      :closable="false"
-    />
+    <el-alert v-if="error" :title="error" type="error" center show-icon :closable="false" />
 
     <el-row v-else :gutter="24" class="flex-1 overflow-hidden">
       <!-- 左列：动画列表 -->

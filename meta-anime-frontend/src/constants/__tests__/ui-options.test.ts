@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  REVIEW_STATUS_OPTIONS,
-  SEASON_OPTIONS,
-  SEASON_OPTIONS_REQUIRED,
-} from "../ui-options";
+import { REVIEW_STATUS_OPTIONS, SEASON_OPTIONS, SEASON_OPTIONS_REQUIRED } from "../ui-options";
 
 describe("ui-options.ts", () => {
   describe("SEASON_OPTIONS", () => {
@@ -46,9 +42,7 @@ describe("ui-options.ts", () => {
 
   describe("SEASON_OPTIONS_REQUIRED", () => {
     it('不应该包含"全部"选项', () => {
-      const hasAllOption = SEASON_OPTIONS_REQUIRED.some(
-        (opt) => opt.label === "全部",
-      );
+      const hasAllOption = SEASON_OPTIONS_REQUIRED.some((opt) => opt.label === "全部");
       expect(hasAllOption).toBe(false);
     });
 
@@ -97,15 +91,9 @@ describe("ui-options.ts", () => {
     });
 
     it("应该正确映射审核状态值", () => {
-      const pendingOption = REVIEW_STATUS_OPTIONS.find(
-        (opt) => opt.label === "待审核",
-      );
-      const approvedOption = REVIEW_STATUS_OPTIONS.find(
-        (opt) => opt.label === "已通过",
-      );
-      const rejectedOption = REVIEW_STATUS_OPTIONS.find(
-        (opt) => opt.label === "已拒绝",
-      );
+      const pendingOption = REVIEW_STATUS_OPTIONS.find((opt) => opt.label === "待审核");
+      const approvedOption = REVIEW_STATUS_OPTIONS.find((opt) => opt.label === "已通过");
+      const rejectedOption = REVIEW_STATUS_OPTIONS.find((opt) => opt.label === "已拒绝");
 
       expect(pendingOption?.value).toBe("PENDING");
       expect(approvedOption?.value).toBe("APPROVED");

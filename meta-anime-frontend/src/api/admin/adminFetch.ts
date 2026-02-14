@@ -5,10 +5,7 @@ import { post } from "./adminHttp";
  * @param year 年份
  * @param season 季度（SPRING, SUMMER, FALL, WINTER）
  */
-export async function fetchAnime(
-  year: number,
-  season: string,
-): Promise<string> {
+export async function fetchAnime(year: number, season: string): Promise<string> {
   return post<string>("/api/admin/fetch/anime", null, {
     params: { year: year.toString(), season },
   });
@@ -19,10 +16,7 @@ export async function fetchAnime(
  * @param year 年份
  * @param season 季度（SPRING, SUMMER, FALL, WINTER）
  */
-export async function fetchMapping(
-  year: number,
-  season: string,
-): Promise<string> {
+export async function fetchMapping(year: number, season: string): Promise<string> {
   return post<string>("/api/admin/fetch/mapping", null, {
     params: { year: year.toString(), season },
   });
@@ -38,6 +32,6 @@ export async function linkMappings(): Promise<string> {
 /**
  * 计算所有动画的平均评分
  */
-export async function calculateScores(): Promise<string> {
-  return post<string>("/api/admin/fetch/calculate_scores");
+export async function calculateMetric(): Promise<string> {
+  return post<string>("/api/admin/fetch/calculate_metric");
 }

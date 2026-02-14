@@ -18,21 +18,19 @@ onMounted(async () => {
           <div>
             <p class="text-sm text-gray-500 mb-1">用户名</p>
             <p class="text-gray-900 font-medium">
-              {{ user.profile.name || user.profile.preferred_username || '未设置' }}
+              {{ user.profile.name || user.profile.preferred_username || "未设置" }}
             </p>
           </div>
 
           <div>
             <p class="text-sm text-gray-500 mb-1">邮箱</p>
             <p class="text-gray-900 font-medium">
-              {{ user.profile.email || '未设置' }}
+              {{ user.profile.email || "未设置" }}
             </p>
           </div>
         </div>
 
-        <el-button type="primary" size="large" @click="logout" class="w-full">
-          登出
-        </el-button>
+        <el-button type="primary" size="large" @click="logout" class="w-full"> 登出 </el-button>
       </div>
     </div>
   </div>

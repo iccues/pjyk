@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { ArrowLeft, ArrowRight } from "@element-plus/icons-vue";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { getAnimeList } from "@/api/public/anime";
-import type { Season } from "@/types/anime";
 import type { Anime } from "@/types/anime.ts";
+import type { AnimeFilterParams } from "@/types/filter";
 import type { Page } from "@/types/page.ts";
+import { filtersToQuery } from "@/utils/filterUtils";
 import AnimeCard from "./AnimeCard.vue";
 
-const props = defineProps<{
-  title?: string;
-  year?: number;
-  season?: Season;
-}>();
+const props = defineProps<
+  AnimeFilterParams & {
+    title?: string;
+  }
+>();
 
 const animes = ref<Page<Anime> | null>(null);
 const loading = ref(false);
@@ -21,13 +22,19 @@ const showLeftButton = ref(false);
 const showRightButton = ref(false);
 const isHovering = ref(false);
 
+// 构建查看更多链接的查询参数
+const moreLink = computed(() => {
+  const query = filtersToQuery(props);
+  const queryString = new URLSearchParams(query).toString();
+  return `/anime/list${queryString ? `?${queryString}` : ""}`;
+});
+
 const fetchAnimes = async () => {
   try {
     loading.value = true;
     error.value = null;
     animes.value = await getAnimeList({
-      year: props.year,
-      season: props.season,
+      ...props,
       pageSize: 12,
     });
   } catch (err) {
@@ -49,9 +56,7 @@ const getCardWidth = (): number => {
   // 默认值
   if (!scrollContainer.value) return 220;
 
-  const firstCard = scrollContainer.value.querySelector(
-    ".flex-shrink-0",
-  ) as HTMLElement;
+  const firstCard = scrollContainer.value.querySelector(".flex-shrink-0") as HTMLElement;
   if (!firstCard) return 220;
 
   // 获取卡片宽度
@@ -102,8 +107,10 @@ onMounted(async () => {
     <h2 class="text-3xl font-bold text-gray-900 border-l-4 border-blue-500 pl-4">
       {{ title }}
     </h2>
-    <router-link :to="`/anime/list?year=${year || ''}&season=${season || ''}`"
-      class="text-sm font-medium text-blue-600 hover:text-blue-500 flex items-center gap-1 transition-colors">
+    <router-link
+      :to="moreLink"
+      class="text-sm font-medium text-blue-600 hover:text-blue-500 flex items-center gap-1 transition-colors"
+    >
       查看更多 <span aria-hidden="true">&rarr;</span>
     </router-link>
   </div>
@@ -136,11 +143,7 @@ onMounted(async () => {
     <button
       v-show="showLeftButton"
       @click="scrollLeft"
-      class="absolute left-0 top-40 -translate-y-1/2 z-10 w-12 h-12
-             bg-white/90 hover:bg-white shadow-lg rounded-full
-             flex items-center justify-center
-             transition-opacity duration-300
-             hover:scale-110 active:scale-95"
+      class="absolute left-0 top-40 -translate-y-1/2 z-10 w-12 h-12 bg-white/90 hover:bg-white shadow-lg rounded-full flex items-center justify-center transition-opacity duration-300 hover:scale-110 active:scale-95"
       :class="{ 'opacity-100': isHovering, 'opacity-0': !isHovering }"
       aria-label="向左滚动"
     >
@@ -153,11 +156,7 @@ onMounted(async () => {
     <button
       v-show="showRightButton"
       @click="scrollRight"
-      class="absolute right-0 top-40 -translate-y-1/2 z-10 w-12 h-12
-             bg-white/90 hover:bg-white shadow-lg rounded-full
-             flex items-center justify-center
-             transition-opacity duration-300
-             hover:scale-110 active:scale-95"
+      class="absolute right-0 top-40 -translate-y-1/2 z-10 w-12 h-12 bg-white/90 hover:bg-white shadow-lg rounded-full flex items-center justify-center transition-opacity duration-300 hover:scale-110 active:scale-95"
       :class="{ 'opacity-100': isHovering, 'opacity-0': !isHovering }"
       aria-label="向右滚动"
     >
@@ -177,7 +176,7 @@ onMounted(async () => {
 }
 
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 </style>

@@ -19,9 +19,7 @@ export function useMappingList() {
       const mappings = await getUnmappedMappingList();
       mappingList.value = mappings;
     } catch (e) {
-      ElMessage.error(
-        "加载映射列表失败: " + (e instanceof Error ? e.message : "未知错误"),
-      );
+      ElMessage.error("加载映射列表失败: " + (e instanceof Error ? e.message : "未知错误"));
     }
   };
 
@@ -45,9 +43,7 @@ export function useMappingList() {
         }
       } else {
         // 从未关联列表中移除
-        const idx = mappingList.value.findIndex(
-          (m) => m.mappingId === mapping.mappingId,
-        );
+        const idx = mappingList.value.findIndex((m) => m.mappingId === mapping.mappingId);
         if (idx !== -1) mappingList.value.splice(idx, 1);
       }
 
@@ -68,9 +64,7 @@ export function useMappingList() {
         ElMessage.success("已解除映射关联");
       }
     } catch (e) {
-      ElMessage.error(
-        "更新失败: " + (e instanceof Error ? e.message : "未知错误"),
-      );
+      ElMessage.error("更新失败: " + (e instanceof Error ? e.message : "未知错误"));
     }
   };
 
@@ -83,12 +77,7 @@ export function useMappingList() {
   ) => {
     const mapping = evt.added?.element;
     if (mapping) {
-      applyMappingChange(
-        mapping,
-        animeId,
-        onAnimeRemoveMapping,
-        onAnimeAddMapping,
-      );
+      applyMappingChange(mapping, animeId, onAnimeRemoveMapping, onAnimeAddMapping);
     }
   };
 
@@ -100,12 +89,7 @@ export function useMappingList() {
   ) => {
     const mapping = evt.added?.element;
     if (mapping) {
-      applyMappingChange(
-        mapping,
-        null,
-        onAnimeRemoveMapping,
-        onAnimeAddMapping,
-      );
+      applyMappingChange(mapping, null, onAnimeRemoveMapping, onAnimeAddMapping);
     }
   };
 
@@ -120,19 +104,14 @@ export function useMappingList() {
   };
 
   // 处理创建 Mapping
-  const handleSubmitMapping = async (
-    sourcePlatform: string,
-    platformId: string,
-  ) => {
+  const handleSubmitMapping = async (sourcePlatform: string, platformId: string) => {
     try {
       const newMapping = await createMapping(sourcePlatform, platformId);
       mappingList.value.unshift(newMapping);
       ElMessage.success("映射创建成功");
       handleCloseMappingDialog();
     } catch (e) {
-      ElMessage.error(
-        "创建失败: " + (e instanceof Error ? e.message : "未知错误"),
-      );
+      ElMessage.error("创建失败: " + (e instanceof Error ? e.message : "未知错误"));
     }
   };
 
@@ -142,15 +121,11 @@ export function useMappingList() {
       const mapping = mappingList.value.find((m) => m.mappingId === mappingId);
       if (!mapping) return;
 
-      await ElMessageBox.confirm(
-        `确定要删除该映射吗？此操作不可恢复。`,
-        "确认删除",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        },
-      );
+      await ElMessageBox.confirm(`确定要删除该映射吗？此操作不可恢复。`, "确认删除", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      });
 
       await deleteMapping(mappingId);
 
@@ -163,9 +138,7 @@ export function useMappingList() {
       ElMessage.success("删除成功");
     } catch (e) {
       if (e === "cancel") return;
-      ElMessage.error(
-        "删除失败: " + (e instanceof Error ? e.message : "未知错误"),
-      );
+      ElMessage.error("删除失败: " + (e instanceof Error ? e.message : "未知错误"));
     }
   };
 

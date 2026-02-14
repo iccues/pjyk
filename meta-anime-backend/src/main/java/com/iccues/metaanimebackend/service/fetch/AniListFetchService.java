@@ -27,6 +27,9 @@ public class AniListFetchService extends AbstractAnimeFetchService {
         int year = date.path("year").asInt();
         int month = date.path("month").asInt();
         int day = date.path("day").asInt();
+        if (day <= 0) {
+            day = 1;
+        }
         return LocalDate.of(year, month, day);
     }
 
@@ -51,13 +54,17 @@ public class AniListFetchService extends AbstractAnimeFetchService {
     }
 
     @Override
-    protected double extractRawScore(JsonNode jsonNode) {
-        return jsonNode.path("averageScore").asDouble();
+    protected Double extractRawScore(JsonNode jsonNode) {
+        double score = jsonNode.path("averageScore").asDouble();
+        if (score <= 0.0) {
+            return null;
+        }
+        return score;
     }
 
     @Override
-    protected double normalizeScore(double rawScore) {
-        return rawScore;
+    protected double extractRawPopularity(JsonNode jsonNode) {
+        return jsonNode.path("popularity").asDouble();
     }
 
     @Override
@@ -104,6 +111,7 @@ public class AniListFetchService extends AbstractAnimeFetchService {
                         color
                       }
                       averageScore
+                      popularity
                       startDate {
                         year
                         month
@@ -161,6 +169,7 @@ public class AniListFetchService extends AbstractAnimeFetchService {
                       color
                     }
                     averageScore
+                    popularity
                     startDate {
                       year
                       month

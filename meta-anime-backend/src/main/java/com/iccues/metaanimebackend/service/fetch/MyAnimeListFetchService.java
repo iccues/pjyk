@@ -51,13 +51,17 @@ public class MyAnimeListFetchService extends AbstractAnimeFetchService {
     }
 
     @Override
-    protected double extractRawScore(JsonNode jsonNode) {
-        return jsonNode.path("mean").asDouble();
+    protected Double extractRawScore(JsonNode jsonNode) {
+        double score = jsonNode.path("mean").asDouble();
+        if (score <= 0.0) {
+            return null;
+        }
+        return score;
     }
 
     @Override
-    protected double normalizeScore(double rawScore) {
-        return (rawScore - 1) / 9 * 100;
+    protected double extractRawPopularity(JsonNode jsonNode) {
+        return jsonNode.path("num_scoring_users").asDouble();
     }
 
     @Override
@@ -102,7 +106,7 @@ public class MyAnimeListFetchService extends AbstractAnimeFetchService {
                 () -> myAnimeListWebClient.get()
                         .uri(uriBuilder -> uriBuilder
                                 .path("/anime/season/{year}/{season}")
-                                .queryParam("fields", "id,alternative_titles,main_picture,start_date,mean,media_type")
+                                .queryParam("fields", "id,alternative_titles,main_picture,start_date,mean,num_scoring_users,media_type")
                                 .queryParam("limit", pageSize)
                                 .queryParam("offset", page * pageSize)
                                 .build(year, season.toLowerName()))
@@ -119,7 +123,7 @@ public class MyAnimeListFetchService extends AbstractAnimeFetchService {
                 () -> myAnimeListWebClient.get()
                         .uri(uriBuilder -> uriBuilder
                                 .path("/anime/{anime_id}")
-                                .queryParam("fields", "id,alternative_titles,main_picture,start_date,mean,media_type")
+                                .queryParam("fields", "id,alternative_titles,main_picture,start_date,mean,num_scoring_users,media_type")
                                 .build(platformId))
                         .retrieve()
                         .bodyToMono(JsonNode.class)

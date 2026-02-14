@@ -13,4 +13,5 @@ import java.util.List;
 public interface AnimeRepository extends JpaRepository<Anime, Long>, JpaSpecificationExecutor<Anime> {
     List<Anime> findByStartDateBetween(LocalDate startDateAfter, LocalDate startDateBefore);
     List<Anime> findAllByReviewStatus(ReviewStatus reviewStatus);
+    void deleteAllByReviewStatusIsNot(ReviewStatus reviewStatus);
 }

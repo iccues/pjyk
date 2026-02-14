@@ -41,6 +41,9 @@ public class Mapping {
     Double rawScore;
     Double normalizedScore;
 
+    Double rawPopularity;
+    Double normalizedPopularity;
+
     @Embedded
     MappingInfo mappingInfo;
 

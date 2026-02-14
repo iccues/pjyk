@@ -2,11 +2,14 @@ package com.iccues.metaanimebackend.service.fetch;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.iccues.metaanimebackend.config.PlatformConfig;
+import com.iccues.metaanimebackend.config.PlatformConfigProperties;
 import com.iccues.metaanimebackend.entity.AnimeTitles;
 import com.iccues.metaanimebackend.entity.Platform;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,9 +20,23 @@ public class AniListFetchServiceTest {
     private ObjectMapper objectMapper;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         service = new AniListFetchService();
         objectMapper = new ObjectMapper();
+
+        // 设置 platformConfigProperties
+        PlatformConfigProperties configProperties = new PlatformConfigProperties();
+        PlatformConfig aniListConfig = new PlatformConfig();
+        aniListConfig.setScoreMean(70.0);
+        aniListConfig.setScoreStd(10.0);
+
+        Field aniListField = PlatformConfigProperties.class.getDeclaredField("aniList");
+        aniListField.setAccessible(true);
+        aniListField.set(configProperties, aniListConfig);
+
+        Field configField = AbstractAnimeFetchService.class.getDeclaredField("platformConfigProperties");
+        configField.setAccessible(true);
+        configField.set(service, configProperties);
     }
 
     @Test
@@ -120,17 +137,19 @@ public class AniListFetchServiceTest {
                 """;
         JsonNode jsonNode = objectMapper.readTree(jsonString);
 
-        double result = service.extractRawScore(jsonNode);
+        Double result = service.extractRawScore(jsonNode);
 
-        assertEquals(0.0, result, 0.001);
+        assertNull(result);
     }
 
     @Test
     public void testNormalizeScore() {
-        // AniList 评分已经是 0-100，不需要归一化
-        double result = service.normalizeScore(85.5);
+        // AniList: mean=70.0, std=10.0
+        // z = (85.0 - 70.0) / 10.0 = 1.5
+        // normalized = 50 + (1.5 * (100 / 6.0)) = 50 + 25 = 75.0
+        double result = service.normalizeScore(85.0);
 
-        assertEquals(85.5, result, 0.001);
+        assertEquals(75.0, result, 0.01);
     }
 
     @Test

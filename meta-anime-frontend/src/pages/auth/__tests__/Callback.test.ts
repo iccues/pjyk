@@ -36,9 +36,7 @@ describe("Callback.vue", () => {
   });
 
   it("挂载时应该调用 signinRedirectCallback", async () => {
-    vi.mocked(oidcManager.signinRedirectCallback).mockResolvedValue(
-      undefined as any,
-    );
+    vi.mocked(oidcManager.signinRedirectCallback).mockResolvedValue(undefined as any);
 
     mount(Callback, {
       global: {
@@ -52,9 +50,7 @@ describe("Callback.vue", () => {
   });
 
   it("认证成功后应该跳转到 /admin", async () => {
-    vi.mocked(oidcManager.signinRedirectCallback).mockResolvedValue(
-      undefined as any,
-    );
+    vi.mocked(oidcManager.signinRedirectCallback).mockResolvedValue(undefined as any);
     const replaceSpy = vi.spyOn(router, "replace");
 
     mount(Callback, {
@@ -69,9 +65,7 @@ describe("Callback.vue", () => {
   });
 
   it("认证失败时应该记录错误", async () => {
-    const consoleErrorSpy = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     const error = new Error("Auth failed");
     vi.mocked(oidcManager.signinRedirectCallback).mockRejectedValue(error);
 

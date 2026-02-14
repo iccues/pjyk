@@ -43,12 +43,7 @@ const emit = defineEmits<{
         <h2 class="text-xl font-semibold text-gray-800 m-0">动画列表</h2>
         <el-tag type="info">{{ animeList.length }}</el-tag>
       </div>
-      <el-button
-        type="primary"
-        size="small"
-        :icon="Plus"
-        @click="emit('create-anime')"
-      >
+      <el-button type="primary" size="small" :icon="Plus" @click="emit('create-anime')">
         新建动画
       </el-button>
     </div>
@@ -66,10 +61,7 @@ const emit = defineEmits<{
       @change="emit('filter-change')"
     />
 
-    <VList
-      :data="animeList"
-      class="flex-1 pr-2 overflow-auto"
-    >
+    <VList :data="animeList" class="flex-1 pr-2 overflow-auto">
       <template #default="{ item: anime }">
         <div :key="anime.animeId" class="mb-3">
           <AdminAnimeItem
@@ -77,7 +69,9 @@ const emit = defineEmits<{
             @mapping-change="(evt) => emit('mapping-change', evt, anime.animeId)"
             @delete-anime="emit('delete-anime', $event)"
             @edit-anime="emit('edit-anime', $event)"
-            @update-review-status="(animeId, reviewStatus) => emit('update-review-status', animeId, reviewStatus)"
+            @update-review-status="
+              (animeId, reviewStatus) => emit('update-review-status', animeId, reviewStatus)
+            "
           />
         </div>
       </template>

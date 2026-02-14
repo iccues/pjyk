@@ -104,10 +104,7 @@ describe("rem.ts", () => {
     const { initRem } = await import("../rem");
     initRem();
 
-    expect(addEventListenerSpy).toHaveBeenCalledWith(
-      "resize",
-      expect.any(Function),
-    );
+    expect(addEventListenerSpy).toHaveBeenCalledWith("resize", expect.any(Function));
   });
 
   it("应该在窗口 resize 时更新 font-size", async () => {
