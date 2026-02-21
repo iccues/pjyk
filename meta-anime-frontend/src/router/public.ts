@@ -11,6 +11,10 @@ export default [
         path: "anime/list",
         component: () => import("@/pages/public/AnimeListPage.vue"),
       },
+      {
+        path: ":pathMatch(.*)*",
+        component: () => import("@/pages/public/NotFoundPage.vue"),
+      },
     ],
   },
 ];
