@@ -109,7 +109,7 @@ onMounted(async () => {
     </h2>
     <router-link
       :to="moreLink"
-      class="text-sm font-medium text-blue-600 hover:text-blue-500 flex items-center gap-1 transition-colors"
+      class="text-[14px] font-medium text-blue-600 hover:text-blue-500 flex items-center gap-1 transition-colors"
     >
       查看更多 <span aria-hidden="true">&rarr;</span>
     </router-link>
@@ -121,7 +121,7 @@ onMounted(async () => {
 
   <div
     v-else-if="animes && animes.content.length > 0"
-    class="relative max-w-[1400px] mx-auto"
+    class="relative"
     @mouseenter="isHovering = true"
     @mouseleave="isHovering = false"
   >
@@ -129,7 +129,7 @@ onMounted(async () => {
     <div
       ref="scrollContainer"
       @scroll="updateButtonVisibility"
-      class="flex gap-5 overflow-x-auto pb-4 px-5 scroll-smooth scrollbar-hide"
+      class="flex gap-5 overflow-x-auto pb-4 px-[max(1.25rem,calc(50%-700px+1.25rem))] scroll-smooth scrollbar-hide"
     >
       <AnimeCard
         v-for="anime in animes.content"
@@ -143,7 +143,7 @@ onMounted(async () => {
     <button
       v-show="showLeftButton"
       @click="scrollLeft"
-      class="absolute left-0 top-40 -translate-y-1/2 z-10 w-12 h-12 bg-white/90 hover:bg-white shadow-lg rounded-full flex items-center justify-center transition-opacity duration-300 hover:scale-110 active:scale-95"
+      class="absolute left-[max(0rem,calc(50%-700px))] top-30 z-10 w-12 h-12 bg-white/90 hover:bg-white shadow-lg rounded-full flex items-center justify-center transition-opacity duration-300 hover:scale-110 active:scale-95"
       :class="{ 'opacity-100': isHovering, 'opacity-0': !isHovering }"
       aria-label="向左滚动"
     >
@@ -156,7 +156,7 @@ onMounted(async () => {
     <button
       v-show="showRightButton"
       @click="scrollRight"
-      class="absolute right-0 top-40 -translate-y-1/2 z-10 w-12 h-12 bg-white/90 hover:bg-white shadow-lg rounded-full flex items-center justify-center transition-opacity duration-300 hover:scale-110 active:scale-95"
+      class="absolute right-[max(0rem,calc(50%-700px))] top-30 z-10 w-12 h-12 bg-white/90 hover:bg-white shadow-lg rounded-full flex items-center justify-center transition-opacity duration-300 hover:scale-110 active:scale-95"
       :class="{ 'opacity-100': isHovering, 'opacity-0': !isHovering }"
       aria-label="向右滚动"
     >

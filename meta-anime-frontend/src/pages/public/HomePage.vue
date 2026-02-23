@@ -20,23 +20,21 @@ const currentSeason = getCurrentSeason();
 </script>
 
 <template>
-  <div class="bg-gray-50/50">
-    <div class="space-y-16 pt-5 pb-20">
-      <!-- 本季新番 -->
-      <AnimeListRow
-        :title="`${currentYear}年${SEASON_NAME_MAP[currentSeason]}新番`"
-        :year="currentYear"
-        :season="currentSeason"
-      />
-      <!-- 当季最高人气 -->
-      <AnimeListRow
-        :title="`${currentYear}年${SEASON_NAME_MAP[currentSeason]}最高人气`"
-        :year="currentYear"
-        :season="currentSeason"
-        sort-by="POPULARITY"
-      />
-      <!-- 历史最高 -->
-      <AnimeListRow title="历史最高" />
-    </div>
+  <div class="space-y-16 pt-5 pb-20">
+    <!-- 本季新番 -->
+    <AnimeListRow
+      :title="`${currentYear}年${SEASON_NAME_MAP[currentSeason]}新番`"
+      :year="currentYear"
+      :season="currentSeason"
+    />
+    <!-- 当季最高人气 -->
+    <AnimeListRow
+      :title="`${currentYear}年${SEASON_NAME_MAP[currentSeason]}最高人气`"
+      :year="currentYear"
+      :season="currentSeason"
+      sort-by="POPULARITY"
+    />
+    <!-- 历史最高 -->
+    <AnimeListRow title="历史最高" />
   </div>
 </template>

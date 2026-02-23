@@ -26,7 +26,7 @@ const parsePage = (page: LocationQueryValue | LocationQueryValue[] | undefined):
 const animeListParams = ref<AnimeListParams>({
   ...queryToFilters(route.query),
   page: parsePage(route.query.page),
-  pageSize: 60,
+  pageSize: 30,
 });
 
 const pageInfo = ref<PageInfo | null>(null);
@@ -62,7 +62,6 @@ const handlePageChange = (page: number) => {
   // 滚动到顶部
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
-
 
 // 动态生成页面标题和描述
 const pageTitle = computed(() => {
@@ -105,9 +104,11 @@ const pageDescription = computed(() => {
 // 动态生成页面 URL
 const pageUrl = computed(() => {
   const url = new URL("https://www.yukiani.com/anime/list");
-  if (animeListParams.value.year) url.searchParams.set("year", animeListParams.value.year.toString());
+  if (animeListParams.value.year)
+    url.searchParams.set("year", animeListParams.value.year.toString());
   if (animeListParams.value.season) url.searchParams.set("season", animeListParams.value.season);
-  if (animeListParams.value.sortBy !== "SCORE") url.searchParams.set("sortBy", animeListParams.value.sortBy || "SCORE");
+  if (animeListParams.value.sortBy !== "SCORE")
+    url.searchParams.set("sortBy", animeListParams.value.sortBy || "SCORE");
   return url.toString();
 });
 
@@ -124,7 +125,8 @@ useHead({
       content: computed(() => {
         const keywords = ["动漫列表", "anime", "番剧", "动画评分"];
         if (animeListParams.value.year) keywords.push(`${animeListParams.value.year}年动漫`);
-        if (animeListParams.value.season) keywords.push(`${SEASON_NAME_MAP[animeListParams.value.season]}新番`);
+        if (animeListParams.value.season)
+          keywords.push(`${SEASON_NAME_MAP[animeListParams.value.season]}新番`);
         return keywords.join(",");
       }),
     },
