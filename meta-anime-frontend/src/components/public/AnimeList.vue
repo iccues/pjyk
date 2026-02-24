@@ -1,33 +1,17 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { type AnimeListParams, getAnimeList } from "@/api/public/anime";
 import type { Anime } from "@/types/anime.ts";
-import type { Page, PageInfo } from "@/types/page.ts";
+import type { Page } from "@/types/page.ts";
 import AnimeCard from "./AnimeCard.vue";
 
-const props = defineProps<AnimeListParams>();
-const emit = defineEmits<(event: "update:pageInfo", payload: PageInfo) => void>();
+const props = defineProps<{
+  animes: Page<Anime> | null;
+  loading: boolean;
+  error: string | null;
+}>();
 
-const animes = ref<Page<Anime> | null>(null);
-const loading = ref(false);
-const error = ref<string | null>(null);
-
-const fetchAnimes = async () => {
-  try {
-    loading.value = true;
-    error.value = null;
-    animes.value = await getAnimeList(props);
-    emit("update:pageInfo", animes.value.page);
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : "未知错误";
-  } finally {
-    loading.value = false;
-  }
-};
-
-watch(() => [props.year, props.season, props.page, props.pageSize, props.sortBy], fetchAnimes, {
-  immediate: true,
-});
+const emit = defineEmits<{
+  "page-change": [page: number];
+}>();
 </script>
 
 <template>
@@ -40,4 +24,16 @@ watch(() => [props.year, props.season, props.page, props.pageSize, props.sortBy]
     <AnimeCard v-for="anime in animes.content" :key="anime.animeId" :anime="anime" />
   </div>
   <div v-else class="text-center py-10 text-base text-gray-600">暂无数据</div>
+
+  <div v-if="animes?.page" class="flex flex-wrap justify-center items-center gap-2 mt-8">
+    <el-pagination
+      :current-page="(animes.page.number || 0) + 1"
+      :page-size="animes.page.size"
+      :total="animes.page.totalElements"
+      :page-count="animes.page.totalPages"
+      layout="prev, pager, next"
+      @current-change="emit('page-change', $event - 1)"
+    />
+    <span class="text-[14px] text-gray-500">共 {{ animes.page.totalElements }} 部</span>
+  </div>
 </template>
