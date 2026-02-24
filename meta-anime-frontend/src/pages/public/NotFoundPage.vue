@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { useHead } from "@unhead/vue";
+import { buildSeoHead } from "@/utils/seoUtils";
 
 const router = useRouter();
 
-useHead({
-  title: "页面不存在 - 有希计划",
-  meta: [{ name: "description", content: "你访问的页面不存在。" }],
-});
+useHead(
+  buildSeoHead({
+    title: "页面不存在 - 有希计划",
+    description: "你访问的页面不存在。",
+  }),
+);
 </script>
 
 <template>
