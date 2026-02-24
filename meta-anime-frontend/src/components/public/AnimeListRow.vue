@@ -2,17 +2,17 @@
 import { ArrowLeft, ArrowRight } from "@element-plus/icons-vue";
 import { computed, onMounted, ref } from "vue";
 import { getAnimeList } from "@/api/public/anime";
-import type { Anime } from "@/types/anime.ts";
-import type { AnimeFilterParams } from "@/types/filter";
+import type { Anime, Season, SortBy } from "@/types/anime.ts";
 import type { Page } from "@/types/page.ts";
-import { filtersToQuery } from "@/utils/filterUtils";
+import { filtersToQuery } from "@/utils/queryUtils";
 import AnimeCard from "./AnimeCard.vue";
 
-const props = defineProps<
-  AnimeFilterParams & {
-    title?: string;
-  }
->();
+const props = defineProps<{
+  year?: number;
+  season?: Season;
+  sortBy?: SortBy;
+  title?: string;
+}>();
 
 const animes = ref<Page<Anime> | null>(null);
 const loading = ref(false);

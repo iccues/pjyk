@@ -2,15 +2,15 @@
 import { Filter } from "@element-plus/icons-vue";
 import { computed } from "vue";
 import { SEASON_OPTIONS, SORT_BY_OPTIONS } from "@/constants/ui-options";
-import type { AnimeFilterParams } from "@/types/filter";
+import type { AnimeListParams } from "@/api/public/anime";
 import { generateYearOptions } from "@/utils/dateUtils";
 
 const props = defineProps<{
-  filters: AnimeFilterParams;
+  modelValue: AnimeListParams;
 }>();
 
 const emit = defineEmits<{
-  "update:filters": [filters: AnimeFilterParams];
+  "update:modelValue": [filters: AnimeListParams];
 }>();
 
 // 使用统一的常量和工具函数
@@ -20,25 +20,32 @@ const yearOptions = computed(() => generateYearOptions(10));
 
 // 处理筛选变化
 const handleYearChange = (value: number | undefined) => {
-  emit("update:filters", {
-    ...props.filters,
+  handleFilterChange({
+    ...props.modelValue,
     year: value,
     // 清空季度如果年份被清除
-    season: value === undefined ? undefined : props.filters.season,
+    season: value === undefined ? undefined : props.modelValue.season,
   });
 };
 
 const handleSeasonChange = (value: string | undefined) => {
-  emit("update:filters", {
-    ...props.filters,
+  handleFilterChange({
+    ...props.modelValue,
     season: value as any,
   });
 };
 
 const handleSortByChange = (value: string) => {
-  emit("update:filters", {
-    ...props.filters,
+  handleFilterChange({
+    ...props.modelValue,
     sortBy: value as any,
+  });
+};
+
+const handleFilterChange = (fliter: AnimeListParams) => {
+  emit("update:modelValue", {
+    ...fliter,
+    page: 0,
   });
 };
 </script>
@@ -49,7 +56,7 @@ const handleSortByChange = (value: string) => {
       <el-icon size="20"><Filter /></el-icon>
 
       <el-select
-        :model-value="filters.year"
+        :model-value="modelValue.year"
         placeholder="年份"
         size="medium"
         class="!w-40"
@@ -65,13 +72,13 @@ const handleSortByChange = (value: string) => {
       </el-select>
 
       <el-select
-        :model-value="filters.season"
+        :model-value="modelValue.season"
         placeholder="季度"
         size="medium"
         class="!w-40"
         clearable
         @change="handleSeasonChange"
-        :disabled="filters.year === undefined"
+        :disabled="modelValue.year === undefined"
       >
         <el-option
           v-for="option in seasonOptions"
@@ -82,7 +89,7 @@ const handleSortByChange = (value: string) => {
       </el-select>
 
       <el-select
-        :model-value="filters.sortBy"
+        :model-value="modelValue.sortBy"
         placeholder="排序方式"
         size="medium"
         class="!w-40"
