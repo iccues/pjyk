@@ -27,7 +27,7 @@ const flipped = ref(true);
         ></div>
         <div
           v-if="anime.averageScore"
-          class="absolute bottom-1 right-3 text-white text-base font-bold"
+          class="absolute bottom-1 right-3 text-white text-[16px] font-bold"
         >
           {{ anime.averageScore.toFixed(0) }}
         </div>
@@ -53,7 +53,7 @@ const flipped = ref(true);
       </Transition>
     </div>
     <h3
-      class="text-sm font-medium text-gray-800 m-0 px-2 leading-[1.4] h-[calc(1.4em*2)] line-clamp-2"
+      class="text-[14px] font-medium text-gray-800 m-0 px-2 leading-[1.4] h-[42px] line-clamp-2"
       :title="anime.title.titleCn || anime.title.titleNative"
     >
       {{ anime.title.titleCn || anime.title.titleNative }}

@@ -1,5 +1,5 @@
 import type { LocationQuery } from "vue-router";
-import type { AnimeFilterParams } from "@/types/filter";
+import type { AnimeListParams } from "@/api/public/anime";
 import type { Season, SortBy } from "@/types/anime";
 
 /**
@@ -27,26 +27,32 @@ const parseSortBy = (value: string): SortBy | undefined => {
 };
 
 /**
- * Convert URL query params to AnimeFilterParams
+ * Parse page from query string (0-based index, defaults to 0)
  */
-export const queryToFilters = (query: LocationQuery): AnimeFilterParams => {
-  const filters: AnimeFilterParams = {
+const parsePage = (value: string): number => {
+  const num = parseInt(value);
+  return isNaN(num) || num < 0 ? 0 : num;
+};
+
+/**
+ * Convert URL query params to AnimeListParams (filters + page)
+ */
+export const queryToFilters = (query: LocationQuery): AnimeListParams => {
+  const filters: AnimeListParams = {
     year: undefined,
     season: undefined,
     sortBy: "SCORE",
+    page: 0,
   };
 
-  // Parse year
   if (query.year && typeof query.year === "string") {
     filters.year = parseYear(query.year);
   }
 
-  // Parse season
   if (query.season && typeof query.season === "string") {
     filters.season = parseSeason(query.season);
   }
 
-  // Parse sortBy
   if (query.sortBy && typeof query.sortBy === "string") {
     const parsed = parseSortBy(query.sortBy);
     if (parsed !== undefined) {
@@ -54,13 +60,17 @@ export const queryToFilters = (query: LocationQuery): AnimeFilterParams => {
     }
   }
 
+  if (query.page && typeof query.page === "string") {
+    filters.page = parsePage(query.page);
+  }
+
   return filters;
 };
 
 /**
- * Convert AnimeFilterParams to URL query params
+ * Convert AnimeListParams (filters + page) to URL query params
  */
-export const filtersToQuery = (filters: AnimeFilterParams): Record<string, string> => {
+export const filtersToQuery = (filters: AnimeListParams): Record<string, string> => {
   const query: Record<string, string> = {};
 
   if (filters.year !== undefined) {
@@ -73,6 +83,10 @@ export const filtersToQuery = (filters: AnimeFilterParams): Record<string, strin
 
   if (filters.sortBy !== undefined && filters.sortBy !== "SCORE") {
     query.sortBy = filters.sortBy;
+  }
+
+  if (filters.page !== undefined && filters.page > 0) {
+    query.page = filters.page.toString();
   }
 
   return query;
