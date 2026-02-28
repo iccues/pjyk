@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import AnimeFilter from "@/components/public/AnimeFilter.vue";
-import AnimeList from "@/components/public/AnimeList.vue";
-import { getAnimeList, type AnimeListParams } from "@/api/public/anime";
+import AnimeFilter from "@/components/AnimeFilter.vue";
+import AnimeList from "@/components/AnimeList.vue";
+import { getAnimeList, type AnimeListParams } from "@/api/anime";
 import type { Page } from "@/types/page";
 import { filtersToQuery, queryToFilters } from "@/utils/queryUtils";
-import { useAnimeListHead } from "@/composables/public/useAnimeListHead";
+import { useAnimeListHead } from "@/composables/useAnimeListHead";
 import type { Anime } from "@/types/anime";
 
 const router = useRouter();

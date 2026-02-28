@@ -1,5 +1,5 @@
 import type { LocationQuery } from "vue-router";
-import type { AnimeListParams } from "@/api/public/anime";
+import type { AnimeListParams } from "@/api/anime";
 import type { Season, SortBy } from "@/types/anime";
 
 /**

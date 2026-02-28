@@ -17,12 +17,9 @@
     "github-markdown-css": "^5.9.0",
     "katex": "^0.16.28",
     "markdown-it": "^14.1.1",
-    "oidc-client-ts": "^3.4.1",
     "tailwindcss": "^4.1.16",
-    "virtua": "^0.48.2",
     "vue": "^3.5.22",
-    "vue-router": "^4.6.3",
-    "vuedraggable": "^4.1.0"
+    "vue-router": "^4.6.3"
   },
   "devDependencies": {
     "@types/markdown-it": "^14.1.2",

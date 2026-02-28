@@ -2,7 +2,7 @@
 import { Filter } from "@element-plus/icons-vue";
 import { computed } from "vue";
 import { SEASON_OPTIONS, SORT_BY_OPTIONS } from "@/constants/ui-options";
-import type { AnimeListParams } from "@/api/public/anime";
+import type { AnimeListParams } from "@/api/anime";
 import { generateYearOptions } from "@/utils/dateUtils";
 
 const props = defineProps<{

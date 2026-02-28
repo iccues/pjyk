@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useHead } from "@unhead/vue";
 import { buildSeoHead } from "@/utils/seoUtils";
-import MarkdownViewer from "@/components/public/MarkdownViewer.vue";
+import MarkdownViewer from "@/components/MarkdownViewer.vue";
 import raw from "@/docs/platforms.md?raw";
 
 useHead(

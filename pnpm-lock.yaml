@@ -117,24 +117,15 @@ importers:
       markdown-it:
         specifier: ^14.1.1
         version: 14.1.1
-      oidc-client-ts:
-        specifier: ^3.4.1
-        version: 3.4.1
       tailwindcss:
         specifier: ^4.1.16
         version: 4.2.1
-      virtua:
-        specifier: ^0.48.2
-        version: 0.48.6(vue@3.5.29(typescript@5.9.3))
       vue:
         specifier: ^3.5.22
         version: 3.5.29(typescript@5.9.3)
       vue-router:
         specifier: ^4.6.3
         version: 4.6.4(vue@3.5.29(typescript@5.9.3))
-      vuedraggable:
-        specifier: ^4.1.0
-        version: 4.1.0(vue@3.5.29(typescript@5.9.3))
     devDependencies:
       '@types/markdown-it':
         specifier: ^14.1.2

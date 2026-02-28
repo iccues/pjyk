@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ArrowLeft, ArrowRight } from "@element-plus/icons-vue";
 import { computed, onMounted, ref } from "vue";
-import { getAnimeList } from "@/api/public/anime";
+import { getAnimeList } from "@/api/anime";
 import type { Anime, Season, SortBy } from "@/types/anime.ts";
 import type { Page } from "@/types/page.ts";
 import { filtersToQuery } from "@/utils/queryUtils";
