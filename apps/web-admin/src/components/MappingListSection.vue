@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Plus } from "@element-plus/icons-vue";
 import draggable from "vuedraggable";
-import AdminMappingItem from "@/components/admin/AdminMappingItem.vue";
-import MappingFormDialog from "@/components/admin/MappingFormDialog.vue";
+import AdminMappingItem from "@/components/AdminMappingItem.vue";
+import MappingFormDialog from "@/components/MappingFormDialog.vue";
 import type { AdminMapping } from "@/types/adminAnime";
 
 interface Props {

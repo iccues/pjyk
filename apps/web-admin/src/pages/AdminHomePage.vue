@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { List } from "@element-plus/icons-vue";
-import DataManagementCard from "@/components/admin/DataManagementCard.vue";
-import FetchDataCard from "@/components/admin/FetchDataCard.vue";
-import "element-plus/dist/index.css";
+import DataManagementCard from "@/components/DataManagementCard.vue";
+import FetchDataCard from "@/components/FetchDataCard.vue";
 </script>
 
 <template>
@@ -18,7 +17,7 @@ import "element-plus/dist/index.css";
       <div class="space-y-3">
         <p class="text-gray-600 mb-4">管理动画数据和映射关系</p>
         <router-link
-          to="/admin/list"
+          to="/list"
           class="text-blue-600 hover:text-blue-800 transition-colors inline-block"
         >
           动画列表管理

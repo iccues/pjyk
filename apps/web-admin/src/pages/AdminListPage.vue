@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import type { AnimeCreateRequest, AnimeUpdateRequest } from "@/api/admin";
-import AnimeListSection from "@/components/admin/AnimeListSection.vue";
-import MappingListSection from "@/components/admin/MappingListSection.vue";
-import { useAnimeList } from "@/composables/admin/useAnimeList";
-import { useMappingList } from "@/composables/admin/useMappingList";
+import AnimeListSection from "@/components/AnimeListSection.vue";
+import MappingListSection from "@/components/MappingListSection.vue";
+import { useAnimeList } from "@/composables/useAnimeList";
+import { useMappingList } from "@/composables/useMappingList";
 import { REVIEW_STATUS_OPTIONS, SEASON_OPTIONS } from "@/constants/ui-options";
 import type { AdminMapping, ReviewStatus } from "@/types/adminAnime";
 import type { Season } from "@/types/anime";
 import type { DraggableChangeEvent } from "@/types/draggable";
 import { generateYearOptions } from "@/utils/dateUtils";
-import "element-plus/dist/index.css";
 
 // 筛选器状态
 const selectedReviewStatus = ref<ReviewStatus | undefined>("PENDING");

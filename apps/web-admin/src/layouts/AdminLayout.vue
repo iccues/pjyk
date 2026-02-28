@@ -10,14 +10,6 @@ import { User } from "@element-plus/icons-vue";
       <div class="flex items-center gap-8">
         <router-link
           to="/"
-          class="text-lg font-bold text-gray-800 hover:text-blue-600 transition-colors no-underline"
-          title="返回前台首页"
-        >
-          有希计划
-        </router-link>
-
-        <router-link
-          to="/admin"
           class="text-lg font-medium text-gray-600 hover:text-blue-600 transition-colors no-underline"
           title="返回后台首页"
         >
@@ -26,7 +18,7 @@ import { User } from "@element-plus/icons-vue";
       </div>
 
       <router-link
-        to="/admin/auth"
+        to="/auth"
         class="text-gray-600 hover:text-blue-600 transition-colors flex items-center justify-center p-2 rounded-full hover:bg-gray-100"
         title="用户信息"
       >

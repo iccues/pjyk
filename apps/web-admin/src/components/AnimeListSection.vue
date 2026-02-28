@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Plus } from "@element-plus/icons-vue";
 import { VList } from "virtua/vue";
-import AdminAnimeItem from "@/components/admin/AdminAnimeItem.vue";
-import AnimeFormDialog from "@/components/admin/AnimeFormDialog.vue";
-import FilterBar from "@/components/admin/FilterBar.vue";
+import AdminAnimeItem from "@/components/AdminAnimeItem.vue";
+import AnimeFormDialog from "@/components/AnimeFormDialog.vue";
+import FilterBar from "@/components/FilterBar.vue";
 import type { AdminAnime, ReviewStatus } from "@/types/adminAnime";
 import type { Season } from "@/types/anime";
 
