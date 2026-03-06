@@ -15,7 +15,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - meta-anime-network
+      - pjyk-network
 
   # 后端服务
   backend:
@@ -35,21 +35,21 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - meta-anime-network
+      - pjyk-network
     restart: unless-stopped
 
-  # 前端服务
-  frontend:
+  web:
     build:
-      context: ./meta-anime-frontend
+      context: ./web
       dockerfile: Dockerfile
-    container_name: meta-anime-frontend
+    container_name: pjyk-web
     ports:
       - "80:80"
+      - "81:81"
     depends_on:
       - backend
     networks:
-      - meta-anime-network
+      - pjyk-network
     restart: unless-stopped
 
 volumes:
@@ -57,5 +57,5 @@ volumes:
     driver: local
 
 networks:
-  meta-anime-network:
+  pjyk-network:
     driver: bridge
