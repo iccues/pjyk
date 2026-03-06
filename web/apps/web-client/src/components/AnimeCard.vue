@@ -53,7 +53,7 @@ const flipped = ref(true);
       </Transition>
     </div>
     <h3
-      class="text-[14px] font-medium text-gray-800 m-0 px-2 leading-[1.4] h-[42px] line-clamp-2"
+      class="text-[14px] font-medium text-gray-800 m-0 px-2 leading-[1.4] h-[40px] line-clamp-2"
       :title="anime.title.titleCn || anime.title.titleNative"
     >
       {{ anime.title.titleCn || anime.title.titleNative }}

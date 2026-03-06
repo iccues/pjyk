@@ -35,6 +35,6 @@ const currentSeason = getCurrentSeason();
       sort-by="POPULARITY"
     />
     <!-- 历史最高 -->
-    <AnimeListRow title="历史最高" />
+    <!-- <AnimeListRow title="历史最高" /> -->
   </div>
 </template>

@@ -20,7 +20,6 @@ const error = ref<string | null>(null);
 const scrollContainer = ref<HTMLElement | null>(null);
 const showLeftButton = ref(false);
 const showRightButton = ref(false);
-const isHovering = ref(false);
 
 // 构建查看更多链接的查询参数
 const moreLink = computed(() => {
@@ -121,9 +120,7 @@ onMounted(async () => {
 
   <div
     v-else-if="animes && animes.content.length > 0"
-    class="relative"
-    @mouseenter="isHovering = true"
-    @mouseleave="isHovering = false"
+    class="relative group/row"
   >
     <!-- 滚动容器 -->
     <div
@@ -143,8 +140,9 @@ onMounted(async () => {
     <button
       v-show="showLeftButton"
       @click="scrollLeft"
-      class="absolute left-[max(0rem,calc(50%-700px))] top-30 z-10 w-12 h-12 bg-white/90 hover:bg-white shadow-lg rounded-full flex items-center justify-center transition-opacity duration-300 hover:scale-110 active:scale-95"
-      :class="{ 'opacity-100': isHovering, 'opacity-0': !isHovering }"
+      class="absolute left-[max(0rem,calc(50%-700px))] top-30 z-10 w-12 h-12
+      bg-white/90 hover:bg-white shadow-lg rounded-full flex items-center
+      justify-center transition-opacity duration-300 hover:scale-110 active:scale-95 opacity-0 group-hover/row:opacity-100"
       aria-label="向左滚动"
     >
       <el-icon :size="24" class="text-gray-700">
@@ -156,8 +154,9 @@ onMounted(async () => {
     <button
       v-show="showRightButton"
       @click="scrollRight"
-      class="absolute right-[max(0rem,calc(50%-700px))] top-30 z-10 w-12 h-12 bg-white/90 hover:bg-white shadow-lg rounded-full flex items-center justify-center transition-opacity duration-300 hover:scale-110 active:scale-95"
-      :class="{ 'opacity-100': isHovering, 'opacity-0': !isHovering }"
+      class="absolute right-[max(0rem,calc(50%-700px))] top-30 z-10 w-12 h-12
+      bg-white/90 hover:bg-white shadow-lg rounded-full flex items-center
+      justify-center transition-opacity duration-300 hover:scale-110 active:scale-95 opacity-0 group-hover/row:opacity-100"
       aria-label="向右滚动"
     >
       <el-icon :size="24" class="text-gray-700">

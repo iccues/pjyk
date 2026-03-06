@@ -59,7 +59,7 @@ const handleFilterChange = (fliter: AnimeListParams) => {
         :model-value="modelValue.year"
         placeholder="年份"
         size="medium"
-        class="!w-40"
+        class="!w-40 [&_input]:!text-[16px]"
         clearable
         @change="handleYearChange"
       >
@@ -75,7 +75,7 @@ const handleFilterChange = (fliter: AnimeListParams) => {
         :model-value="modelValue.season"
         placeholder="季度"
         size="medium"
-        class="!w-40"
+        class="!w-40 [&_input]:!text-[16px]"
         clearable
         @change="handleSeasonChange"
         :disabled="modelValue.year === undefined"
@@ -92,7 +92,7 @@ const handleFilterChange = (fliter: AnimeListParams) => {
         :model-value="modelValue.sortBy"
         placeholder="排序方式"
         size="medium"
-        class="!w-40"
+        class="!w-40 [&_input]:!text-[16px]"
         @change="handleSortByChange"
       >
         <el-option

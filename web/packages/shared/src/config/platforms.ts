@@ -1,6 +1,6 @@
 import anilistLogo from "../assets/logo/anilist.png";
 import bangumiLogo from "../assets/logo/bangumi.png";
-import myAnimeListLogo from "../assets/logo/myanimelist.png";
+import myAnimeListLogo from "../assets/logo/myanimelist.svg";
 
 /**
  * 平台配置接口
