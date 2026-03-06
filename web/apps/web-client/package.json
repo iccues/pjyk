@@ -6,16 +6,20 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@pjyk-web/shared": "workspace:*",
     "@tailwindcss/vite": "^4.1.16",
     "@unhead/vue": "^2.1.2",
+    "@urql/vue": "^2.0.0",
     "@vscode/markdown-it-katex": "^1.1.2",
     "element-plus": "^2.11.7",
     "github-markdown-css": "^5.9.0",
+    "graphql": "^16.13.1",
     "katex": "^0.16.28",
     "markdown-it": "^14.1.1",
     "tailwindcss": "^4.1.16",
@@ -23,6 +27,8 @@
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^6.1.2",
+    "@graphql-codegen/client-preset": "^5.2.3",
     "@types/markdown-it": "^14.1.2",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/tsconfig": "^0.8.1",
