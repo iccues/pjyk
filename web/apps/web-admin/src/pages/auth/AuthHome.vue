@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { User } from "oidc-client-ts";
 import { onMounted, ref } from "vue";
+
 import { logout, oidcManager } from "@/auth/oidc";
 
 const user = ref<User | null>(null);
@@ -11,20 +12,20 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex items-center justify-center min-h-[80vh]">
-    <div class="bg-white rounded-lg shadow-md p-8 max-w-md w-full">
+  <div class="flex min-h-[80vh] items-center justify-center">
+    <div class="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
       <div v-if="user" class="text-center">
         <div class="mb-8 space-y-3">
           <div>
-            <p class="text-sm text-gray-500 mb-1">用户名</p>
-            <p class="text-gray-900 font-medium">
+            <p class="mb-1 text-sm text-gray-500">用户名</p>
+            <p class="font-medium text-gray-900">
               {{ user.profile.name || user.profile.preferred_username || "未设置" }}
             </p>
           </div>
 
           <div>
-            <p class="text-sm text-gray-500 mb-1">邮箱</p>
-            <p class="text-gray-900 font-medium">
+            <p class="mb-1 text-sm text-gray-500">邮箱</p>
+            <p class="font-medium text-gray-900">
               {{ user.profile.email || "未设置" }}
             </p>
           </div>

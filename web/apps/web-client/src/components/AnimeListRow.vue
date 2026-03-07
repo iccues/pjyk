@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ArrowLeft, ArrowRight } from "@element-plus/icons-vue";
-import { computed, onMounted, ref } from "vue";
-import { getAnimeList } from "@/api/anime";
-import type { Anime, Season, SortBy } from "@/types/anime.ts";
-import type { Page } from "@/types/page.ts";
+import { useQuery } from "@urql/vue";
+import { computed, nextTick, ref, watch } from "vue";
+
+import { GetAnimeListRowDocument, type Season, type SortBy } from "@/graphql/generated/graphql";
 import { filtersToQuery } from "@/utils/queryUtils";
+
 import AnimeCard from "./AnimeCard.vue";
 
 const props = defineProps<{
@@ -14,9 +15,6 @@ const props = defineProps<{
   title?: string;
 }>();
 
-const animes = ref<Page<Anime> | null>(null);
-const loading = ref(false);
-const error = ref<string | null>(null);
 const scrollContainer = ref<HTMLElement | null>(null);
 const showLeftButton = ref(false);
 const showRightButton = ref(false);
@@ -28,20 +26,13 @@ const moreLink = computed(() => {
   return `/anime/list${queryString ? `?${queryString}` : ""}`;
 });
 
-const fetchAnimes = async () => {
-  try {
-    loading.value = true;
-    error.value = null;
-    animes.value = await getAnimeList({
-      ...props,
-      pageSize: 12,
-    });
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : "未知错误";
-  } finally {
-    loading.value = false;
-  }
-};
+const { data, fetching, error } = useQuery({
+  query: GetAnimeListRowDocument,
+  variables: computed(() => ({
+    ...props,
+    pageSize: 12,
+  })),
+});
 
 const updateButtonVisibility = () => {
   if (!scrollContainer.value) return;
@@ -94,42 +85,42 @@ const scrollRight = () => {
   });
 };
 
-onMounted(async () => {
-  await fetchAnimes();
+watch(data, async () => {
+  await nextTick();
   updateButtonVisibility();
 });
 </script>
 
 <template>
   <!-- 标题栏 -->
-  <div class="flex max-w-[1400px] mx-auto px-5 justify-between items-center mb-8">
-    <h2 class="text-3xl font-bold text-gray-900 border-l-4 border-blue-500 pl-4">
+  <div class="mx-auto mb-8 flex max-w-[1400px] items-center justify-between px-5">
+    <h2 class="border-l-4 border-blue-500 pl-4 text-3xl font-bold text-gray-900">
       {{ title }}
     </h2>
     <router-link
       :to="moreLink"
-      class="text-[14px] font-medium text-blue-600 hover:text-blue-500 flex items-center gap-1 transition-colors"
+      class="flex items-center gap-1 text-[14px] font-medium text-blue-600 transition-colors hover:text-blue-500"
     >
       查看更多 <span aria-hidden="true">&rarr;</span>
     </router-link>
   </div>
 
   <!-- 动画列表 -->
-  <div v-if="error" class="text-center py-10 text-base text-red-600">{{ error }}</div>
-  <div v-else-if="loading" class="text-center py-10 text-base text-gray-600">加载中...</div>
+  <div v-if="error" class="py-10 text-center text-base text-red-600">{{ error }}</div>
+  <div v-else-if="fetching" class="py-10 text-center text-base text-gray-600">加载中...</div>
 
   <div
-    v-else-if="animes && animes.content.length > 0"
-    class="relative group/row"
+    v-else-if="data?.animeList && data?.animeList?.content.length > 0"
+    class="group/row relative"
   >
     <!-- 滚动容器 -->
     <div
       ref="scrollContainer"
       @scroll="updateButtonVisibility"
-      class="flex gap-5 overflow-x-auto pb-4 px-[max(1.25rem,calc(50%-700px+1.25rem))] scroll-smooth scrollbar-hide"
+      class="scrollbar-hide flex gap-5 overflow-x-auto scroll-smooth px-[max(1.25rem,calc(50%-700px+1.25rem))] pb-4"
     >
       <AnimeCard
-        v-for="anime in animes.content"
+        v-for="anime in data?.animeList?.content"
         :key="anime.animeId"
         :anime="anime"
         class="flex-shrink-0"
@@ -140,9 +131,7 @@ onMounted(async () => {
     <button
       v-show="showLeftButton"
       @click="scrollLeft"
-      class="absolute left-[max(0rem,calc(50%-700px))] top-30 z-10 w-12 h-12
-      bg-white/90 hover:bg-white shadow-lg rounded-full flex items-center
-      justify-center transition-opacity duration-300 hover:scale-110 active:scale-95 opacity-0 group-hover/row:opacity-100"
+      class="absolute top-30 left-[max(0rem,calc(50%-700px))] z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/90 opacity-0 shadow-lg transition-opacity duration-300 group-hover/row:opacity-100 hover:scale-110 hover:bg-white active:scale-95"
       aria-label="向左滚动"
     >
       <el-icon :size="24" class="text-gray-700">
@@ -154,9 +143,7 @@ onMounted(async () => {
     <button
       v-show="showRightButton"
       @click="scrollRight"
-      class="absolute right-[max(0rem,calc(50%-700px))] top-30 z-10 w-12 h-12
-      bg-white/90 hover:bg-white shadow-lg rounded-full flex items-center
-      justify-center transition-opacity duration-300 hover:scale-110 active:scale-95 opacity-0 group-hover/row:opacity-100"
+      class="absolute top-30 right-[max(0rem,calc(50%-700px))] z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/90 opacity-0 shadow-lg transition-opacity duration-300 group-hover/row:opacity-100 hover:scale-110 hover:bg-white active:scale-95"
       aria-label="向右滚动"
     >
       <el-icon :size="24" class="text-gray-700">
@@ -165,7 +152,7 @@ onMounted(async () => {
     </button>
   </div>
 
-  <div v-else class="text-center py-10 text-base text-gray-600">暂无数据</div>
+  <div v-else class="py-10 text-center text-base text-gray-600">暂无数据</div>
 </template>
 
 <style scoped>

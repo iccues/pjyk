@@ -2,6 +2,7 @@
 import { Picture } from "@element-plus/icons-vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { computed, ref, watch } from "vue";
+
 import type { AdminAnime } from "@/types/adminAnime";
 
 interface AnimeForm {
@@ -160,14 +161,14 @@ const handleSubmit = async () => {
         <el-image
           :src="formData.coverImage"
           fit="cover"
-          class="w-[120px] h-[170px] rounded"
+          class="h-[170px] w-[120px] rounded"
           :preview-src-list="[formData.coverImage]"
         >
           <template #error>
             <div
-              class="flex flex-col items-center justify-center w-full h-full bg-gray-100 text-gray-400 text-xs"
+              class="flex h-full w-full flex-col items-center justify-center bg-gray-100 text-xs text-gray-400"
             >
-              <el-icon class="text-2xl mb-1"><Picture /></el-icon>
+              <el-icon class="mb-1 text-2xl"><Picture /></el-icon>
               <span>加载失败</span>
             </div>
           </template>

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Download, Refresh, SetUp } from "@element-plus/icons-vue";
+import { SEASON_OPTIONS_REQUIRED } from "@pjyk-web/shared/constants/ui-options.ts";
 import { ElMessage } from "element-plus";
 import { ref } from "vue";
+
 import { calculateMetric, fetchAnime, fetchMapping, linkMappings } from "@/api/admin";
-import { SEASON_OPTIONS_REQUIRED } from "@pjyk-web/shared/constants/ui-options.ts";
 
 // 数据抓取相关
 const fetchDialogVisible = ref(false);
@@ -77,15 +78,15 @@ const handleCalculateScores = async () => {
 <template>
   <div>
     <!-- 数据抓取卡片 -->
-    <el-card class="hover:shadow-lg transition-shadow">
+    <el-card class="transition-shadow hover:shadow-lg">
       <template #header>
         <div class="flex items-center gap-2">
           <el-icon><Download /></el-icon>
-          <span class="font-semibold text-lg">数据抓取</span>
+          <span class="text-lg font-semibold">数据抓取</span>
         </div>
       </template>
       <div class="">
-        <p class="text-gray-600 mb-4">从外部平台抓取动画数据</p>
+        <p class="mb-4 text-gray-600">从外部平台抓取动画数据</p>
         <el-button type="primary" size="large" :icon="Download" @click="handleOpenFetchDialog">
           抓取动画数据
         </el-button>

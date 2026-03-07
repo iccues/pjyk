@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import { REVIEW_STATUS_OPTIONS, SEASON_OPTIONS } from "@pjyk-web/shared/constants/ui-options.ts";
+import { generateYearOptions } from "@pjyk-web/shared/utils/dateUtils.ts";
 import { computed, onMounted, ref } from "vue";
+
 import type { AnimeCreateRequest, AnimeUpdateRequest } from "@/api/admin";
 import AnimeListSection from "@/components/AnimeListSection.vue";
 import MappingListSection from "@/components/MappingListSection.vue";
 import { useAnimeList } from "@/composables/useAnimeList";
 import { useMappingList } from "@/composables/useMappingList";
-import { REVIEW_STATUS_OPTIONS, SEASON_OPTIONS } from "@pjyk-web/shared/constants/ui-options.ts";
 import type { AdminMapping, ReviewStatus } from "@/types/adminAnime";
 import type { Season } from "@/types/anime";
 import type { DraggableChangeEvent } from "@/types/draggable";
-import { generateYearOptions } from "@pjyk-web/shared/utils/dateUtils.ts";
 
 // 筛选器状态
 const selectedReviewStatus = ref<ReviewStatus | undefined>("PENDING");
@@ -105,7 +106,7 @@ const onUpdateReviewStatus = (animeId: number, reviewStatus: ReviewStatus) => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full p-5 max-w-[1800px] mx-auto overflow-hidden" v-loading="loading">
+  <div class="mx-auto flex h-full max-w-[1800px] flex-col overflow-hidden p-5" v-loading="loading">
     <el-alert v-if="error" :title="error" type="error" center show-icon :closable="false" />
 
     <el-row v-else :gutter="24" class="flex-1 overflow-hidden">

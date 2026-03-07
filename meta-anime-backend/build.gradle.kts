@@ -3,6 +3,7 @@ plugins {
     jacoco
     id("org.springframework.boot") version "3.5.7"
     id("io.spring.dependency-management") version "1.1.7"
+    id("com.netflix.dgs.codegen") version "8.3.0"
 }
 
 group = "com.iccues"
@@ -42,8 +43,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
+    implementation("org.springframework.boot:spring-boot-starter-graphql")
+    implementation("com.netflix.graphql.dgs.codegen:graphql-dgs-codegen-gradle:8.3.0")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.springframework.graphql:spring-graphql-test")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -59,4 +63,9 @@ tasks.withType<Test> {
 
 tasks.test {
     finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.generateJava {
+    schemaPaths = listOf("${projectDir}/src/main/resources/graphql").toMutableList()
+    packageName = "com.iccues.generated"
 }

@@ -1,63 +1,48 @@
 <script setup lang="ts">
+import { useQuery } from "@urql/vue";
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+
 import AnimeFilter from "@/components/AnimeFilter.vue";
 import AnimeList from "@/components/AnimeList.vue";
-import { getAnimeList, type AnimeListParams } from "@/api/anime";
-import type { Page } from "@/types/page";
-import { filtersToQuery, queryToFilters } from "@/utils/queryUtils";
 import { useAnimeListHead } from "@/composables/useAnimeListHead";
-import type { Anime } from "@/types/anime";
+import { GetAnimeListDocument, type GetAnimeListQueryVariables } from "@/graphql/generated/graphql";
+import { filtersToQuery, queryToFilters } from "@/utils/queryUtils";
 
 const router = useRouter();
 const route = useRoute();
 
-const animes = ref<Page<Anime> | null>(null);
-const loading = ref(false);
-const error = ref<string | null>(null);
-
-const fetchAnimes = async () => {
-  try {
-    loading.value = true;
-    error.value = null;
-    animes.value = await getAnimeList(animeListParams.value);
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : "未知错误";
-  } finally {
-    loading.value = false;
-  }
-};
-
 // 单一数据源：所有列表参数
-const animeListParams = ref<AnimeListParams>({
+const animeListParams = ref<GetAnimeListQueryVariables>({
   ...queryToFilters(route.query),
   pageSize: 30,
 });
 
+const { data, fetching, error } = useQuery({
+  query: GetAnimeListDocument,
+  variables: animeListParams,
+});
+
 // 监听参数变化，同步更新 URL Query
-watch(
-  animeListParams,
-  () => {
-    router.push({ query: filtersToQuery(animeListParams.value) });
-    fetchAnimes();
-  },
-  { deep: true, immediate: true },
-);
+watch(animeListParams, () => router.push({ query: filtersToQuery(animeListParams.value) }), {
+  deep: true,
+  immediate: true,
+});
 
 // 动态 SEO 配置
 useAnimeListHead(animeListParams);
 </script>
 
 <template>
-  <div class="p-5 max-w-[1400px] mx-auto">
+  <div class="mx-auto max-w-[1400px] p-5">
     <!-- 筛选器 -->
     <AnimeFilter v-model="animeListParams" />
 
     <AnimeList
-      :animes="animes"
-      :loading="loading"
+      :animeList="data?.animeList"
+      :fetching="fetching"
       :error="error"
-      v-on:page-change="animeListParams.page = $event"
+      v-on:page-change="animeListParams.pageNumber = $event"
     />
   </div>
 </template>

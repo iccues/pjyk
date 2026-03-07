@@ -2,6 +2,7 @@
 import { Delete } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { ref } from "vue";
+
 import { deleteNonApprovedAnimes } from "@/api/admin";
 
 const loading = ref(false);
@@ -36,15 +37,15 @@ const handleDeleteNonApprovedAnimes = async () => {
 </script>
 
 <template>
-  <el-card class="hover:shadow-lg transition-shadow">
+  <el-card class="transition-shadow hover:shadow-lg">
     <template #header>
       <div class="flex items-center gap-2">
         <el-icon><Delete /></el-icon>
-        <span class="font-semibold text-lg">数据管理</span>
+        <span class="text-lg font-semibold">数据管理</span>
       </div>
     </template>
     <div>
-      <p class="text-gray-600 mb-4">管理和清理动画数据</p>
+      <p class="mb-4 text-gray-600">管理和清理动画数据</p>
       <el-button
         type="danger"
         size="large"
@@ -54,7 +55,7 @@ const handleDeleteNonApprovedAnimes = async () => {
       >
         删除未通过动画
       </el-button>
-      <p class="text-sm text-gray-500 mt-3">删除所有 PENDING 和 REJECTED 状态的动画及其映射</p>
+      <p class="mt-3 text-sm text-gray-500">删除所有 PENDING 和 REJECTED 状态的动画及其映射</p>
     </div>
   </el-card>
 </template>

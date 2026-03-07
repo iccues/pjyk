@@ -1,5 +1,6 @@
 import type { AdminAnime, ReviewStatus } from "@/types/adminAnime";
 import type { Season } from "@/types/anime";
+
 import { del, get, post, put } from "./adminHttp";
 
 /**

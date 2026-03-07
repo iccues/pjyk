@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Plus } from "@element-plus/icons-vue";
 import { VList } from "virtua/vue";
+
 import AdminAnimeItem from "@/components/AdminAnimeItem.vue";
 import AnimeFormDialog from "@/components/AnimeFormDialog.vue";
 import FilterBar from "@/components/FilterBar.vue";
@@ -37,10 +38,10 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="flex flex-col h-full">
-    <div class="flex justify-between items-center mb-4">
+  <div class="flex h-full flex-col">
+    <div class="mb-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <h2 class="text-xl font-semibold text-gray-800 m-0">动画列表</h2>
+        <h2 class="m-0 text-xl font-semibold text-gray-800">动画列表</h2>
         <el-tag type="info">{{ animeList.length }}</el-tag>
       </div>
       <el-button type="primary" size="small" :icon="Plus" @click="emit('create-anime')">
@@ -61,7 +62,7 @@ const emit = defineEmits<{
       @change="emit('filter-change')"
     />
 
-    <VList :data="animeList" class="flex-1 pr-2 overflow-auto">
+    <VList :data="animeList" class="flex-1 overflow-auto pr-2">
       <template #default="{ item: anime }">
         <div :key="anime.animeId" class="mb-3">
           <AdminAnimeItem

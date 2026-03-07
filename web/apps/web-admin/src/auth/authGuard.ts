@@ -1,4 +1,5 @@
 import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
+
 import { oidcManager } from "./oidc";
 
 export async function authGuard(

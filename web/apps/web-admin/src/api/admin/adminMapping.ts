@@ -1,4 +1,5 @@
 import type { AdminMapping } from "@/types/adminAnime";
+
 import { del, get, post, put } from "./adminHttp";
 
 /**

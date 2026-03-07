@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Plus } from "@element-plus/icons-vue";
 import draggable from "vuedraggable";
+
 import AdminMappingItem from "@/components/AdminMappingItem.vue";
 import MappingFormDialog from "@/components/MappingFormDialog.vue";
 import type { AdminMapping } from "@/types/adminAnime";
@@ -22,10 +23,10 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="flex flex-col h-full">
-    <div class="flex justify-between items-center mb-4">
+  <div class="flex h-full flex-col">
+    <div class="mb-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <h2 class="text-xl font-semibold text-gray-800 m-0">未关联映射</h2>
+        <h2 class="m-0 text-xl font-semibold text-gray-800">未关联映射</h2>
         <el-tag type="warning">{{ mappingList.length }}</el-tag>
       </div>
       <el-button type="primary" size="small" :icon="Plus" @click="emit('create-mapping')">
@@ -33,14 +34,14 @@ const emit = defineEmits<{
       </el-button>
     </div>
 
-    <div class="flex-1 p-2 rounded transition-colors overflow-hidden">
+    <div class="flex-1 overflow-hidden rounded p-2 transition-colors">
       <draggable
         :model-value="mappingList"
         :group="{ name: 'mappings', pull: true, put: true }"
         item-key="mappingId"
         :sort="false"
         @change="emit('mapping-change', $event)"
-        class="h-full overflow-y-auto flex flex-col gap-3 pr-2"
+        class="flex h-full flex-col gap-3 overflow-y-auto pr-2"
       >
         <template #item="{ element }">
           <AdminMappingItem :mapping="element" @delete-mapping="emit('delete-mapping', $event)" />

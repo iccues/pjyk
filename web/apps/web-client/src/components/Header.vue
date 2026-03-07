@@ -4,15 +4,15 @@ import logo from "@/assets/logo.svg";
 
 <template>
   <header>
-    <div class="max-w-[1240px] mx-auto px-4 sm:px-6 flex items-center justify-between py-5">
-      <router-link to="/" class="flex items-center gap-2 cursor-pointer group">
+    <div class="mx-auto flex max-w-[1240px] items-center justify-between px-4 py-5 sm:px-6">
+      <router-link to="/" class="group flex cursor-pointer items-center gap-2">
         <img
           :src="logo"
           alt="Project Yuki Logo"
-          class="w-8 h-8 rounded-full shadow-lg group-hover:shadow-indigo-500/30 transition-shadow"
+          class="h-8 w-8 rounded-full shadow-lg transition-shadow group-hover:shadow-indigo-500/30"
         />
         <span
-          class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600"
+          class="bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-xl font-bold text-transparent"
         >
           有希计划
         </span>

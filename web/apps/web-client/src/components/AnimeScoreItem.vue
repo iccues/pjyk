@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import { getPlatformConfig } from "@pjyk-web/shared/config/platforms.ts";
-import type { Mapping } from "@/types/anime";
+import { computed } from "vue";
+
+import type { ScoreItemFragment } from "@/graphql/generated/graphql";
 
 const props = defineProps<{
-  mapping: Mapping;
+  mapping: ScoreItemFragment;
 }>();
 
 // 根据平台名称获取配置
@@ -20,7 +21,7 @@ const animeUrl = computed(() => platformConfig.value.getAnimeUrl?.(props.mapping
     :href="animeUrl"
     target="_blank"
     rel="noopener noreferrer"
-    class="flex items-center justify-between px-3 py-2 bg-white rounded-full hover:opacity-80 transition-all cursor-pointer no-underline"
+    class="flex cursor-pointer items-center justify-between rounded-full bg-white px-3 py-2 no-underline transition-all hover:opacity-80"
     @click.stop
   >
     <div class="flex items-center gap-2">
@@ -28,19 +29,19 @@ const animeUrl = computed(() => platformConfig.value.getAnimeUrl?.(props.mapping
         v-if="platformConfig.logo"
         :src="platformConfig.logo"
         :alt="platformConfig.name"
-        class="w-5 h-5 object-contain"
+        class="h-5 w-5 object-contain"
       />
       <span class="text-xs font-medium">{{ platformConfig.name }}</span>
     </div>
     <span class="text-sm font-bold text-blue-600">{{ mapping.rawScore?.toFixed(1) }}</span>
   </a>
-  <div v-else class="flex items-center justify-between px-3 py-2 bg-white rounded-full opacity-75">
+  <div v-else class="flex items-center justify-between rounded-full bg-white px-3 py-2 opacity-75">
     <div class="flex items-center gap-2">
       <img
         v-if="platformConfig.logo"
         :src="platformConfig.logo"
         :alt="platformConfig.name"
-        class="w-5 h-5 object-contain"
+        class="h-5 w-5 object-contain"
       />
       <span class="text-xs font-medium">{{ platformConfig.name }}</span>
     </div>

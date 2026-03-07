@@ -1,6 +1,6 @@
 import type { LocationQuery } from "vue-router";
-import type { AnimeListParams } from "@/api/anime";
-import type { Season, SortBy } from "@/types/anime";
+
+import type { GetAnimeListQueryVariables, Season, SortBy } from "@/graphql/generated/graphql";
 
 /**
  * Parse year from query string
@@ -35,33 +35,33 @@ const parsePage = (value: string): number => {
 };
 
 /**
- * Convert URL query params to AnimeListParams (filters + page)
+ * Convert URL query params to GetAnimeListQueryVariables (filters + page)
  */
-export const queryToFilters = (query: LocationQuery): AnimeListParams => {
-  const filters: AnimeListParams = {
+export const queryToFilters = (query: LocationQuery): GetAnimeListQueryVariables => {
+  const filters: GetAnimeListQueryVariables = {
     year: undefined,
     season: undefined,
     sortBy: "SCORE",
-    page: 0,
+    pageNumber: 0,
   };
 
-  if (query.year && typeof query.year === "string") {
+  if (query.year != null && typeof query.year === "string") {
     filters.year = parseYear(query.year);
   }
 
-  if (query.season && typeof query.season === "string") {
+  if (query.season != null && typeof query.season === "string") {
     filters.season = parseSeason(query.season);
   }
 
-  if (query.sortBy && typeof query.sortBy === "string") {
+  if (query.sortBy != null && typeof query.sortBy === "string") {
     const parsed = parseSortBy(query.sortBy);
     if (parsed !== undefined) {
       filters.sortBy = parsed;
     }
   }
 
-  if (query.page && typeof query.page === "string") {
-    filters.page = parsePage(query.page);
+  if (query.pageNumber != null && typeof query.pageNumber === "string") {
+    filters.pageNumber = parsePage(query.pageNumber);
   }
 
   return filters;
@@ -70,23 +70,23 @@ export const queryToFilters = (query: LocationQuery): AnimeListParams => {
 /**
  * Convert AnimeListParams (filters + page) to URL query params
  */
-export const filtersToQuery = (filters: AnimeListParams): Record<string, string> => {
+export const filtersToQuery = (filters: GetAnimeListQueryVariables): Record<string, string> => {
   const query: Record<string, string> = {};
 
-  if (filters.year !== undefined) {
+  if (filters.year != null) {
     query.year = filters.year.toString();
   }
 
-  if (filters.season !== undefined) {
+  if (filters.season != null) {
     query.season = filters.season;
   }
 
-  if (filters.sortBy !== undefined && filters.sortBy !== "SCORE") {
+  if (filters.sortBy != null && filters.sortBy !== "SCORE") {
     query.sortBy = filters.sortBy;
   }
 
-  if (filters.page !== undefined && filters.page > 0) {
-    query.page = filters.page.toString();
+  if (filters.pageNumber != null && filters.pageNumber > 0) {
+    query.pageNumber = filters.pageNumber.toString();
   }
 
   return query;

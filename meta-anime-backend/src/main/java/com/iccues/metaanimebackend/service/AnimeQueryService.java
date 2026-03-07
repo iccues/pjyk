@@ -30,13 +30,15 @@ public class AnimeQueryService {
      * 只返回已审核通过的动画
      */
     public Page<Anime> getAnimeList(Integer year, Season season, int pageNumber, int pageSize, SortBy sortBy) {
+        int limitedPageSize = Math.min(pageSize, 60);
+
         LocalDateRange dateRange = seasonService.getStartDateRange(year, season);
         Specification<Anime> spec = Specification.allOf(
                 AnimeSpec.startDateBetween(dateRange),
                 AnimeSpec.reviewStatusEquals(ReviewStatus.APPROVED),
                 AnimeSpec.orderBy(sortBy)
         );
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        PageRequest pageRequest = PageRequest.of(pageNumber, limitedPageSize);
         return animeRepository.findAll(spec, pageRequest);
     }
 }

@@ -1,0 +1,66 @@
+type Query {
+    animeList(
+        year: Int
+        season: Season
+        pageNumber: Int = 0
+        pageSize: Int = 30
+        sortBy: SortBy = SCORE
+    ): AnimePage
+}
+
+type PageInfo {
+    size: Int!
+    number: Int!
+    totalElements: Int!
+    totalPages: Int!
+}
+
+type AnimePage {
+    content: [Anime!]!
+    pageInfo: PageInfo!
+}
+
+type Anime {
+    animeId: ID!
+    title: AnimeTitles!
+    coverImage: String!
+    startDate: String
+    averageScore: Float
+    popularity: Float
+    mappings: [Mapping!]!
+}
+
+type AnimeTitles {
+    titleNative: String
+    titleRomaji: String
+    titleEn: String
+    titleCn: String
+}
+
+type Mapping {
+    mappingId: ID!
+    sourcePlatform: Platform!
+    platformId: String!
+    rawScore: Float
+    normalizedScore: Float
+    rawPopularity: Float
+    normalizedPopularity: Float
+}
+
+enum Platform {
+    Bangumi
+    AniList
+    MyAnimeList
+}
+
+enum Season {
+    WINTER
+    SPRING
+    SUMMER
+    FALL
+}
+
+enum SortBy {
+    SCORE
+    POPULARITY
+}

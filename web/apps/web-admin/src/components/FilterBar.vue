@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Filter } from "@element-plus/icons-vue";
+
 import type { ReviewStatus } from "@/types/adminAnime";
 import type { Season } from "@/types/anime";
 

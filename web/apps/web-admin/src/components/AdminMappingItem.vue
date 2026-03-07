@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Delete } from "@element-plus/icons-vue";
-import { computed } from "vue";
 import { getPlatformConfig } from "@pjyk-web/shared/config/platforms.ts";
+import { computed } from "vue";
+
 import type { AdminMapping } from "@/types/adminAnime";
 
 const props = defineProps<{
@@ -45,57 +46,57 @@ const handleDelete = (e: Event) => {
 
 <template>
   <div
-    class="flex items-center py-1.5 px-2.5 gap-2.5 bg-white border border-gray-200 rounded-sm transition-all min-h-[50px] cursor-grab hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm active:cursor-grabbing"
+    class="flex min-h-[50px] cursor-grab items-center gap-2.5 rounded-sm border border-gray-200 bg-white px-2.5 py-1.5 transition-all hover:border-gray-300 hover:bg-gray-50 hover:shadow-sm active:cursor-grabbing"
   >
     <el-image
       v-if="mapping.mappingInfo.coverImage"
       :src="mapping.mappingInfo.coverImage"
       :alt="mapping.mappingInfo.title.titleNative || mapping.mappingInfo.title.titleRomaji"
-      class="shrink-0 w-8 h-12 object-cover rounded-sm"
+      class="h-12 w-8 shrink-0 rounded-sm object-cover"
       fit="cover"
       lazy
     />
-    <div class="shrink-0 w-16 flex flex-col items-start py-0.5">
-      <span class="text-[10px] text-gray-500 leading-tight mb-0.5">映射ID</span>
+    <div class="flex w-16 shrink-0 flex-col items-start py-0.5">
+      <span class="mb-0.5 text-[10px] leading-tight text-gray-500">映射ID</span>
       <span
-        class="text-xs text-gray-900 font-medium whitespace-nowrap overflow-hidden text-ellipsis w-full"
+        class="w-full overflow-hidden text-xs font-medium text-ellipsis whitespace-nowrap text-gray-900"
       >
         {{ mapping.mappingId }}
       </span>
     </div>
-    <div class="flex-1 min-w-0 flex flex-col items-start gap-0.5 py-1" :title="titleTooltip">
+    <div class="flex min-w-0 flex-1 flex-col items-start gap-0.5 py-1" :title="titleTooltip">
       <span
-        class="text-sm font-medium text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis w-full"
+        class="w-full overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-gray-900"
       >
         {{ mapping.mappingInfo.title.titleCn || mapping.mappingInfo.title.titleNative }}
       </span>
-      <span class="text-xs text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis w-full">
+      <span class="w-full overflow-hidden text-xs text-ellipsis whitespace-nowrap text-gray-500">
         {{ mapping.mappingInfo.title.titleNative }}
       </span>
     </div>
-    <div class="shrink-0 w-8 flex flex-col items-start py-0.5">
-      <span class="text-[10px] text-gray-500 leading-tight mb-0.5">评分</span>
+    <div class="flex w-8 shrink-0 flex-col items-start py-0.5">
+      <span class="mb-0.5 text-[10px] leading-tight text-gray-500">评分</span>
       <span
-        class="text-xs text-amber-500 font-semibold whitespace-nowrap overflow-hidden text-ellipsis w-full"
+        class="w-full overflow-hidden text-xs font-semibold text-ellipsis whitespace-nowrap text-amber-500"
       >
         {{ mapping.rawScore }}
       </span>
     </div>
     <a :href="animeUrl" target="_blank" rel="noopener noreferrer" @click.stop title="访问平台页面">
-      <div class="shrink-0 w-[100px] flex justify-center py-0.5">
+      <div class="flex w-[100px] shrink-0 justify-center py-0.5">
         <el-tag type="primary" size="small" effect="plain">{{ mapping.sourcePlatform }}</el-tag>
       </div>
     </a>
     <div
       v-if="mapping.mappingInfo.startDate"
-      class="shrink-0 w-20 flex flex-col items-start py-0.5"
+      class="flex w-20 shrink-0 flex-col items-start py-0.5"
     >
-      <span class="text-[10px] text-gray-500 leading-tight mb-0.5">开始日期</span>
-      <span class="text-[11px] text-gray-700 whitespace-nowrap">{{
+      <span class="mb-0.5 text-[10px] leading-tight text-gray-500">开始日期</span>
+      <span class="text-[11px] whitespace-nowrap text-gray-700">{{
         mapping.mappingInfo.startDate
       }}</span>
     </div>
-    <div class="shrink-0 flex items-center">
+    <div class="flex shrink-0 items-center">
       <el-button
         type="danger"
         size="small"

@@ -3,14 +3,14 @@ import { User } from "@element-plus/icons-vue";
 </script>
 
 <template>
-  <div class="h-screen flex flex-col">
+  <div class="flex h-screen flex-col">
     <header
-      class="flex justify-between items-center px-6 py-4 bg-white shadow-sm border-b border-gray-100"
+      class="flex items-center justify-between border-b border-gray-100 bg-white px-6 py-4 shadow-sm"
     >
       <div class="flex items-center gap-8">
         <router-link
           to="/"
-          class="text-lg font-medium text-gray-600 hover:text-blue-600 transition-colors no-underline"
+          class="text-lg font-medium text-gray-600 no-underline transition-colors hover:text-blue-600"
           title="返回后台首页"
         >
           Admin Panel
@@ -19,7 +19,7 @@ import { User } from "@element-plus/icons-vue";
 
       <router-link
         to="/auth"
-        class="text-gray-600 hover:text-blue-600 transition-colors flex items-center justify-center p-2 rounded-full hover:bg-gray-100"
+        class="flex items-center justify-center rounded-full p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600"
         title="用户信息"
       >
         <el-icon size="20"><User /></el-icon>

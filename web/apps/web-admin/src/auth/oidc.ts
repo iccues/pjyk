@@ -1,4 +1,5 @@
 import { UserManager, WebStorageStateStore } from "oidc-client-ts";
+
 import { getOidcConfig } from "@/api/public/config";
 
 const oidcConfig = await getOidcConfig();

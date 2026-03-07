@@ -1,33 +1,35 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import type { Anime } from "@/types/anime.ts";
+
+import type { AnimeCardFragment } from "@/graphql/generated/graphql";
+
 import AnimeScoreItem from "./AnimeScoreItem.vue";
 
-defineProps<{
-  anime: Anime;
+const props = defineProps<{
+  anime: AnimeCardFragment;
 }>();
 
 const flipped = ref(true);
 </script>
 
 <template>
-  <div class="w-[12.5rem] flex flex-col gap-2">
+  <div class="flex w-[12.5rem] flex-col gap-2">
     <div
-      class="relative w-full aspect-[1/1.4] overflow-hidden bg-gray-100 rounded-3xl transition-all duration-300 group"
+      class="group relative aspect-[1/1.4] w-full overflow-hidden rounded-3xl bg-gray-100 transition-all duration-300"
       @click="flipped = !flipped"
     >
-      <div class="w-full h-full group-hover:brightness-80 transition-all duration-300">
+      <div class="h-full w-full transition-all duration-300 group-hover:brightness-80">
         <img
-          class="w-full h-full object-cover block"
+          class="block h-full w-full object-cover"
           :src="anime.coverImage"
-          :alt="anime.title.titleCn || anime.title.titleNative"
+          :alt="anime.title.titleCn || anime.title.titleNative || 'Anime Cover'"
         />
         <div
           class="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/70 to-transparent"
         ></div>
         <div
           v-if="anime.averageScore"
-          class="absolute bottom-1 right-3 text-white text-[16px] font-bold"
+          class="absolute right-3 bottom-1 text-[16px] font-bold text-white"
         >
           {{ anime.averageScore.toFixed(0) }}
         </div>
@@ -42,7 +44,7 @@ const flipped = ref(true);
       >
         <div
           v-if="!flipped"
-          class="absolute inset-0 bg-black/20 p-3 flex flex-col gap-3 backdrop-blur-lg"
+          class="absolute inset-0 flex flex-col gap-3 bg-black/20 p-3 backdrop-blur-lg"
         >
           <AnimeScoreItem
             v-for="mapping in anime.mappings"
@@ -53,8 +55,8 @@ const flipped = ref(true);
       </Transition>
     </div>
     <h3
-      class="text-[14px] font-medium text-gray-800 m-0 px-2 leading-[1.4] h-[40px] line-clamp-2"
-      :title="anime.title.titleCn || anime.title.titleNative"
+      class="m-0 line-clamp-2 h-[40px] px-2 text-[14px] leading-[1.4] font-medium text-gray-800"
+      :title="anime.title.titleCn || anime.title.titleNative || ''"
     >
       {{ anime.title.titleCn || anime.title.titleNative }}
     </h3>

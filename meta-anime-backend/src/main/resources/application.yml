@@ -5,6 +5,10 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
 
+  graphql:
+    http:
+      path: /api/graphql
+
   security:
     oauth2:
       resourceserver:

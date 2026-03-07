@@ -1,0 +1,64 @@
+query GetAnimeListRow(
+  $year: Int
+  $season: Season
+  $pageNumber: Int
+  $pageSize: Int
+  $sortBy: SortBy
+) {
+  animeList(
+    year: $year
+    season: $season
+    pageNumber: $pageNumber
+    pageSize: $pageSize
+    sortBy: $sortBy
+  ) {
+    content {
+      animeId
+      ...AnimeCard
+    }
+  }
+}
+
+query GetAnimeList($year: Int, $season: Season, $pageNumber: Int, $pageSize: Int, $sortBy: SortBy) {
+  animeList(
+    year: $year
+    season: $season
+    pageNumber: $pageNumber
+    pageSize: $pageSize
+    sortBy: $sortBy
+  ) {
+    ...AnimeList
+  }
+}
+
+fragment AnimeList on AnimePage {
+  content {
+    animeId
+    ...AnimeCard
+  }
+  pageInfo {
+    size
+    number
+    totalElements
+    totalPages
+  }
+}
+
+fragment AnimeCard on Anime {
+  title {
+    titleNative
+    titleCn
+  }
+  coverImage
+  averageScore
+  mappings {
+    mappingId
+    ...ScoreItem
+  }
+}
+
+fragment ScoreItem on Mapping {
+  sourcePlatform
+  platformId
+  rawScore
+}

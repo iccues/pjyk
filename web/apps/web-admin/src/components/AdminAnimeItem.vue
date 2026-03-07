@@ -2,7 +2,9 @@
 import { ArrowDown, Delete, Edit } from "@element-plus/icons-vue";
 import { ref } from "vue";
 import draggable from "vuedraggable";
+
 import type { AdminAnime, ReviewStatus } from "@/types/adminAnime";
+
 import AdminMappingItem from "./AdminMappingItem.vue";
 
 const props = defineProps<{
@@ -53,38 +55,38 @@ const handleReviewStatusChange = (newStatus: ReviewStatus) => {
 
 <template>
   <div
-    class="border border-gray-200 rounded bg-white transition-all"
-    :class="{ 'border-blue-300': isExpanded, 'hover:shadow-md hover:border-gray-300': true }"
+    class="rounded border border-gray-200 bg-white transition-all"
+    :class="{ 'border-blue-300': isExpanded, 'hover:border-gray-300 hover:shadow-md': true }"
   >
     <div
-      class="flex items-center py-2 px-3 cursor-pointer gap-3 min-h-[60px] hover:bg-gray-50"
+      class="flex min-h-[60px] cursor-pointer items-center gap-3 px-3 py-2 hover:bg-gray-50"
       @click="toggleExpand"
     >
-      <div class="shrink-0 w-[50px]">
+      <div class="w-[50px] shrink-0">
         <el-image
           :src="anime.coverImage"
           :alt="anime.title.titleCn || anime.title.titleNative"
           fit="cover"
-          class="w-[50px] h-[70px] rounded-sm"
+          class="h-[70px] w-[50px] rounded-sm"
           lazy
         />
       </div>
-      <div class="shrink-0 w-12 flex flex-col items-start py-1">
-        <span class="text-[10px] text-gray-500 leading-tight mb-0.5">ID</span>
-        <span class="text-xs text-gray-900 font-medium">{{ anime.animeId }}</span>
+      <div class="flex w-12 shrink-0 flex-col items-start py-1">
+        <span class="mb-0.5 text-[10px] leading-tight text-gray-500">ID</span>
+        <span class="text-xs font-medium text-gray-900">{{ anime.animeId }}</span>
       </div>
-      <div class="flex-1 min-w-0 flex flex-col items-start gap-0.5 py-1">
+      <div class="flex min-w-0 flex-1 flex-col items-start gap-0.5 py-1">
         <div
-          class="text-sm font-semibold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis w-full"
+          class="w-full overflow-hidden text-sm font-semibold text-ellipsis whitespace-nowrap text-gray-900"
         >
           {{ anime.title.titleCn || anime.title.titleNative }}
         </div>
-        <div class="text-xs text-gray-500 whitespace-nowrap overflow-hidden text-ellipsis w-full">
+        <div class="w-full overflow-hidden text-xs text-ellipsis whitespace-nowrap text-gray-500">
           {{ anime.title.titleNative }}
         </div>
       </div>
-      <div class="shrink-0 w-24 flex flex-col items-center py-1" @click.stop>
-        <span class="text-[10px] text-gray-500 leading-tight mb-0.5">审核</span>
+      <div class="flex w-24 shrink-0 flex-col items-center py-1" @click.stop>
+        <span class="mb-0.5 text-[10px] leading-tight text-gray-500">审核</span>
         <el-select
           :model-value="anime.reviewStatus"
           size="small"
@@ -99,7 +101,7 @@ const handleReviewStatusChange = (newStatus: ReviewStatus) => {
           />
         </el-select>
       </div>
-      <div class="shrink-0 w-[100px] flex justify-center items-center gap-1">
+      <div class="flex w-[100px] shrink-0 items-center justify-center gap-1">
         <el-button
           type="primary"
           size="small"
@@ -126,12 +128,12 @@ const handleReviewStatusChange = (newStatus: ReviewStatus) => {
     </div>
 
     <el-collapse-transition>
-      <div v-if="isExpanded" class="border-t border-gray-200 bg-gray-50 py-2 px-3 pb-3" @click.stop>
+      <div v-if="isExpanded" class="border-t border-gray-200 bg-gray-50 px-3 py-2 pb-3" @click.stop>
         <draggable
           :model-value="anime.mappings"
           :group="{ name: 'mappings', pull: true, put: true }"
           item-key="mappingId"
-          class="flex flex-col gap-1.5 min-h-[60px]"
+          class="flex min-h-[60px] flex-col gap-1.5"
           @change="handleMappingChange"
         >
           <template #item="{ element }">

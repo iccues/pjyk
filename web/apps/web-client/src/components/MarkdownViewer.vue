@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import MarkdownIt from "markdown-it";
 import mk from "@vscode/markdown-it-katex";
+import MarkdownIt from "markdown-it";
+
 import "katex/dist/katex.min.css";
 import "github-markdown-css/github-markdown-light.css";
 

@@ -17,6 +17,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/anime/**").permitAll()
                         .requestMatchers("/api/config/**").permitAll()
+                        .requestMatchers("/api/graphiql").permitAll()
+                        .requestMatchers("/api/graphql").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .oauth2ResourceServer(oauth -> oauth
