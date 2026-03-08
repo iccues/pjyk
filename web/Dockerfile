@@ -11,8 +11,8 @@ RUN corepack prepare --activate
 
 # 安装依赖
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY apps/web-client/package.json ./apps/web-client/
-COPY apps/web-admin/package.json ./apps/web-admin/
+COPY apps/client/package.json ./apps/client/
+COPY apps/admin/package.json ./apps/admin/
 COPY packages/shared/package.json ./packages/shared/
 RUN pnpm install --frozen-lockfile
 
@@ -24,8 +24,8 @@ RUN pnpm turbo run build
 FROM nginx:1.29.4
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/apps/web-client/dist /usr/share/nginx/client
-COPY --from=build /app/apps/web-admin/dist /usr/share/nginx/admin
+COPY --from=build /app/apps/client/dist /usr/share/nginx/client
+COPY --from=build /app/apps/admin/dist /usr/share/nginx/admin
 
 EXPOSE 80 81
 
