@@ -18,11 +18,11 @@ services:
       - pjyk-network
 
   # 后端服务
-  backend:
+  api:
     build:
-      context: ./meta-anime-backend
+      context: ./api
       dockerfile: Dockerfile
-    container_name: meta-anime-backend
+    container_name: pjyk-api
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/meta-anime
@@ -47,7 +47,7 @@ services:
       - "80:80"
       - "81:81"
     depends_on:
-      - backend
+      - api
     networks:
       - pjyk-network
     restart: unless-stopped
