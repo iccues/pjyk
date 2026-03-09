@@ -1,0 +1,11 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+logging:
+  level:
+    root: INFO
+    com.yukiani: INFO
+    org.springframework: WARN
+    org.hibernate: WARN

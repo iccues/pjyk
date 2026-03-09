@@ -2,9 +2,9 @@ services:
   # PostgreSQL 数据库
   postgres:
     image: postgres:17.7
-    container_name: meta-anime-postgres
+    container_name: pjyk-postgres
     environment:
-      POSTGRES_DB: meta-anime
+      POSTGRES_DB: pjyk
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
@@ -18,14 +18,14 @@ services:
       - pjyk-network
 
   # 后端服务
-  backend:
+  api:
     build:
-      context: ./meta-anime-backend
+      context: ./api
       dockerfile: Dockerfile
-    container_name: meta-anime-backend
+    container_name: pjyk-api
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/meta-anime
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pjyk
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       MAL_CLIENT_ID: ${MAL_CLIENT_ID}
@@ -47,7 +47,7 @@ services:
       - "80:80"
       - "81:81"
     depends_on:
-      - backend
+      - api
     networks:
       - pjyk-network
     restart: unless-stopped

@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  graphql:
+    graphiql:
+      path: /api/graphiql
+      enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.yukiani: DEBUG
