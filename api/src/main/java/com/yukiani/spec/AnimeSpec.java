@@ -4,6 +4,8 @@ import com.yukiani.entity.Anime;
 import com.yukiani.entity.LocalDateRange;
 import com.yukiani.entity.ReviewStatus;
 import com.yukiani.entity.SortBy;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -60,6 +62,40 @@ public class AnimeSpec {
             if (query == null) return null;
             query.orderBy(criteriaBuilder.asc(root.get("id")));
             return criteriaBuilder.conjunction();
+        };
+    }
+
+    public static Specification<Anime> similarTitle(String query) {
+        return (root, cq, cb) -> {
+            if (query == null || query.isBlank()) return null;
+
+            Path<?> titlePath = root.get("title");
+            float threshold = 0.1f;
+
+            List<String> fields = List.of("titleNative", "titleRomaji", "titleEn", "titleCn");
+
+            // WHERE: 任意 title 字段相似度超过阈值
+            List<Predicate> predicates = new ArrayList<>();
+            for (String field : fields) {
+                Expression<Float> sim = cb.function(
+                        "similarity", Float.class,
+                        titlePath.get(field), cb.literal(query));
+                predicates.add(cb.greaterThan(sim, threshold));
+            }
+
+            // ORDER BY GREATEST(similarity(...)) DESC
+            if (cq != null && !Long.class.equals(cq.getResultType())) {
+                @SuppressWarnings("unchecked")
+                Expression<Float>[] simExprs = fields.stream()
+                        .map(field -> cb.function(
+                                "similarity", Float.class,
+                                titlePath.get(field), cb.literal(query)))
+                        .toArray(Expression[]::new);
+                Expression<Float> greatest = cb.function("GREATEST", Float.class, simExprs);
+                cq.orderBy(cb.desc(greatest));
+            }
+
+            return cb.or(predicates.toArray(Predicate[]::new));
         };
     }
 }
