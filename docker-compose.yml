@@ -2,9 +2,9 @@ services:
   # PostgreSQL 数据库
   postgres:
     image: postgres:17.7
-    container_name: meta-anime-postgres
+    container_name: pjyk-postgres
     environment:
-      POSTGRES_DB: meta-anime
+      POSTGRES_DB: pjyk
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
@@ -25,7 +25,7 @@ services:
     container_name: pjyk-api
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/meta-anime
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pjyk
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       MAL_CLIENT_ID: ${MAL_CLIENT_ID}
