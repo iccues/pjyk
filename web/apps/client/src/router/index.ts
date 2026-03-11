@@ -14,6 +14,10 @@ const routes = [
         component: () => import("@/pages/AnimeListPage.vue"),
       },
       {
+        path: "search",
+        component: () => import("@/pages/SearchPage.vue"),
+      },
+      {
         path: "docs/about",
         component: () => import("@/pages/docs/AboutPage.vue"),
       },

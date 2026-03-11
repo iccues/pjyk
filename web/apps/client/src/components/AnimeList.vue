@@ -27,7 +27,10 @@ const emit = defineEmits<{
   </div>
   <div v-else class="py-10 text-center text-base text-gray-600">暂无数据</div>
 
-  <div v-if="animeList?.pageInfo" class="mt-8 flex flex-wrap items-center justify-center gap-2">
+  <div
+    v-if="animeList?.pageInfo && animeList.pageInfo.totalPages > 1"
+    class="mt-8 flex flex-wrap items-center justify-center gap-2"
+  >
     <el-pagination
       :current-page="(animeList.pageInfo.number || 0) + 1"
       :page-size="animeList.pageInfo.size"
