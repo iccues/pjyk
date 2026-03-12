@@ -4,6 +4,8 @@ import com.yukiani.entity.Anime;
 import com.yukiani.entity.LocalDateRange;
 import com.yukiani.entity.ReviewStatus;
 import com.yukiani.entity.SortBy;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -60,6 +62,44 @@ public class AnimeSpec {
             if (query == null) return null;
             query.orderBy(criteriaBuilder.asc(root.get("id")));
             return criteriaBuilder.conjunction();
+        };
+    }
+
+    public static Specification<Anime> similarTitle(String query) {
+        return (root, cq, cb) -> {
+            if (query == null || query.isBlank()) return null;
+
+            Path<?> titlePath = root.get("title");
+            float threshold = 0.0f;
+
+            List<String> fields = List.of("titleNative", "titleRomaji", "titleEn", "titleCn");
+
+            // WHERE: 任意 title 字段相似度超过阈值，或包含子串（解决短词嵌入长词中 trigram 无交集的问题）
+            String likePattern = "%" + query + "%";
+            List<Predicate> predicates = new ArrayList<>();
+            for (String field : fields) {
+                Expression<Float> sim = cb.function(
+                        "word_similarity", Float.class,
+                        cb.literal(query), titlePath.get(field));
+                predicates.add(cb.or(
+                        cb.greaterThan(sim, threshold),
+                        cb.like(titlePath.get(field), likePattern)
+                ));
+            }
+
+            // ORDER BY GREATEST(similarity(...)) DESC
+            if (cq != null && !Long.class.equals(cq.getResultType())) {
+                @SuppressWarnings("unchecked")
+                Expression<Float>[] simExprs = fields.stream()
+                        .map(field -> cb.function(
+                                "word_similarity", Float.class,
+                                cb.literal(query), titlePath.get(field)))
+                        .toArray(Expression[]::new);
+                Expression<Float> greatest = cb.function("GREATEST", Float.class, simExprs);
+                cq.orderBy(cb.desc(greatest));
+            }
+
+            return cb.or(predicates.toArray(Predicate[]::new));
         };
     }
 }

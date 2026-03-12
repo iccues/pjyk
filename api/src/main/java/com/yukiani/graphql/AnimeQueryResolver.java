@@ -41,4 +41,18 @@ public class AnimeQueryResolver {
 
         return graphQLTypeMapper.toAnimePage(animePage);
     }
+
+    @QueryMapping
+    public AnimePage animeListBySearch(
+            @Argument String query,
+            @Argument Integer pageNumber,
+            @Argument Integer pageSize
+    ) {
+        Page<Anime> animePage = animeQueryService.getAnimeListBySearch(
+                query,
+                pageNumber,
+                pageSize);
+
+        return graphQLTypeMapper.toAnimePage(animePage);
+    }
 }

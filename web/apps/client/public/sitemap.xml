@@ -8,4 +8,8 @@
     <loc>https://www.yukiani.com/anime/list</loc>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://www.yukiani.com/search</loc>
+    <priority>0.8</priority>
+  </url>
 </urlset>

@@ -11,6 +11,7 @@ import jakarta.annotation.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.stereotype.Service;
 
 /**
@@ -37,6 +38,23 @@ public class AnimeQueryService {
                 AnimeSpec.startDateBetween(dateRange),
                 AnimeSpec.reviewStatusEquals(ReviewStatus.APPROVED),
                 AnimeSpec.orderBy(sortBy)
+        );
+        PageRequest pageRequest = PageRequest.of(pageNumber, limitedPageSize);
+        return animeRepository.findAll(spec, pageRequest);
+    }
+
+    public Page<Anime> getAnimeListBySearch(
+            String query,
+            Integer pageNumber,
+            Integer pageSize
+    ) {
+        if (query == null || query.isBlank()) return Page.empty();
+
+        int limitedPageSize = Math.min(pageSize, 60);
+
+        Specification<Anime> spec = Specification.allOf(
+                AnimeSpec.similarTitle(query),
+                AnimeSpec.reviewStatusEquals(ReviewStatus.APPROVED)
         );
         PageRequest pageRequest = PageRequest.of(pageNumber, limitedPageSize);
         return animeRepository.findAll(spec, pageRequest);

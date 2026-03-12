@@ -31,6 +31,12 @@ query GetAnimeList($year: Int, $season: Season, $pageNumber: Int, $pageSize: Int
   }
 }
 
+query GetAnimeListBySearch($query: String, $pageNumber: Int, $pageSize: Int) {
+  animeListBySearch(query: $query, pageNumber: $pageNumber, pageSize: $pageSize) {
+    ...AnimeList
+  }
+}
+
 fragment AnimeList on AnimePage {
   content {
     animeId
