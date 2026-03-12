@@ -48,6 +48,8 @@ public class AnimeQueryService {
             Integer pageNumber,
             Integer pageSize
     ) {
+        if (query == null || query.isBlank()) return Page.empty();
+
         int limitedPageSize = Math.min(pageSize, 60);
 
         Specification<Anime> spec = Specification.allOf(

@@ -14,8 +14,6 @@ useSearchHead(searchParams);
 const { data, fetching, error } = useQuery({
   query: GetAnimeListBySearchDocument,
   variables: searchParams,
-  // 仅在有查询参数时发送请求
-  pause: () => !searchParams.value.query || searchParams.value.query.trim() === "",
 });
 </script>
 

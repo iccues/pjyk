@@ -70,17 +70,21 @@ public class AnimeSpec {
             if (query == null || query.isBlank()) return null;
 
             Path<?> titlePath = root.get("title");
-            float threshold = 0.1f;
+            float threshold = 0.0f;
 
             List<String> fields = List.of("titleNative", "titleRomaji", "titleEn", "titleCn");
 
-            // WHERE: 任意 title 字段相似度超过阈值
+            // WHERE: 任意 title 字段相似度超过阈值，或包含子串（解决短词嵌入长词中 trigram 无交集的问题）
+            String likePattern = "%" + query + "%";
             List<Predicate> predicates = new ArrayList<>();
             for (String field : fields) {
                 Expression<Float> sim = cb.function(
-                        "similarity", Float.class,
-                        titlePath.get(field), cb.literal(query));
-                predicates.add(cb.greaterThan(sim, threshold));
+                        "word_similarity", Float.class,
+                        cb.literal(query), titlePath.get(field));
+                predicates.add(cb.or(
+                        cb.greaterThan(sim, threshold),
+                        cb.like(titlePath.get(field), likePattern)
+                ));
             }
 
             // ORDER BY GREATEST(similarity(...)) DESC
@@ -88,8 +92,8 @@ public class AnimeSpec {
                 @SuppressWarnings("unchecked")
                 Expression<Float>[] simExprs = fields.stream()
                         .map(field -> cb.function(
-                                "similarity", Float.class,
-                                titlePath.get(field), cb.literal(query)))
+                                "word_similarity", Float.class,
+                                cb.literal(query), titlePath.get(field)))
                         .toArray(Expression[]::new);
                 Expression<Float> greatest = cb.function("GREATEST", Float.class, simExprs);
                 cq.orderBy(cb.desc(greatest));
