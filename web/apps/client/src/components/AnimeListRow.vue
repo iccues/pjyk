@@ -109,10 +109,7 @@ watch(data, async () => {
   <div v-if="error" class="py-10 text-center text-base text-red-600">{{ error }}</div>
   <div v-else-if="fetching" class="py-10 text-center text-base text-gray-600">加载中...</div>
 
-  <div
-    v-else-if="data?.animeList && data?.animeList?.content.length > 0"
-    class="group/row relative"
-  >
+  <div v-else-if="data && data?.animeList.content.length > 0" class="group/row relative">
     <!-- 滚动容器 -->
     <div
       ref="scrollContainer"

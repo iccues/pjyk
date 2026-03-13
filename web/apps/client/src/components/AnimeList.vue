@@ -6,7 +6,7 @@ import type { AnimeListFragment } from "@/graphql/generated/graphql";
 import AnimeCard from "./AnimeCard.vue";
 
 const props = defineProps<{
-  animeList?: AnimeListFragment | null;
+  animeList?: AnimeListFragment;
   fetching: boolean;
   error?: CombinedError;
 }>();

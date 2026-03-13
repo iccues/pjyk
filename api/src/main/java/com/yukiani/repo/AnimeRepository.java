@@ -14,4 +14,6 @@ public interface AnimeRepository extends JpaRepository<Anime, Long>, JpaSpecific
     List<Anime> findByStartDateBetween(LocalDate startDateAfter, LocalDate startDateBefore);
     List<Anime> findAllByReviewStatus(ReviewStatus reviewStatus);
     void deleteAllByReviewStatusIsNot(ReviewStatus reviewStatus);
+
+    Anime findByAnimeIdAndReviewStatus(Long animeId, ReviewStatus reviewStatus);
 }
