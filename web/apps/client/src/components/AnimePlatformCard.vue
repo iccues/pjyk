@@ -44,11 +44,11 @@ const animeUrl = computed(() => platformConfig.value.getAnimeUrl?.(props.mapping
       </template>
       <template v-if="mapping.normalizedScore != null">
         <span class="text-gray-500">标准化评分</span>
-        <span class="font-bold text-blue-600">{{ mapping.normalizedScore.toFixed(2) }}</span>
+        <span class="font-bold text-blue-600">{{ mapping.normalizedScore.toFixed(1) }}</span>
       </template>
       <template v-if="mapping.normalizedPopularity != null">
         <span class="text-gray-500">标准化人气</span>
-        <span class="font-medium text-gray-700">{{ mapping.normalizedPopularity.toFixed(2) }}</span>
+        <span class="font-medium text-gray-700">{{ mapping.normalizedPopularity.toFixed(0) }}</span>
       </template>
     </div>
   </a>
