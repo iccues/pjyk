@@ -22,13 +22,13 @@ const { data, fetching, error } = useQuery({
     <!-- Search Box -->
     <div class="mt-4 mb-8 grid grid-cols-[repeat(auto-fill,12.5rem)] justify-center gap-5">
       <div
-        class="col-span-full flex w-full max-w-md items-center overflow-hidden rounded-full border border-gray-300 bg-white transition-shadow"
+        class="col-span-full flex w-full max-w-md items-center overflow-hidden rounded-[12px] border border-gray-300 bg-white transition-shadow"
       >
         <input
           v-model="searchInput"
           type="text"
-          placeholder="输入番剧标题进行搜索..."
-          class="w-full border-none bg-transparent px-4 py-2 text-[15px] text-gray-900 placeholder:text-gray-400 focus:outline-none"
+          placeholder="搜索番剧..."
+          class="w-full border-none bg-transparent px-[12px] py-[9px] text-[16px] text-gray-900 placeholder:text-gray-400 focus:outline-none"
           @keyup.enter="handleSearch"
         />
         <button

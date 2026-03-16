@@ -82,7 +82,7 @@ public abstract class AbstractAnimeFetchService {
 
         double rawPopularity = extractRawPopularity(jsonNode);
         double normalizedPopularity = normalizePopularity(rawPopularity);
-        mapping.setRawPopularity(normalizedPopularity);
+        mapping.setRawPopularity(rawPopularity);
         mapping.setNormalizedPopularity(normalizedPopularity);
 
         mappingRepoService.saveOrUpdate(mapping);

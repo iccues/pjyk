@@ -51,20 +51,40 @@ fragment AnimeList on AnimePage {
 }
 
 fragment AnimeCard on Anime {
+  animeId
   title {
     titleNative
     titleCn
   }
   coverImage
   averageScore
-  mappings {
-    mappingId
-    ...ScoreItem
+}
+
+query GetAnimeDetail($animeId: ID!) {
+  anime(animeId: $animeId) {
+    animeId
+    coverImage
+    startDate
+    averageScore
+    popularity
+    title {
+      titleNative
+      titleRomaji
+      titleEn
+      titleCn
+    }
+    mappings {
+      mappingId
+      ...MappingItem
+    }
   }
 }
 
-fragment ScoreItem on Mapping {
+fragment MappingItem on Mapping {
   sourcePlatform
   platformId
   rawScore
+  normalizedScore
+  rawPopularity
+  normalizedPopularity
 }

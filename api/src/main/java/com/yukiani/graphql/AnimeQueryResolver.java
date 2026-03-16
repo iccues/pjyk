@@ -2,7 +2,7 @@ package com.yukiani.graphql;
 
 import com.yukiani.generated.types.Season;
 import com.yukiani.generated.types.SortBy;
-import com.yukiani.entity.Anime;
+import com.yukiani.generated.types.Anime;
 import com.yukiani.generated.types.AnimePage;
 import com.yukiani.service.AnimeQueryService;
 import jakarta.annotation.Resource;
@@ -31,7 +31,7 @@ public class AnimeQueryResolver {
             @Argument Integer pageSize,
             @Argument SortBy sortBy) {
 
-        Page<Anime> animePage = animeQueryService.getAnimeList(
+        var animePage = animeQueryService.getAnimeList(
                 year,
                 graphQLTypeMapper.toSeason(season),
                 pageNumber,
@@ -48,11 +48,20 @@ public class AnimeQueryResolver {
             @Argument Integer pageNumber,
             @Argument Integer pageSize
     ) {
-        Page<Anime> animePage = animeQueryService.getAnimeListBySearch(
+        var animePage = animeQueryService.getAnimeListBySearch(
                 query,
                 pageNumber,
-                pageSize);
+                pageSize
+        );
 
         return graphQLTypeMapper.toAnimePage(animePage);
+    }
+
+    @QueryMapping
+    public Anime anime(
+            @Argument Long animeId
+    ) {
+        var anime = animeQueryService.getAnimeById(animeId);
+        return graphQLTypeMapper.toGraphQLAnime(anime);
     }
 }

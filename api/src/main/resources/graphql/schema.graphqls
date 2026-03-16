@@ -5,13 +5,15 @@ type Query {
         pageNumber: Int = 0
         pageSize: Int = 30
         sortBy: SortBy = SCORE
-    ): AnimePage
+    ): AnimePage!
 
     animeListBySearch(
         query: String
         pageNumber: Int = 0
         pageSize: Int = 30
-    ): AnimePage
+    ): AnimePage!
+
+    anime(animeId: ID!): Anime
 }
 
 type PageInfo {

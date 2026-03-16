@@ -59,4 +59,8 @@ public class AnimeQueryService {
         PageRequest pageRequest = PageRequest.of(pageNumber, limitedPageSize);
         return animeRepository.findAll(spec, pageRequest);
     }
+
+    public Anime getAnimeById(Long animeId) {
+        return animeRepository.findByAnimeIdAndReviewStatus(animeId, ReviewStatus.APPROVED);
+    }
 }

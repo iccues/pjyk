@@ -1,21 +1,6 @@
 <script setup lang="ts">
-import { Search } from "@element-plus/icons-vue";
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-
 import logo from "@/assets/logo.svg";
-
-const router = useRouter();
-const searchQuery = ref("");
-
-const handleSearch = () => {
-  const query = searchQuery.value.trim();
-  const routeLocation = router.resolve({
-    path: "/search",
-    query: query ? { q: query } : {},
-  });
-  window.open(routeLocation.href, "_blank");
-};
+import HeaderSearch from "./HeaderSearch.vue";
 </script>
 
 <template>
@@ -34,25 +19,7 @@ const handleSearch = () => {
         </span>
       </router-link>
 
-      <!-- Header Search Box -->
-      <div
-        class="flex w-64 items-center overflow-hidden rounded-full border border-gray-300 bg-white transition-shadow"
-      >
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="搜索番剧..."
-          class="w-full border-none bg-transparent px-4 py-1.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
-          @keyup.enter="handleSearch"
-        />
-        <button
-          @click="handleSearch"
-          class="mr-1 flex items-center justify-center p-1.5 text-gray-400 transition-colors hover:text-indigo-600 focus:outline-none"
-          title="搜索"
-        >
-          <el-icon :size="16"><Search /></el-icon>
-        </button>
-      </div>
+      <HeaderSearch />
     </div>
   </header>
 </template>
