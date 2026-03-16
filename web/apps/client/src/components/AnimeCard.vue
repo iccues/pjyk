@@ -12,7 +12,7 @@ const props = defineProps<{
   <RouterLink :to="`/anime/${anime.animeId}`" class="block no-underline">
     <div class="group flex w-[12.5rem] flex-col gap-2">
       <div
-        class="relative aspect-[1/1.4] w-full overflow-hidden rounded-3xl bg-gray-100 transition-all duration-300"
+        class="relative aspect-[1/1.4] w-full overflow-hidden rounded-2xl bg-gray-100 transition-all duration-300"
       >
         <div class="h-full w-full transition-all duration-300 group-hover:brightness-80">
           <img

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ArrowLeft, ArrowRight } from "@element-plus/icons-vue";
 import { useQuery } from "@urql/vue";
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 
 import { GetAnimeListRowDocument, type Season, type SortBy } from "@/graphql/generated/graphql";
 import { filtersToQuery } from "@/utils/queryUtils";
@@ -42,25 +42,11 @@ const updateButtonVisibility = () => {
   showRightButton.value = scrollLeft < scrollWidth - clientWidth;
 };
 
-const getCardWidth = (): number => {
-  // 默认值
-  if (!scrollContainer.value) return 220;
-
-  const firstCard = scrollContainer.value.querySelector(".flex-shrink-0") as HTMLElement;
-  if (!firstCard) return 220;
-
-  // 获取卡片宽度
-  const cardWidth = firstCard.offsetWidth;
-
-  // 获取 gap（通过比较第一个和第二个卡片的位置）
-  const secondCard = firstCard.nextElementSibling as HTMLElement;
-  if (secondCard) {
-    const gap = secondCard.offsetLeft - (firstCard.offsetLeft + cardWidth);
-    return cardWidth + gap;
-  }
-
-  // 如果只有一个卡片，使用默认 gap
-  return cardWidth + 20;
+const getCardWidth = () => {
+  const fontSize = typeof window !== "undefined"
+    ? parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
+    : 16;
+  return fontSize * (12.5 + 1.25); // 卡片宽度 (12.5rem) + 间距 (1.25rem/gap-5)
 };
 
 const scrollLeft = () => {
@@ -89,6 +75,8 @@ watch(data, async () => {
   await nextTick();
   updateButtonVisibility();
 });
+
+onMounted(updateButtonVisibility);
 </script>
 
 <template>
@@ -99,7 +87,7 @@ watch(data, async () => {
     </h2>
     <router-link
       :to="moreLink"
-      class="flex items-center gap-1 text-[14px] font-medium text-blue-600 transition-colors hover:text-blue-500"
+      class="-m-6 flex items-center gap-1 p-6 text-[14px] font-medium text-blue-600 transition-colors hover:text-blue-500"
     >
       查看更多 <span aria-hidden="true">&rarr;</span>
     </router-link>
@@ -117,7 +105,7 @@ watch(data, async () => {
       class="scrollbar-hide flex gap-5 overflow-x-auto scroll-smooth px-[max(1.25rem,calc(50%-700px+1.25rem))] pb-4"
     >
       <AnimeCard
-        v-for="anime in data?.animeList?.content"
+        v-for="anime in data.animeList.content"
         :key="anime.animeId"
         :anime="anime"
         class="flex-shrink-0"
@@ -128,7 +116,7 @@ watch(data, async () => {
     <button
       v-show="showLeftButton"
       @click="scrollLeft"
-      class="absolute top-30 left-[max(0rem,calc(50%-700px))] z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/90 opacity-0 shadow-lg transition-opacity duration-300 group-hover/row:opacity-100 hover:scale-110 hover:bg-white active:scale-95"
+      class="absolute top-30 left-[max(1.25rem,calc(50%-700px+1.25rem))] z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/90 opacity-0 shadow-lg transition-opacity duration-300 group-hover/row:opacity-100 hover:scale-110 hover:bg-white active:scale-95"
       aria-label="向左滚动"
     >
       <el-icon :size="24" class="text-gray-700">
@@ -140,7 +128,7 @@ watch(data, async () => {
     <button
       v-show="showRightButton"
       @click="scrollRight"
-      class="absolute top-30 right-[max(0rem,calc(50%-700px))] z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/90 opacity-0 shadow-lg transition-opacity duration-300 group-hover/row:opacity-100 hover:scale-110 hover:bg-white active:scale-95"
+      class="absolute top-30 right-[max(1.25rem,calc(50%-700px+1.25rem))] z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/90 opacity-0 shadow-lg transition-opacity duration-300 group-hover/row:opacity-100 hover:scale-110 hover:bg-white active:scale-95"
       aria-label="向右滚动"
     >
       <el-icon :size="24" class="text-gray-700">
