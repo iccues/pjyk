@@ -71,16 +71,13 @@ const handleSearch = () => {
       v-if="isSearchVisible"
       class="fixed inset-0 z-10 flex flex-col bg-white px-3 py-6 sm:hidden"
     >
-      <button
-        @click="toggleSearch"
-        class="mb-4 flex h-10 w-10 self-end text-gray-600"
-      >
+      <button @click="toggleSearch" class="mb-4 flex h-10 w-10 self-end text-gray-600">
         <el-icon :size="24">
           <Close />
         </el-icon>
       </button>
       <div
-        class="flex items-center overflow-hidden rounded-2xl border border-gray-300 bg-gray-50 transition-shadow mx-3"
+        class="mx-3 flex items-center overflow-hidden rounded-2xl border border-gray-300 bg-gray-50 transition-shadow"
       >
         <input
           ref="mobileInputRef"
