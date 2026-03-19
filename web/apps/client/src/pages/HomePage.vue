@@ -18,6 +18,7 @@ const getCurrentSeason = (): "WINTER" | "SPRING" | "SUMMER" | "FALL" => {
 };
 
 const currentSeason = getCurrentSeason();
+const yearlyBestYear = currentMonth >= 1 && currentMonth <= 3 ? currentYear - 1 : currentYear;
 </script>
 
 <template>
@@ -35,6 +36,8 @@ const currentSeason = getCurrentSeason();
       :season="currentSeason"
       sort-by="POPULARITY"
     />
+    <!-- 年度最佳 -->
+    <AnimeListRow :title="`${yearlyBestYear}年度最佳`" :year="yearlyBestYear" />
     <!-- 历史最高 -->
     <!-- <AnimeListRow title="历史最高" /> -->
   </div>

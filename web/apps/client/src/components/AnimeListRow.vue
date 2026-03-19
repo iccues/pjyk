@@ -43,9 +43,10 @@ const updateButtonVisibility = () => {
 };
 
 const getCardWidth = () => {
-  const fontSize = typeof window !== "undefined"
-    ? parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
-    : 16;
+  const fontSize =
+    typeof window !== "undefined"
+      ? parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
+      : 16;
   return fontSize * (12.5 + 1.25); // 卡片宽度 (12.5rem) + 间距 (1.25rem/gap-5)
 };
 
@@ -87,7 +88,7 @@ onMounted(updateButtonVisibility);
     </h2>
     <router-link
       :to="moreLink"
-      class="-m-6 flex items-center gap-1 p-6 text-[14px] font-medium text-blue-600 transition-colors hover:text-blue-500"
+      class="-m-5 flex items-center gap-1 p-5 text-[14px] font-medium text-blue-600 transition-colors hover:text-blue-500"
     >
       查看更多 <span aria-hidden="true">&rarr;</span>
     </router-link>
