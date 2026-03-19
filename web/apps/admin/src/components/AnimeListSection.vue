@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Plus } from "@element-plus/icons-vue";
 import { VList } from "virtua/vue";
+import { computed, ref } from "vue";
 
 import AdminAnimeItem from "@/components/AdminAnimeItem.vue";
 import AnimeFormDialog from "@/components/AnimeFormDialog.vue";
@@ -20,7 +21,7 @@ interface Props {
   editingAnime?: AdminAnime;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const emit = defineEmits<{
   "update:selectedReviewStatus": [value: ReviewStatus | undefined];
@@ -35,6 +36,38 @@ const emit = defineEmits<{
   "close-dialog": [];
   "submit-form": [formData: any];
 }>();
+
+const searchKeyword = ref("");
+
+const titleMatches = (
+  title:
+    | { titleCn?: string; titleNative?: string; titleRomaji?: string; titleEn?: string }
+    | undefined,
+  keyword: string,
+) => {
+  if (!title) return false;
+  return (
+    title.titleCn?.toLowerCase().includes(keyword) ||
+    title.titleNative?.toLowerCase().includes(keyword) ||
+    title.titleRomaji?.toLowerCase().includes(keyword) ||
+    title.titleEn?.toLowerCase().includes(keyword)
+  );
+};
+
+const filteredAnimeList = computed(() => {
+  const keyword = searchKeyword.value.trim().toLowerCase();
+  if (!keyword) return props.animeList;
+  return props.animeList.filter((anime) => {
+    if (String(anime.animeId) === keyword) return true;
+    if (titleMatches(anime.title, keyword)) return true;
+    return anime.mappings.some(
+      (m) =>
+        String(m.mappingId) === keyword ||
+        m.platformId.toLowerCase().includes(keyword) ||
+        titleMatches(m.mappingInfo?.title, keyword),
+    );
+  });
+});
 </script>
 
 <template>
@@ -42,12 +75,14 @@ const emit = defineEmits<{
     <div class="mb-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <h2 class="m-0 text-xl font-semibold text-gray-800">动画列表</h2>
-        <el-tag type="info">{{ animeList.length }}</el-tag>
+        <el-tag type="info">{{ filteredAnimeList.length }} / {{ animeList.length }}</el-tag>
       </div>
       <el-button type="primary" size="small" :icon="Plus" @click="emit('create-anime')">
         新建动画
       </el-button>
     </div>
+
+    <el-input v-model="searchKeyword" placeholder="搜索标题 / ID..." class="mb-3" />
 
     <FilterBar
       :selected-review-status="selectedReviewStatus"
@@ -62,7 +97,7 @@ const emit = defineEmits<{
       @change="emit('filter-change')"
     />
 
-    <VList :data="animeList" class="flex-1 overflow-auto pr-2">
+    <VList :data="filteredAnimeList" class="flex-1 overflow-auto pr-2">
       <template #default="{ item: anime }">
         <div :key="anime.animeId" class="mb-3">
           <AdminAnimeItem
