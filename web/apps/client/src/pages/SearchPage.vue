@@ -29,7 +29,7 @@ const { data, fetching, error } = useQuery({
           type="text"
           placeholder="搜索番剧..."
           class="w-full border-none bg-transparent px-[12px] py-[9px] text-[16px] text-gray-900 placeholder:text-gray-400 focus:outline-none"
-          @keyup.enter="handleSearch"
+          @keydown.enter="handleSearch"
         />
         <button
           @click="handleSearch"

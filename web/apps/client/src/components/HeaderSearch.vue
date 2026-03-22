@@ -38,7 +38,7 @@ const handleSearch = () => {
       type="text"
       placeholder="搜索番剧..."
       class="w-full border-none bg-transparent px-2.5 py-1.5 text-[12px] text-gray-900 placeholder:text-gray-400 focus:outline-none"
-      @keyup.enter="handleSearch"
+      @keydown.enter="handleSearch"
     />
     <button
       @click="handleSearch"
@@ -85,7 +85,7 @@ const handleSearch = () => {
           type="text"
           placeholder="搜索番剧..."
           class="w-full border-none bg-transparent px-4 py-3 text-[16px] text-gray-900 placeholder:text-gray-400 focus:outline-none"
-          @keyup.enter="handleSearch"
+          @keydown.enter="handleSearch"
         />
         <button
           @click="handleSearch"
