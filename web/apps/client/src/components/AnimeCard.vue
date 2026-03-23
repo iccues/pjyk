@@ -16,12 +16,20 @@ const props = defineProps<{
           class="will-change: [filter] h-full w-full transition-[filter] duration-300 group-hover:brightness-80"
         >
           <img
+            v-if="anime.coverImage"
             class="block h-full w-full object-cover"
             :src="anime.coverImage"
             :alt="anime.title.titleCn || anime.title.titleNative || 'Anime Cover'"
           />
+          <div
+            v-else
+            class="flex h-full w-full flex-col items-center justify-center bg-gray-200 text-gray-400"
+          >
+            <span class="text-[14px] font-medium">暂无封面</span>
+          </div>
         </div>
         <div
+          v-if="anime.averageScore"
           class="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/70 to-transparent"
         ></div>
         <div
