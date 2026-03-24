@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BangumiFetchService extends AbstractAnimeFetchService {
@@ -82,14 +83,16 @@ public class BangumiFetchService extends AbstractAnimeFetchService {
     final int pageSize = 50;
 
     JsonNode fetchPage(int year, Season season, int page) {
+        Map<String, Object> queryParams = season != null
+                ? Map.of("year", year, "month", season.toMonth(), "limit", pageSize, "offset", page * pageSize)
+                : Map.of("year", year, "limit", pageSize, "offset", page * pageSize);
+
         return RetryUtil.executeWithRetry(
                 () -> bangumiWebClient.get()
-                        .uri(uriBuilder -> uriBuilder
-                                .queryParam("year", year)
-                                .queryParam("month", season.toMonth())
-                                .queryParam("limit", pageSize)
-                                .queryParam("offset", page * pageSize)
-                                .build())
+                        .uri(uriBuilder -> {
+                            queryParams.forEach(uriBuilder::queryParam);
+                            return uriBuilder.build();
+                        })
                         .retrieve()
                         .bodyToMono(JsonNode.class)
                         .block(),

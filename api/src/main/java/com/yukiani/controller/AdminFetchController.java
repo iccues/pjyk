@@ -1,6 +1,7 @@
 package com.yukiani.controller;
 
 import com.yukiani.common.Response;
+import com.yukiani.entity.Platform;
 import com.yukiani.entity.Season;
 import com.yukiani.service.fetch.FetchService;
 import jakarta.annotation.Resource;
@@ -16,15 +17,15 @@ public class AdminFetchController {
 
     @ResponseBody
     @PostMapping("/anime")
-    public Response<String> fetchAnime(@RequestParam int year, @RequestParam Season season) {
-        fetchService.fetchAnime(year, season);
+    public Response<String> fetchAnime(@RequestParam int year, Season season, Platform platform) {
+        fetchService.fetchAnime(year, season, platform);
         return Response.ok("数据抓取任务已启动");
     }
 
     @ResponseBody
     @PostMapping("/mapping")
-    public Response<String> fetchMapping(@RequestParam int year, @RequestParam Season season) {
-        fetchService.fetchMapping(year, season);
+    public Response<String> fetchMapping(@RequestParam int year, Season season, Platform platform) {
+        fetchService.fetchMapping(year, season, platform);
         return Response.ok("映射抓取任务已启动");
     }
 
