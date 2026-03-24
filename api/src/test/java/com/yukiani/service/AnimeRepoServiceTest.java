@@ -5,6 +5,7 @@ import com.yukiani.entity.AnimeTitles;
 import com.yukiani.entity.MappingInfo;
 import com.yukiani.repo.AnimeRepository;
 import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,9 @@ public class AnimeRepoServiceTest {
 
     @Resource
     private AnimeRepoService animeRepoService;
+
+    @Resource
+    private EntityManager entityManager;
 
     @AfterEach
     public void cleanup() {
@@ -245,5 +249,22 @@ public class AnimeRepoServiceTest {
 
         assertNotNull(result);
         assertEquals(existingAnime.getAnimeId(), result.getAnimeId());
+    }
+
+    @Test
+    public void testAnimeTitleIsNotNullWhenAllFieldsAreNull() {
+        Anime anime = new Anime();
+        anime.setTitle(new AnimeTitles()); // 所有成员都是 null
+        anime = animeRepository.save(anime);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        Anime reloaded = animeRepository.findById(anime.getAnimeId()).orElseThrow();
+        assertNotNull(reloaded.getTitle());
+        assertNull(reloaded.getTitle().getTitleNative());
+        assertNull(reloaded.getTitle().getTitleRomaji());
+        assertNull(reloaded.getTitle().getTitleEn());
+        assertNull(reloaded.getTitle().getTitleCn());
     }
 }

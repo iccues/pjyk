@@ -204,7 +204,8 @@ public class InfoServiceTest {
         // 验证：anime 保持不变（因为 MappingInfo 为 null，方法提前返回）
         assertNull(anime.getCoverImage());
         assertNull(anime.getStartDate());
-        assertNull(anime.getTitle());
+        assertNotNull(anime.getTitle());
+        assertNull(anime.getTitle().getTitleNative());
     }
 
     // ==================== cleanInfo 测试 ====================

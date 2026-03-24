@@ -46,7 +46,6 @@ const dialogTitle = computed(() => (isEditMode.value ? "编辑动画" : "创建�
 
 // 表单验证规则
 const rules: FormRules<AnimeForm> = {
-  "title.titleNative": [{ required: true, message: "请输入原生标题", trigger: "blur" }],
   coverImage: [
     {
       type: "url",
@@ -135,12 +134,8 @@ const handleSubmit = async () => {
         <el-input v-model="formData.title.titleCn" placeholder="请输入中文标题" clearable />
       </el-form-item>
 
-      <el-form-item label="原生标题" prop="title.titleNative" required>
-        <el-input
-          v-model="formData.title.titleNative"
-          placeholder="请输入原生标题（必填）"
-          clearable
-        />
+      <el-form-item label="原生标题" prop="title.titleNative">
+        <el-input v-model="formData.title.titleNative" placeholder="请输入原生标题" clearable />
       </el-form-item>
 
       <el-form-item label="罗马音标题" prop="title.titleRomaji">

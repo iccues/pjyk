@@ -22,7 +22,14 @@ public class Anime {
     Integer version = 0;
 
     @Embedded
-    AnimeTitles title;
+    AnimeTitles title = new AnimeTitles();
+
+    @PostLoad
+    protected void postLoad() {
+        if (title == null) {
+            title = new AnimeTitles();
+        }
+    }
 
     String coverImage;
 

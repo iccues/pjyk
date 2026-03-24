@@ -20,7 +20,7 @@ export type Anime = {
   __typename?: 'Anime';
   animeId: Scalars['ID']['output'];
   averageScore?: Maybe<Scalars['Float']['output']>;
-  coverImage: Scalars['String']['output'];
+  coverImage?: Maybe<Scalars['String']['output']>;
   mappings: Array<Mapping>;
   popularity?: Maybe<Scalars['Float']['output']>;
   startDate?: Maybe<Scalars['String']['output']>;
@@ -112,7 +112,7 @@ export type GetAnimeListRowQueryVariables = Exact<{
 }>;
 
 
-export type GetAnimeListRowQuery = { __typename?: 'Query', animeList: { __typename?: 'AnimePage', content: Array<{ __typename?: 'Anime', animeId: number, coverImage: string, averageScore?: number | null, title: { __typename?: 'AnimeTitles', titleNative?: string | null, titleCn?: string | null } }> } };
+export type GetAnimeListRowQuery = { __typename?: 'Query', animeList: { __typename?: 'AnimePage', content: Array<{ __typename?: 'Anime', animeId: number, coverImage?: string | null, averageScore?: number | null, title: { __typename?: 'AnimeTitles', titleNative?: string | null, titleCn?: string | null } }> } };
 
 export type GetAnimeListQueryVariables = Exact<{
   year?: InputMaybe<Scalars['Int']['input']>;
@@ -123,7 +123,7 @@ export type GetAnimeListQueryVariables = Exact<{
 }>;
 
 
-export type GetAnimeListQuery = { __typename?: 'Query', animeList: { __typename?: 'AnimePage', content: Array<{ __typename?: 'Anime', animeId: number, coverImage: string, averageScore?: number | null, title: { __typename?: 'AnimeTitles', titleNative?: string | null, titleCn?: string | null } }>, pageInfo: { __typename?: 'PageInfo', size: number, number: number, totalElements: number, totalPages: number } } };
+export type GetAnimeListQuery = { __typename?: 'Query', animeList: { __typename?: 'AnimePage', content: Array<{ __typename?: 'Anime', animeId: number, coverImage?: string | null, averageScore?: number | null, title: { __typename?: 'AnimeTitles', titleNative?: string | null, titleCn?: string | null } }>, pageInfo: { __typename?: 'PageInfo', size: number, number: number, totalElements: number, totalPages: number } } };
 
 export type GetAnimeListBySearchQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']['input']>;
@@ -132,18 +132,18 @@ export type GetAnimeListBySearchQueryVariables = Exact<{
 }>;
 
 
-export type GetAnimeListBySearchQuery = { __typename?: 'Query', animeListBySearch: { __typename?: 'AnimePage', content: Array<{ __typename?: 'Anime', animeId: number, coverImage: string, averageScore?: number | null, title: { __typename?: 'AnimeTitles', titleNative?: string | null, titleCn?: string | null } }>, pageInfo: { __typename?: 'PageInfo', size: number, number: number, totalElements: number, totalPages: number } } };
+export type GetAnimeListBySearchQuery = { __typename?: 'Query', animeListBySearch: { __typename?: 'AnimePage', content: Array<{ __typename?: 'Anime', animeId: number, coverImage?: string | null, averageScore?: number | null, title: { __typename?: 'AnimeTitles', titleNative?: string | null, titleCn?: string | null } }>, pageInfo: { __typename?: 'PageInfo', size: number, number: number, totalElements: number, totalPages: number } } };
 
-export type AnimeListFragment = { __typename?: 'AnimePage', content: Array<{ __typename?: 'Anime', animeId: number, coverImage: string, averageScore?: number | null, title: { __typename?: 'AnimeTitles', titleNative?: string | null, titleCn?: string | null } }>, pageInfo: { __typename?: 'PageInfo', size: number, number: number, totalElements: number, totalPages: number } };
+export type AnimeListFragment = { __typename?: 'AnimePage', content: Array<{ __typename?: 'Anime', animeId: number, coverImage?: string | null, averageScore?: number | null, title: { __typename?: 'AnimeTitles', titleNative?: string | null, titleCn?: string | null } }>, pageInfo: { __typename?: 'PageInfo', size: number, number: number, totalElements: number, totalPages: number } };
 
-export type AnimeCardFragment = { __typename?: 'Anime', animeId: number, coverImage: string, averageScore?: number | null, title: { __typename?: 'AnimeTitles', titleNative?: string | null, titleCn?: string | null } };
+export type AnimeCardFragment = { __typename?: 'Anime', animeId: number, coverImage?: string | null, averageScore?: number | null, title: { __typename?: 'AnimeTitles', titleNative?: string | null, titleCn?: string | null } };
 
 export type GetAnimeDetailQueryVariables = Exact<{
   animeId: Scalars['ID']['input'];
 }>;
 
 
-export type GetAnimeDetailQuery = { __typename?: 'Query', anime?: { __typename?: 'Anime', animeId: number, coverImage: string, startDate?: string | null, averageScore?: number | null, popularity?: number | null, title: { __typename?: 'AnimeTitles', titleNative?: string | null, titleRomaji?: string | null, titleEn?: string | null, titleCn?: string | null }, mappings: Array<{ __typename?: 'Mapping', mappingId: number, sourcePlatform: Platform, platformId: string, rawScore?: number | null, normalizedScore?: number | null, rawPopularity?: number | null, normalizedPopularity?: number | null }> } | null };
+export type GetAnimeDetailQuery = { __typename?: 'Query', anime?: { __typename?: 'Anime', animeId: number, coverImage?: string | null, startDate?: string | null, averageScore?: number | null, popularity?: number | null, title: { __typename?: 'AnimeTitles', titleNative?: string | null, titleRomaji?: string | null, titleEn?: string | null, titleCn?: string | null }, mappings: Array<{ __typename?: 'Mapping', mappingId: number, sourcePlatform: Platform, platformId: string, rawScore?: number | null, normalizedScore?: number | null, rawPopularity?: number | null, normalizedPopularity?: number | null }> } | null };
 
 export type MappingItemFragment = { __typename?: 'Mapping', sourcePlatform: Platform, platformId: string, rawScore?: number | null, normalizedScore?: number | null, rawPopularity?: number | null, normalizedPopularity?: number | null };
 

@@ -27,11 +27,13 @@ public abstract class AdminAnimeMapper {
     @org.mapstruct.Mapping(target = "averageScore", ignore = true)
     @org.mapstruct.Mapping(target = "reviewStatus", ignore = true)
     @org.mapstruct.Mapping(target = "mappings", ignore = true)
+    @org.mapstruct.Mapping(target = "popularity", ignore = true)
     public abstract Anime requestToAnime(AnimeCreateRequest animeCreateRequest);
 
     @org.mapstruct.Mapping(target = "version", ignore = true)
     @org.mapstruct.Mapping(target = "averageScore", ignore = true)
     @org.mapstruct.Mapping(target = "mappings", ignore = true)
     @org.mapstruct.Mapping(target = "animeId", ignore = true)
+    @org.mapstruct.Mapping(target = "popularity", ignore = true)
     public abstract void updateAnimeByRequest(AnimeUpdateRequest animeUpdateRequest, @MappingTarget Anime anime);
 }

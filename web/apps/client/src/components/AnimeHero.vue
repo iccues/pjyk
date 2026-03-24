@@ -9,7 +9,7 @@ const props = defineProps<{
 
 const displayTitle = computed(() => {
   const t = props.anime.title;
-  return t.titleCn || t.titleNative || t.titleRomaji || t.titleEn || "—";
+  return t.titleCn || t.titleNative || t.titleRomaji || t.titleEn || "";
 });
 
 const subTitles = computed(() => {
@@ -25,7 +25,7 @@ const subTitles = computed(() => {
 <template>
   <div class="flex flex-col items-center gap-8 sm:flex-row sm:items-start">
     <!-- Cover Image -->
-    <div class="shrink-0">
+    <div v-if="anime.coverImage" class="shrink-0">
       <img
         :src="anime.coverImage"
         :alt="displayTitle"
