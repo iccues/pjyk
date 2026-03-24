@@ -7,6 +7,7 @@
 export type ReviewStatus = "PENDING" | "APPROVED" | "REJECTED";
 export type Season = "WINTER" | "SPRING" | "SUMMER" | "FALL";
 export type SortBy = "SCORE" | "POPULARITY";
+export type Platform = "AniList" | "Bangumi" | "MyAnimeList";
 
 /**
  * 季度选项（含"全部"选项，用于筛选器）
@@ -48,6 +49,16 @@ export const REVIEW_STATUS_OPTIONS: {
 export const SORT_BY_OPTIONS: { label: string; value: SortBy }[] = [
   { label: "按评分", value: "SCORE" },
   { label: "按人气", value: "POPULARITY" },
+];
+
+/**
+ * 平台选项
+ */
+export const PLATFORM_OPTIONS: { label: string; value: Platform | undefined }[] = [
+  { label: "全部", value: undefined },
+  { label: "Bangumi", value: "Bangumi" },
+  { label: "AniList", value: "AniList" },
+  { label: "MyAnimeList", value: "MyAnimeList" },
 ];
 
 /**

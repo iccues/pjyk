@@ -3,7 +3,7 @@ import type { Response } from "@/types/response";
 
 interface RequestOptions {
   headers?: Record<string, string>;
-  params?: Record<string, string>;
+  params?: Record<string, string | number | boolean | undefined | null>;
 }
 
 /**
@@ -18,8 +18,16 @@ async function request<T>(
   // 处理 URL 参数
   let finalUrl = url;
   if (options?.params) {
-    const params = new URLSearchParams(options.params);
-    finalUrl = `${url}?${params.toString()}`;
+    const params = new URLSearchParams();
+    Object.entries(options.params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        params.append(key, value.toString());
+      }
+    });
+    const queryString = params.toString();
+    if (queryString) {
+      finalUrl = `${url}?${queryString}`;
+    }
   }
 
   const user = await oidcManager.getUser();

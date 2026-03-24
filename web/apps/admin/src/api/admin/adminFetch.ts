@@ -3,22 +3,32 @@ import { post } from "./adminHttp";
 /**
  * 抓取动画数据（完整流程：抓取映射、合并映射、计算评分）
  * @param year 年份
- * @param season 季度（SPRING, SUMMER, FALL, WINTER）
+ * @param season 季度（SPRING, SUMMER, FALL, WINTER，可选）
+ * @param platform 平台（Bangumi, AniList, MyAnimeList，可选）
  */
-export async function fetchAnime(year: number, season: string): Promise<string> {
+export async function fetchAnime(
+  year: number,
+  season?: string,
+  platform?: string,
+): Promise<string> {
   return post<string>("/api/admin/fetch/anime", null, {
-    params: { year: year.toString(), season },
+    params: { year: year.toString(), season, platform },
   });
 }
 
 /**
  * 抓取映射数据
  * @param year 年份
- * @param season 季度（SPRING, SUMMER, FALL, WINTER）
+ * @param season 季度（SPRING, SUMMER, FALL, WINTER，可选）
+ * @param platform 平台（Bangumi, AniList, MyAnimeList，可选）
  */
-export async function fetchMapping(year: number, season: string): Promise<string> {
+export async function fetchMapping(
+  year: number,
+  season?: string,
+  platform?: string,
+): Promise<string> {
   return post<string>("/api/admin/fetch/mapping", null, {
-    params: { year: year.toString(), season },
+    params: { year: year.toString(), season, platform },
   });
 }
 
