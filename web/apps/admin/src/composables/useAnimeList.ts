@@ -23,6 +23,7 @@ export function useAnimeList() {
   const loadAnimeList = async (reviewStatus?: ReviewStatus, year?: number, season?: Season) => {
     try {
       loading.value = true;
+      error.value = null;
       const animes = await getAnimeList(reviewStatus, year, season);
       animeList.value = animes;
     } catch (e) {

@@ -69,21 +69,15 @@ public class AniListFetchService extends AbstractAnimeFetchService {
 
     @Override
     protected List<JsonNode> fetchMappingJson(int year, Season season) {
-        JsonNode firstPage = fetchPage(year, season, 1);
-        if (firstPage == null) {
-            return new ArrayList<>();
-        }
-
-        boolean hasNextPage = firstPage.path("pageInfo").path("hasNextPage").asBoolean();
         List<JsonNode> list = new ArrayList<>();
-        firstPage.path("media").forEach(list::add);
+        for (int i = 2; ; i++) {
+            JsonNode page = fetchPage(year, season, i);
+            if (page == null) break;
 
-        for (int i = 2; hasNextPage; i++) {
-            JsonNode nextPage = fetchPage(year, season, i);
-            hasNextPage = nextPage.path("pageInfo").path("hasNextPage").asBoolean();
-            nextPage.path("media").forEach(list::add);
+            page.path("media").forEach(list::add);
+
+            if(!page.path("pageInfo").path("hasNextPage").asBoolean()) break;
         }
-
         return list;
     }
 
@@ -124,11 +118,9 @@ public class AniListFetchService extends AbstractAnimeFetchService {
                   }
                 }""";
 
-        Map<String, Object> variables = Map.of(
-                "seasonYear", year,
-                "season", season.name(),
-                "page", page
-        );
+        Map<String, Object> variables = season != null
+                ? Map.of("seasonYear", year, "page", page, "season", season.name())
+                : Map.of("seasonYear", year, "page", page);
 
         Map<String, Object> requestBody = Map.of(
                 "query", query,

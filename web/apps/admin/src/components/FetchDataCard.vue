@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Download, Refresh, SetUp } from "@element-plus/icons-vue";
-import { SEASON_OPTIONS_REQUIRED } from "@pjyk-web/shared/constants/ui-options.ts";
+import { PLATFORM_OPTIONS, SEASON_OPTIONS } from "@pjyk-web/shared/constants/ui-options.ts";
 import { ElMessage } from "element-plus";
 import { ref } from "vue";
 
@@ -9,11 +9,13 @@ import { calculateMetric, fetchAnime, fetchMapping, linkMappings } from "@/api/a
 // 数据抓取相关
 const fetchDialogVisible = ref(false);
 const fetchYear = ref(new Date().getFullYear());
-const fetchSeason = ref<"SPRING" | "SUMMER" | "FALL" | "WINTER">("SPRING");
+const fetchSeason = ref<string | undefined>(undefined);
+const fetchPlatform = ref<string | undefined>(undefined);
 const fetchLoading = ref(false);
 
-// 使用统一的季度选项（不含"全部"选项）
-const seasonOptions = SEASON_OPTIONS_REQUIRED;
+// 使用含"全部"选项的季度选项
+const seasonOptions = SEASON_OPTIONS;
+const platformOptions = PLATFORM_OPTIONS;
 
 // 打开抓取对话框
 const handleOpenFetchDialog = () => {
@@ -24,7 +26,7 @@ const handleOpenFetchDialog = () => {
 const handleFetchAnime = async () => {
   try {
     fetchLoading.value = true;
-    await fetchAnime(fetchYear.value, fetchSeason.value);
+    await fetchAnime(fetchYear.value, fetchSeason.value, fetchPlatform.value);
     ElMessage.success("数据抓取任务已启动，请稍后查看结果");
     fetchDialogVisible.value = false;
   } catch (e) {
@@ -38,7 +40,7 @@ const handleFetchAnime = async () => {
 const handleFetchMapping = async () => {
   try {
     fetchLoading.value = true;
-    await fetchMapping(fetchYear.value, fetchSeason.value);
+    await fetchMapping(fetchYear.value, fetchSeason.value, fetchPlatform.value);
     ElMessage.success("映射抓取任务已启动，请稍后查看结果");
     fetchDialogVisible.value = false;
   } catch (e) {
@@ -111,10 +113,28 @@ const handleCalculateScores = async () => {
           <el-input-number v-model="fetchYear" :min="2000" :max="2099" style="width: 100%" />
         </el-form-item>
         <el-form-item label="季度">
-          <el-select v-model="fetchSeason" style="width: 100%">
+          <el-select
+            v-model="fetchSeason"
+            style="width: 100%"
+            placeholder="选择季度（留空则抓取全年）"
+          >
             <el-option
               v-for="option in seasonOptions"
-              :key="option.value"
+              :key="option.value ?? 'ALL'"
+              :label="option.label"
+              :value="option.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="平台">
+          <el-select
+            v-model="fetchPlatform"
+            style="width: 100%"
+            placeholder="选择平台（留空则抓取全部）"
+          >
+            <el-option
+              v-for="option in platformOptions"
+              :key="option.value ?? 'ALL'"
               :label="option.label"
               :value="option.value"
             />

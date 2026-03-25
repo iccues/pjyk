@@ -66,34 +66,38 @@ public class MyAnimeListFetchService extends AbstractAnimeFetchService {
 
     @Override
     protected List<JsonNode> fetchMappingJson(int year, Season season) {
-        JsonNode firstPage = fetchPage(year, season, 0);
-        if (firstPage == null) {
-            return new ArrayList<>();
+        if (season == null) {
+            List<JsonNode> list = new ArrayList<>();
+            for (Season s : Season.values()) {
+                list.addAll(fetchSeasonMappings(year, s));
+            }
+            return list;
         }
+        return fetchSeasonMappings(year, season);
+    }
 
-        boolean hasNextPage = firstPage.path("paging").has("next");
+    private List<JsonNode> fetchSeasonMappings(int year, Season season) {
         List<JsonNode> list = new ArrayList<>();
-        addAnimeNodesToList(firstPage, list);
+        for (int i = 0; ; i++) {
+            JsonNode page = fetchPage(year, season, i);
+            if (page == null) break;
 
-        for (int i = 1; hasNextPage; i++) {
-            JsonNode nextPage = fetchPage(year, season, i);
-            hasNextPage = nextPage.path("paging").has("next");
-            addAnimeNodesToList(nextPage, list);
+            extractMediaItems(page, list);
+
+            if (!page.path("paging").has("next")) break;
         }
-
         return list;
     }
 
-    private void addAnimeNodesToList(JsonNode firstPage, List<JsonNode> list) {
-        firstPage.path("data")
-                .forEach(jsonNode -> {
-                    JsonNode node = jsonNode.path("node");
-                    String mediaType = node.path("media_type").asText();
-                    if (mediaType.equals("music") || mediaType.equals("pv")) {
-                        return;
-                    }
-                    list.add(node);
-                });
+    private void extractMediaItems(JsonNode page, List<JsonNode> list) {
+        page.path("data").forEach(jsonNode -> {
+            JsonNode node = jsonNode.path("node");
+            String mediaType = node.path("media_type").asText();
+            if ("music".equals(mediaType) || "pv".equals(mediaType)) {
+                return;
+            }
+            list.add(node);
+        });
     }
 
     @Resource

@@ -26,16 +26,23 @@ public class FetchService {
     MetricService metricService;
 
     @Async
-    public void fetchAnime(int year, Season season) {
-        fetchMapping(year, season);
+    public void fetchAnime(int year, Season season, Platform platform) {
+        fetchMapping(year, season, platform);
         linkMappings();
     }
 
     @Async
-    public void fetchMapping(int year, Season season) {
-        safeFetchMappings(bangumiFetchService, Platform.Bangumi, year, season);
-        safeFetchMappings(aniListFetchService, Platform.AniList, year, season);
-        safeFetchMappings(myAnimeListFetchService, Platform.MyAnimeList, year, season);
+    public void fetchMapping(int year, Season season, Platform platform) {
+        switch (platform) {
+            case Bangumi -> safeFetchMappings(bangumiFetchService, Platform.Bangumi, year, season);
+            case AniList -> safeFetchMappings(aniListFetchService, Platform.AniList, year, season);
+            case MyAnimeList -> safeFetchMappings(myAnimeListFetchService, Platform.MyAnimeList, year, season);
+            case null -> {
+                safeFetchMappings(bangumiFetchService, Platform.Bangumi, year, season);
+                safeFetchMappings(aniListFetchService, Platform.AniList, year, season);
+                safeFetchMappings(myAnimeListFetchService, Platform.MyAnimeList, year, season);
+            }
+        }
     }
 
     private void safeFetchMappings(AbstractAnimeFetchService service, Platform platform, int year, Season season) {

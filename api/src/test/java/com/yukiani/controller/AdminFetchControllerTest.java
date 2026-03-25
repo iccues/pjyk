@@ -25,7 +25,7 @@ public class AdminFetchControllerTest {
 
     @Test
     public void testFetchAnime_Success() throws Exception {
-        doNothing().when(fetchService).fetchAnime(2024, Season.SPRING);
+        doNothing().when(fetchService).fetchAnime(2024, Season.SPRING, null);
 
         mockMvc.perform(post("/api/admin/fetch/anime")
                         .param("year", "2024")
@@ -34,12 +34,12 @@ public class AdminFetchControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").value("数据抓取任务已启动"));
 
-        verify(fetchService, times(1)).fetchAnime(2024, Season.SPRING);
+        verify(fetchService, times(1)).fetchAnime(2024, Season.SPRING, null);
     }
 
     @Test
     public void testFetchAnime_WinterSeason() throws Exception {
-        doNothing().when(fetchService).fetchAnime(2024, Season.WINTER);
+        doNothing().when(fetchService).fetchAnime(2024, Season.WINTER, null);
 
         mockMvc.perform(post("/api/admin/fetch/anime")
                         .param("year", "2024")
@@ -47,12 +47,12 @@ public class AdminFetchControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
 
-        verify(fetchService, times(1)).fetchAnime(2024, Season.WINTER);
+        verify(fetchService, times(1)).fetchAnime(2024, Season.WINTER, null);
     }
 
     @Test
     public void testFetchAnime_SummerSeason() throws Exception {
-        doNothing().when(fetchService).fetchAnime(2024, Season.SUMMER);
+        doNothing().when(fetchService).fetchAnime(2024, Season.SUMMER, null);
 
         mockMvc.perform(post("/api/admin/fetch/anime")
                         .param("year", "2024")
@@ -60,12 +60,12 @@ public class AdminFetchControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
 
-        verify(fetchService, times(1)).fetchAnime(2024, Season.SUMMER);
+        verify(fetchService, times(1)).fetchAnime(2024, Season.SUMMER, null);
     }
 
     @Test
     public void testFetchAnime_FallSeason() throws Exception {
-        doNothing().when(fetchService).fetchAnime(2024, Season.FALL);
+        doNothing().when(fetchService).fetchAnime(2024, Season.FALL, null);
 
         mockMvc.perform(post("/api/admin/fetch/anime")
                         .param("year", "2024")
@@ -73,12 +73,12 @@ public class AdminFetchControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
 
-        verify(fetchService, times(1)).fetchAnime(2024, Season.FALL);
+        verify(fetchService, times(1)).fetchAnime(2024, Season.FALL, null);
     }
 
     @Test
     public void testFetchMapping_Success() throws Exception {
-        doNothing().when(fetchService).fetchMapping(2024, Season.SPRING);
+        doNothing().when(fetchService).fetchMapping(2024, Season.SPRING, null);
 
         mockMvc.perform(post("/api/admin/fetch/mapping")
                         .param("year", "2024")
@@ -87,12 +87,12 @@ public class AdminFetchControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").value("映射抓取任务已启动"));
 
-        verify(fetchService, times(1)).fetchMapping(2024, Season.SPRING);
+        verify(fetchService, times(1)).fetchMapping(2024, Season.SPRING, null);
     }
 
     @Test
     public void testFetchMapping_DifferentYearAndSeason() throws Exception {
-        doNothing().when(fetchService).fetchMapping(2023, Season.WINTER);
+        doNothing().when(fetchService).fetchMapping(2023, Season.WINTER, null);
 
         mockMvc.perform(post("/api/admin/fetch/mapping")
                         .param("year", "2023")
@@ -100,7 +100,7 @@ public class AdminFetchControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
 
-        verify(fetchService, times(1)).fetchMapping(2023, Season.WINTER);
+        verify(fetchService, times(1)).fetchMapping(2023, Season.WINTER, null);
     }
 
     @Test
@@ -130,7 +130,7 @@ public class AdminFetchControllerTest {
     @Test
     public void testFetchAnime_ServiceException() throws Exception {
         // Mock service 抛出异常
-        doThrow(new RuntimeException("服务异常")).when(fetchService).fetchAnime(2024, Season.SPRING);
+        doThrow(new RuntimeException("服务异常")).when(fetchService).fetchAnime(2024, Season.SPRING, null);
 
         mockMvc.perform(post("/api/admin/fetch/anime")
                         .param("year", "2024")
@@ -138,7 +138,7 @@ public class AdminFetchControllerTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false));
 
-        verify(fetchService, times(1)).fetchAnime(2024, Season.SPRING);
+        verify(fetchService, times(1)).fetchAnime(2024, Season.SPRING, null);
     }
 
     @Test
