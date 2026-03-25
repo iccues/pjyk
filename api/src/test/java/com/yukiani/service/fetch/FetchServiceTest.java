@@ -64,7 +64,7 @@ public class FetchServiceTest {
         int year = 2024;
         Season season = Season.WINTER;
 
-        fetchService.fetchMapping(year, season);
+        fetchService.fetchMapping(year, season, null);
 
         verify(bangumiFetchService, times(1)).fetchAndSaveMappings(year, season);
         verify(aniListFetchService, times(1)).fetchAndSaveMappings(year, season);
@@ -90,7 +90,7 @@ public class FetchServiceTest {
         int year = 2024;
         Season season = Season.SPRING;
 
-        fetchService.fetchAnime(year, season);
+        fetchService.fetchAnime(year, season, null);
 
         verify(bangumiFetchService, times(1)).fetchAndSaveMappings(year, season);
         verify(aniListFetchService, times(1)).fetchAndSaveMappings(year, season);
@@ -112,7 +112,7 @@ public class FetchServiceTest {
                 .when(bangumiFetchService).fetchAndSaveMappings(year, season);
 
         // Execute - should not throw exception
-        fetchService.fetchMapping(year, season);
+        fetchService.fetchMapping(year, season, null);
 
         // Verify all services were called
         verify(bangumiFetchService, times(1)).fetchAndSaveMappings(year, season);
@@ -130,7 +130,7 @@ public class FetchServiceTest {
                 .when(aniListFetchService).fetchAndSaveMappings(year, season);
 
         // Execute - should not throw exception
-        fetchService.fetchMapping(year, season);
+        fetchService.fetchMapping(year, season, null);
 
         // Verify all services were called
         verify(bangumiFetchService, times(1)).fetchAndSaveMappings(year, season);
@@ -148,7 +148,7 @@ public class FetchServiceTest {
                 .when(myAnimeListFetchService).fetchAndSaveMappings(year, season);
 
         // Execute - should not throw exception
-        fetchService.fetchMapping(year, season);
+        fetchService.fetchMapping(year, season, null);
 
         // Verify all services were called
         verify(bangumiFetchService, times(1)).fetchAndSaveMappings(year, season);
@@ -168,7 +168,7 @@ public class FetchServiceTest {
                 .when(aniListFetchService).fetchAndSaveMappings(year, season);
 
         // Execute - should not throw exception
-        fetchService.fetchMapping(year, season);
+        fetchService.fetchMapping(year, season, null);
 
         // Verify all services were called despite failures
         verify(bangumiFetchService, times(1)).fetchAndSaveMappings(year, season);
@@ -190,7 +190,7 @@ public class FetchServiceTest {
                 .when(myAnimeListFetchService).fetchAndSaveMappings(year, season);
 
         // Execute - should not throw exception even when all fail
-        fetchService.fetchMapping(year, season);
+        fetchService.fetchMapping(year, season, null);
 
         // Verify all services were called
         verify(bangumiFetchService, times(1)).fetchAndSaveMappings(year, season);
