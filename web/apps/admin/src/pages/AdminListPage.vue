@@ -24,8 +24,8 @@ const yearOptions = computed(() => generateYearOptions(10));
 
 const {
   animeList,
-  loading,
-  error,
+  loading: animeLoading,
+  error: animeError,
   dialogVisible,
   editingAnime,
   loadAnimeList,
@@ -41,6 +41,8 @@ const {
 
 const {
   mappingList,
+  loading: mappingLoading,
+  error: mappingError,
   mappingDialogVisible,
   loadMappingList,
   handleMappingToAnime,
@@ -106,14 +108,14 @@ const onUpdateReviewStatus = (animeId: number, reviewStatus: ReviewStatus) => {
 </script>
 
 <template>
-  <div class="mx-auto flex h-full max-w-[1800px] flex-col overflow-hidden p-5" v-loading="loading">
-    <el-alert v-if="error" :title="error" type="error" center show-icon :closable="false" />
-
-    <el-row v-else :gutter="24" class="flex-1 overflow-hidden">
+  <div class="mx-auto flex h-full max-w-[1800px] flex-col overflow-hidden p-5">
+    <el-row :gutter="24" class="flex-1 overflow-hidden">
       <!-- 左列：动画列表 -->
       <el-col :xs="24" :lg="12" class="h-full">
         <AnimeListSection
           :anime-list="animeList"
+          :loading="animeLoading"
+          :error="animeError"
           :selected-review-status="selectedReviewStatus"
           :selected-year="selectedYear"
           :selected-season="selectedSeason"
@@ -133,6 +135,7 @@ const onUpdateReviewStatus = (animeId: number, reviewStatus: ReviewStatus) => {
           @mapping-change="onMappingToAnime"
           @close-dialog="handleCloseDialog"
           @submit-form="onSubmitForm"
+          @refresh="loadAnimeList(selectedReviewStatus, selectedYear, selectedSeason)"
         />
       </el-col>
 
@@ -140,12 +143,15 @@ const onUpdateReviewStatus = (animeId: number, reviewStatus: ReviewStatus) => {
       <el-col :xs="24" :lg="12" class="h-full">
         <MappingListSection
           :mapping-list="mappingList"
+          :loading="mappingLoading"
+          :error="mappingError"
           :mapping-dialog-visible="mappingDialogVisible"
           @create-mapping="handleCreateMapping"
           @delete-mapping="handleDeleteMapping"
           @mapping-change="onMappingToUnmapped"
           @close-dialog="handleCloseMappingDialog"
           @submit-mapping="handleSubmitMapping"
+          @refresh="loadMappingList"
         />
       </el-col>
     </el-row>

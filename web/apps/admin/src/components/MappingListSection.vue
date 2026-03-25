@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Plus } from "@element-plus/icons-vue";
+import { Plus, Refresh } from "@element-plus/icons-vue";
 import draggable from "vuedraggable";
 
 import AdminMappingItem from "@/components/AdminMappingItem.vue";
@@ -9,6 +9,8 @@ import type { AdminMapping } from "@/types/adminAnime";
 interface Props {
   mappingList: AdminMapping[];
   mappingDialogVisible: boolean;
+  loading?: boolean;
+  error?: string | null;
 }
 
 defineProps<Props>();
@@ -19,22 +21,36 @@ const emit = defineEmits<{
   "mapping-change": [evt: any];
   "close-dialog": [];
   "submit-mapping": [sourcePlatform: string, platformId: string];
+  refresh: [];
 }>();
 </script>
 
 <template>
-  <div class="flex h-full flex-col">
+  <div class="flex h-full flex-col" v-loading="loading">
     <div class="mb-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <h2 class="m-0 text-xl font-semibold text-gray-800">未关联映射</h2>
         <el-tag type="warning">{{ mappingList.length }}</el-tag>
       </div>
-      <el-button type="primary" size="small" :icon="Plus" @click="emit('create-mapping')">
-        新建映射
-      </el-button>
+      <div class="flex items-center gap-2">
+        <el-button :icon="Refresh" circle size="small" @click="emit('refresh')" />
+        <el-button type="primary" size="small" :icon="Plus" @click="emit('create-mapping')">
+          新建映射
+        </el-button>
+      </div>
     </div>
 
-    <div class="flex-1 overflow-hidden rounded p-2 transition-colors">
+    <el-alert
+      v-if="error"
+      :title="error"
+      type="error"
+      center
+      show-icon
+      :closable="false"
+      class="mb-4"
+    />
+
+    <div v-else class="flex-1 overflow-hidden rounded p-2 transition-colors">
       <draggable
         :model-value="mappingList"
         :group="{ name: 'mappings', pull: true, put: true }"

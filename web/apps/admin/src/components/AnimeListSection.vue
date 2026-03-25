@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Plus } from "@element-plus/icons-vue";
+import { Plus, Refresh } from "@element-plus/icons-vue";
 import { VList } from "virtua/vue";
 import { computed, ref } from "vue";
 
@@ -19,6 +19,8 @@ interface Props {
   seasonOptions: { label: string; value: Season | undefined }[];
   dialogVisible: boolean;
   editingAnime?: AdminAnime;
+  loading?: boolean;
+  error?: string | null;
 }
 
 const props = defineProps<Props>();
@@ -35,6 +37,7 @@ const emit = defineEmits<{
   "mapping-change": [evt: any, animeId: number];
   "close-dialog": [];
   "submit-form": [formData: any];
+  refresh: [];
 }>();
 
 const searchKeyword = ref("");
@@ -71,15 +74,18 @@ const filteredAnimeList = computed(() => {
 </script>
 
 <template>
-  <div class="flex h-full flex-col">
+  <div class="flex h-full flex-col" v-loading="loading">
     <div class="mb-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <h2 class="m-0 text-xl font-semibold text-gray-800">动画列表</h2>
         <el-tag type="info">{{ filteredAnimeList.length }} / {{ animeList.length }}</el-tag>
       </div>
-      <el-button type="primary" size="small" :icon="Plus" @click="emit('create-anime')">
-        新建动画
-      </el-button>
+      <div class="flex items-center gap-2">
+        <el-button :icon="Refresh" circle size="small" @click="emit('refresh')" />
+        <el-button type="primary" size="small" :icon="Plus" @click="emit('create-anime')">
+          新建动画
+        </el-button>
+      </div>
     </div>
 
     <el-input v-model="searchKeyword" placeholder="搜索标题 / ID..." class="mb-3" />
@@ -97,7 +103,17 @@ const filteredAnimeList = computed(() => {
       @change="emit('filter-change')"
     />
 
-    <VList :data="filteredAnimeList" class="flex-1 overflow-auto pr-2">
+    <el-alert
+      v-if="error"
+      :title="error"
+      type="error"
+      center
+      show-icon
+      :closable="false"
+      class="mb-4"
+    />
+
+    <VList v-else :data="filteredAnimeList" class="flex-1 overflow-auto pr-2">
       <template #default="{ item: anime }">
         <div :key="anime.animeId" class="mb-3">
           <AdminAnimeItem

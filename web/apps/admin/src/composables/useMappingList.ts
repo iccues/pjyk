@@ -12,15 +12,21 @@ import type { DraggableChangeEvent } from "@/types/draggable";
 
 export function useMappingList() {
   const mappingList = ref<AdminMapping[]>([]);
+  const loading = ref(true);
+  const error = ref<string | null>(null);
   const mappingDialogVisible = ref(false);
 
   // 加载未关联映射列表
   const loadMappingList = async () => {
     try {
+      loading.value = true;
+      error.value = null;
       const mappings = await getUnmappedMappingList();
       mappingList.value = mappings;
     } catch (e) {
-      ElMessage.error("加载映射列表失败: " + (e instanceof Error ? e.message : "未知错误"));
+      error.value = e instanceof Error ? e.message : "加载动画列表失败";
+    } finally {
+      loading.value = false;
     }
   };
 
@@ -153,6 +159,8 @@ export function useMappingList() {
 
   return {
     mappingList,
+    loading,
+    error,
     mappingDialogVisible,
     loadMappingList,
     applyMappingChange,
