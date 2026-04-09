@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { REVIEW_STATUS_OPTIONS, SEASON_OPTIONS } from "@pjyk-web/shared/constants/ui-options.ts";
-import { generateYearOptions } from "@pjyk-web/shared/utils/dateUtils.ts";
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 
 import type { AnimeCreateRequest, AnimeUpdateRequest } from "@/api/admin";
 import AnimeListSection from "@/components/AnimeListSection.vue";
@@ -16,11 +14,6 @@ import type { DraggableChangeEvent } from "@/types/draggable";
 const selectedReviewStatus = ref<ReviewStatus | undefined>("PENDING");
 const selectedYear = ref<number | undefined>(undefined);
 const selectedSeason = ref<Season | undefined>(undefined);
-
-// 筛选器选项
-const reviewStatusOptions = REVIEW_STATUS_OPTIONS;
-const seasonOptions = SEASON_OPTIONS;
-const yearOptions = computed(() => generateYearOptions(10));
 
 const {
   animeList,
@@ -119,9 +112,6 @@ const onUpdateReviewStatus = (animeId: number, reviewStatus: ReviewStatus) => {
           :selected-review-status="selectedReviewStatus"
           :selected-year="selectedYear"
           :selected-season="selectedSeason"
-          :review-status-options="reviewStatusOptions"
-          :year-options="yearOptions"
-          :season-options="seasonOptions"
           :dialog-visible="dialogVisible"
           :editing-anime="editingAnime"
           @update:selected-review-status="selectedReviewStatus = $event"

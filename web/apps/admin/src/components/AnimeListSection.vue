@@ -14,9 +14,6 @@ interface Props {
   selectedReviewStatus?: ReviewStatus;
   selectedYear?: number;
   selectedSeason?: Season;
-  reviewStatusOptions: { label: string; value: ReviewStatus | undefined }[];
-  yearOptions: { label: string; value: number | undefined }[];
-  seasonOptions: { label: string; value: Season | undefined }[];
   dialogVisible: boolean;
   editingAnime?: AdminAnime;
   loading?: boolean;
@@ -94,9 +91,6 @@ const filteredAnimeList = computed(() => {
       :selected-review-status="selectedReviewStatus"
       :selected-year="selectedYear"
       :selected-season="selectedSeason"
-      :review-status-options="reviewStatusOptions"
-      :year-options="yearOptions"
-      :season-options="seasonOptions"
       @update:selected-review-status="emit('update:selectedReviewStatus', $event)"
       @update:selected-year="emit('update:selectedYear', $event)"
       @update:selected-season="emit('update:selectedSeason', $event)"

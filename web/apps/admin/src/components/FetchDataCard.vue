@@ -110,7 +110,14 @@ const handleCalculateScores = async () => {
     <el-dialog v-model="fetchDialogVisible" title="抓取动画数据" width="500px">
       <el-form label-width="80px">
         <el-form-item label="年份">
-          <el-input-number v-model="fetchYear" :min="2000" :max="2099" style="width: 100%" />
+          <el-date-picker
+            :model-value="String(fetchYear)"
+            type="year"
+            style="width: 100%"
+            value-format="YYYY"
+            clearable
+            @update:model-value="fetchYear = $event ? Number($event) : new Date().getFullYear()"
+          />
         </el-form-item>
         <el-form-item label="季度">
           <el-select
