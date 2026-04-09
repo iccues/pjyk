@@ -14,20 +14,10 @@ export type Platform = "AniList" | "Bangumi" | "MyAnimeList";
  */
 export const SEASON_OPTIONS: { label: string; value: Season | undefined }[] = [
   { label: "全部", value: undefined },
-  { label: "冬季", value: "WINTER" },
-  { label: "春季", value: "SPRING" },
-  { label: "夏季", value: "SUMMER" },
-  { label: "秋季", value: "FALL" },
-];
-
-/**
- * 季度选项（不含"全部"选项，用于数据抓取等必选场景）
- */
-export const SEASON_OPTIONS_REQUIRED: { label: string; value: Season }[] = [
-  { label: "冬季", value: "WINTER" },
-  { label: "春季", value: "SPRING" },
-  { label: "夏季", value: "SUMMER" },
-  { label: "秋季", value: "FALL" },
+  { label: "1月", value: "WINTER" },
+  { label: "4月", value: "SPRING" },
+  { label: "7月", value: "SUMMER" },
+  { label: "10月", value: "FALL" },
 ];
 
 /**
@@ -65,10 +55,10 @@ export const PLATFORM_OPTIONS: { label: string; value: Platform | undefined }[] 
  * 季度名称映射（用于 SEO、文案等场景）
  */
 export const SEASON_NAME_MAP: Record<Season, string> = {
-  WINTER: "冬季",
-  SPRING: "春季",
-  SUMMER: "夏季",
-  FALL: "秋季",
+  WINTER: "1月",
+  SPRING: "4月",
+  SUMMER: "7月",
+  FALL: "10月",
 };
 
 /**

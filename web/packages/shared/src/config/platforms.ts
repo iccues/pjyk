@@ -51,14 +51,6 @@ export function getPlatformConfig(platformName: string): PlatformConfig {
 }
 
 /**
- * 获取所有支持的平台列表
- * @returns 平台名称数组
- */
-export function getAllPlatforms(): string[] {
-  return Object.keys(platformConfigs);
-}
-
-/**
  * 获取所有平台的配置列表（用于下拉选择等）
  * @returns 平台配置数组
  */
