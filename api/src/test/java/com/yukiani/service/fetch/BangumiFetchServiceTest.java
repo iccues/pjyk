@@ -179,6 +179,6 @@ public class BangumiFetchServiceTest {
 
         assertNotNull(result);
         assertEquals("Test Anime", result.getTitleNative());
-        assertEquals("", result.getTitleCn());
+        assertNull(result.getTitleCn());
     }
 }

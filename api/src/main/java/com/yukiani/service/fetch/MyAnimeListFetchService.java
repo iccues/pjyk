@@ -35,8 +35,8 @@ public class MyAnimeListFetchService extends AbstractAnimeFetchService {
     protected AnimeTitles extractTitles(JsonNode jsonNode) {
         JsonNode titleJson = jsonNode.path("alternative_titles");
         AnimeTitles titles = new AnimeTitles();
-        titles.setTitleEn(titleJson.path("en").asText());
-        titles.setTitleNative(titleJson.path("ja").asText());
+        titles.setTitleEn(titleJson.path("en").asText(null));
+        titles.setTitleNative(titleJson.path("ja").asText(null));
         return titles;
     }
 

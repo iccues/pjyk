@@ -37,9 +37,9 @@ public class AniListFetchService extends AbstractAnimeFetchService {
     protected AnimeTitles extractTitles(JsonNode jsonNode) {
         JsonNode titleJson = jsonNode.path("title");
         AnimeTitles titles = new AnimeTitles();
-        titles.setTitleNative(titleJson.path("native").asText());
-        titles.setTitleRomaji(titleJson.path("romaji").asText());
-        titles.setTitleEn(titleJson.path("english").asText());
+        titles.setTitleNative(titleJson.path("native").asText(null));
+        titles.setTitleRomaji(titleJson.path("romaji").asText(null));
+        titles.setTitleEn(titleJson.path("english").asText(null));
         return titles;
     }
 

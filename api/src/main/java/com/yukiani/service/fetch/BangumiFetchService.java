@@ -30,8 +30,8 @@ public class BangumiFetchService extends AbstractAnimeFetchService {
     @Override
     protected AnimeTitles extractTitles(JsonNode jsonNode) {
         AnimeTitles titles = new AnimeTitles();
-        titles.setTitleNative(jsonNode.path("name").asText());
-        titles.setTitleCn(jsonNode.path("name_cn").asText());
+        titles.setTitleNative(jsonNode.path("name").asText(null));
+        titles.setTitleCn(jsonNode.path("name_cn").asText(null));
         return titles;
     }
 

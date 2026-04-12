@@ -167,7 +167,7 @@ public class AniListFetchServiceTest {
 
         assertNotNull(result);
         assertEquals("Test Anime", result.getTitleRomaji());
-        assertEquals("", result.getTitleEn());
-        assertEquals("", result.getTitleNative());
+        assertNull(result.getTitleEn());
+        assertNull(result.getTitleNative());
     }
 }
