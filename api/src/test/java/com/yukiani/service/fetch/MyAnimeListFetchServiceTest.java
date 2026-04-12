@@ -210,7 +210,7 @@ public class MyAnimeListFetchServiceTest {
 
         assertNotNull(result);
         assertEquals("Test Anime", result.getTitleEn());
-        assertEquals("", result.getTitleNative());
+        assertNull(result.getTitleNative());
     }
 
     @Test
@@ -225,7 +225,7 @@ public class MyAnimeListFetchServiceTest {
         AnimeTitles result = service.extractTitles(jsonNode);
 
         assertNotNull(result);
-        assertEquals("", result.getTitleEn());
-        assertEquals("", result.getTitleNative());
+        assertNull(result.getTitleEn());
+        assertNull(result.getTitleNative());
     }
 }

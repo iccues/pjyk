@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Filter } from "@element-plus/icons-vue";
 import { SEASON_OPTIONS, SORT_BY_OPTIONS } from "@pjyk-web/shared/constants/ui-options.ts";
-import { generateYearOptions } from "@pjyk-web/shared/utils/dateUtils.ts";
+import { generateYearOptionsFrom } from "@pjyk-web/shared/utils/dateUtils.ts";
 import { computed } from "vue";
 
 import type { GetAnimeListQueryVariables } from "@/graphql/generated/graphql";
@@ -17,7 +17,7 @@ const emit = defineEmits<{
 // 使用统一的常量和工具函数
 const seasonOptions = SEASON_OPTIONS;
 const sortByOptions = SORT_BY_OPTIONS;
-const yearOptions = computed(() => generateYearOptions(10));
+const yearOptions = computed(() => generateYearOptionsFrom(1990));
 
 // 处理筛选变化
 const handleYearChange = (value: number | undefined) => {

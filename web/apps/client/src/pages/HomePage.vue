@@ -5,6 +5,7 @@ import AnimeListRow from "@/components/AnimeListRow.vue";
 
 // 获取当前年份和季度
 const now = new Date();
+now.setMonth(now.getMonth() - 1);
 const currentYear = now.getFullYear();
 const currentMonth = now.getMonth() + 1; // JavaScript 月份从0开始
 
@@ -18,7 +19,7 @@ const getCurrentSeason = (): "WINTER" | "SPRING" | "SUMMER" | "FALL" => {
 };
 
 const currentSeason = getCurrentSeason();
-const yearlyBestYear = currentMonth >= 1 && currentMonth <= 3 ? currentYear - 1 : currentYear;
+const yearlyBestYear = currentSeason === "WINTER" ? currentYear - 1 : currentYear;
 </script>
 
 <template>
@@ -38,7 +39,7 @@ const yearlyBestYear = currentMonth >= 1 && currentMonth <= 3 ? currentYear - 1 
     />
     <!-- 年度最佳 -->
     <AnimeListRow :title="`${yearlyBestYear}年度最佳`" :year="yearlyBestYear" />
-    <!-- 历史最高 -->
-    <!-- <AnimeListRow title="历史最高" /> -->
+    <!-- 全部最高 -->
+    <AnimeListRow title="全部最高" />
   </div>
 </template>
