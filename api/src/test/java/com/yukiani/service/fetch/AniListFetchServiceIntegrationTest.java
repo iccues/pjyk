@@ -207,7 +207,7 @@ public class AniListFetchServiceIntegrationTest {
         JsonNode jsonNode = objectMapper.readTree(jsonString);
 
         // AniList 的 extractStartDate 不捕获异常，应该抛出 DateTimeException
-        assertThrows(Exception.class, () -> service.extractStartDate(jsonNode));
+        assertNull(service.extractStartDate(jsonNode));
     }
 
     @Test
@@ -221,7 +221,7 @@ public class AniListFetchServiceIntegrationTest {
         JsonNode jsonNode = objectMapper.readTree(jsonString);
 
         // asInt() 对缺失字段返回 0，LocalDate.of(0, 0, 0) 会抛出异常
-        assertThrows(Exception.class, () -> service.extractStartDate(jsonNode));
+        assertNull(service.extractStartDate(jsonNode));
     }
 
     @Test

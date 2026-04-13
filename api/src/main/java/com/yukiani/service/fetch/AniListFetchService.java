@@ -24,13 +24,23 @@ public class AniListFetchService extends AbstractAnimeFetchService {
     @Override
     protected LocalDate extractStartDate(JsonNode jsonNode) {
         JsonNode date = jsonNode.path("startDate");
+        if (date.isMissingNode() || date.isNull()) {
+            return null;
+        }
+
         int year = date.path("year").asInt();
         int month = date.path("month").asInt();
         int day = date.path("day").asInt();
-        if (day <= 0) {
-            day = 1;
+
+        if (year <= 0 || month <= 0 || day <= 0) {
+            return null;
         }
-        return LocalDate.of(year, month, day);
+
+        try {
+            return LocalDate.of(year, month, day);
+        } catch (java.time.DateTimeException e) {
+            return null;
+        }
     }
 
     @Override
@@ -45,12 +55,12 @@ public class AniListFetchService extends AbstractAnimeFetchService {
 
     @Override
     protected String extractCoverImage(JsonNode jsonNode) {
-        return jsonNode.path("coverImage").path("extraLarge").asText();
+        return jsonNode.path("coverImage").path("extraLarge").asText(null);
     }
 
     @Override
     protected String extractPlatformId(JsonNode jsonNode) {
-        return jsonNode.path("id").asText();
+        return jsonNode.path("id").asText(null);
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +24,17 @@ public class BangumiFetchService extends AbstractAnimeFetchService {
 
     @Override
     protected LocalDate extractStartDate(JsonNode jsonNode) {
-        String date = jsonNode.path("date").asText();
-        return LocalDate.parse(date);
+        String dateStr = jsonNode.path("date").asText(null);
+
+        if (dateStr == null || dateStr.isBlank()) {
+            return null;
+        }
+
+        try {
+            return LocalDate.parse(dateStr);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
     }
 
     @Override
@@ -37,12 +47,12 @@ public class BangumiFetchService extends AbstractAnimeFetchService {
 
     @Override
     protected String extractCoverImage(JsonNode jsonNode) {
-        return jsonNode.path("images").path("common").asText();
+        return jsonNode.path("images").path("common").asText(null);
     }
 
     @Override
     protected String extractPlatformId(JsonNode jsonNode) {
-        return jsonNode.path("id").asText();
+        return jsonNode.path("id").asText(null);
     }
 
     @Override

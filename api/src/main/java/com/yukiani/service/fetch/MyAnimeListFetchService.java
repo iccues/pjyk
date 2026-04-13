@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,10 +24,15 @@ public class MyAnimeListFetchService extends AbstractAnimeFetchService {
 
     @Override
     protected LocalDate extractStartDate(JsonNode jsonNode) {
+        String dateStr = jsonNode.path("start_date").asText(null);
+
+        if (dateStr == null || dateStr.isBlank()) {
+            return null;
+        }
+
         try {
-            String date = jsonNode.path("start_date").asText();
-            return LocalDate.parse(date);
-        } catch (Exception e) {
+            return LocalDate.parse(dateStr);
+        } catch (DateTimeParseException e) {
             return null;
         }
     }
@@ -42,12 +48,12 @@ public class MyAnimeListFetchService extends AbstractAnimeFetchService {
 
     @Override
     protected String extractCoverImage(JsonNode jsonNode) {
-        return jsonNode.path("main_picture").path("large").asText();
+        return jsonNode.path("main_picture").path("large").asText(null);
     }
 
     @Override
     protected String extractPlatformId(JsonNode jsonNode) {
-        return jsonNode.path("id").asText();
+        return jsonNode.path("id").asText(null);
     }
 
     @Override

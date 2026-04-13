@@ -72,6 +72,7 @@ public abstract class AbstractAnimeFetchService {
     void processAndSaveMapping(JsonNode jsonNode) {
         String platformId = extractPlatformId(jsonNode);
         MappingInfo mappingInfo = extractMappingInfo(jsonNode);
+        if (platformId == null || mappingInfo.getStartDate() == null) return;
 
         Mapping mapping = new Mapping(getPlatform(), platformId, mappingInfo);
 
