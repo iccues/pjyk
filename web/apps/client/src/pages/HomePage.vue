@@ -24,22 +24,22 @@ const yearlyBestYear = currentSeason === "WINTER" ? currentYear - 1 : currentYea
 
 <template>
   <div class="space-y-16 pt-5 pb-20">
-    <!-- 本季新番 -->
+    <!-- 本季最佳 -->
     <AnimeListRow
-      :title="`${currentYear}年${SEASON_NAME_MAP[currentSeason]}新番`"
+      :title="`${currentYear}年${SEASON_NAME_MAP[currentSeason]}最佳`"
       :year="currentYear"
       :season="currentSeason"
     />
     <!-- 当季最高人气 -->
     <AnimeListRow
-      :title="`${currentYear}年${SEASON_NAME_MAP[currentSeason]}最高人气`"
+      :title="`${currentYear}年${SEASON_NAME_MAP[currentSeason]}最热`"
       :year="currentYear"
       :season="currentSeason"
       sort-by="POPULARITY"
     />
     <!-- 年度最佳 -->
     <AnimeListRow :title="`${yearlyBestYear}年度最佳`" :year="yearlyBestYear" />
-    <!-- 全部最高 -->
-    <AnimeListRow title="全部最高" />
+    <!-- 历史最佳 -->
+    <AnimeListRow title="历史最佳" />
   </div>
 </template>
