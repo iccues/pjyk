@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Picture } from "@element-plus/icons-vue";
-import type { FormInstance, FormRules } from "element-plus";
+import { ElMessage, type FormInstance, type FormRules } from "element-plus";
 import { computed, ref, watch } from "vue";
 
+import { createAnime, updateAnime } from "@/api/admin";
 import type { AdminAnime } from "@/types/adminAnime";
 
 interface AnimeForm {
@@ -17,14 +18,11 @@ interface AnimeForm {
 }
 
 const props = defineProps<{
-  visible: boolean;
-  anime?: AdminAnime; // 编辑模式时传入
+  anime: AdminAnime | null;
 }>();
 
-const emit = defineEmits<{
-  close: [];
-  submit: [data: AnimeForm];
-}>();
+const visible = defineModel<boolean>("visible", { required: true });
+const animeList = defineModel<AdminAnime[]>("animeList", { required: true });
 
 const formRef = ref<FormInstance>();
 const formData = ref<AnimeForm>({
@@ -57,29 +55,26 @@ const rules: FormRules<AnimeForm> = {
 };
 
 // 监听对话框打开，初始化表单数据
-watch(
-  () => props.visible,
-  (visible) => {
-    if (visible) {
-      if (props.anime) {
-        // 编辑模式：填充现有数据
-        formData.value = {
-          title: {
-            titleCn: props.anime.title.titleCn || "",
-            titleNative: props.anime.title.titleNative || "",
-            titleRomaji: props.anime.title.titleRomaji || "",
-            titleEn: props.anime.title.titleEn || "",
-          },
-          coverImage: props.anime.coverImage || "",
-          startDate: props.anime.startDate || "",
-        };
-      } else {
-        // 创建模式：重置表单
-        resetForm();
-      }
+watch(visible, () => {
+  if (visible) {
+    if (props.anime) {
+      // 编辑模式：填充现有数据
+      formData.value = {
+        title: {
+          titleCn: props.anime.title.titleCn || "",
+          titleNative: props.anime.title.titleNative || "",
+          titleRomaji: props.anime.title.titleRomaji || "",
+          titleEn: props.anime.title.titleEn || "",
+        },
+        coverImage: props.anime.coverImage || "",
+        startDate: props.anime.startDate || "",
+      };
+    } else {
+      // 创建模式：重置表单
+      resetForm();
     }
-  },
-);
+  }
+});
 
 // 重置表单
 const resetForm = () => {
@@ -96,31 +91,50 @@ const resetForm = () => {
   formRef.value?.clearValidate();
 };
 
-// 关闭对话框
-const handleClose = () => {
-  emit("close");
-};
-
 // 提交表单
 const handleSubmit = async () => {
   if (!formRef.value) return;
 
-  await formRef.value.validate((valid) => {
-    if (valid) {
-      emit("submit", formData.value);
+  try {
+    await formRef.value.validate();
+
+    if (props.anime) {
+      // 编辑模式
+      const updated = await updateAnime({
+        animeId: props.anime.animeId,
+        ...formData.value,
+      });
+
+      // 更新列表中的动画数据
+      const idx = animeList.value.findIndex((a) => a.animeId === props.anime!.animeId);
+      if (idx !== -1) {
+        // 保留 mappings，只更新其他字段
+        animeList.value[idx] = {
+          ...updated,
+          mappings: animeList.value[idx]?.mappings || [],
+        };
+      }
+
+      ElMessage.success("动画更新成功");
+    } else {
+      // 创建模式
+      const created = await createAnime(formData.value);
+
+      // 将新动画添加到列表顶部
+      animeList.value.unshift(created);
+
+      ElMessage.success("动画创建成功");
     }
-  });
+
+    visible.value = false;
+  } catch (e) {
+    ElMessage.error("操作失败: " + (e instanceof Error ? e.message : "未知错误"));
+  }
 };
 </script>
 
 <template>
-  <el-dialog
-    :model-value="visible"
-    :title="dialogTitle"
-    width="600px"
-    :close-on-click-modal="false"
-    @close="handleClose"
-  >
+  <el-dialog v-model="visible" :title="dialogTitle" width="600px">
     <el-form
       ref="formRef"
       :model="formData"
@@ -183,7 +197,7 @@ const handleSubmit = async () => {
     </el-form>
 
     <template #footer>
-      <el-button @click="handleClose">取消</el-button>
+      <el-button>取消</el-button>
       <el-button type="primary" @click="handleSubmit">保存</el-button>
     </template>
   </el-dialog>
