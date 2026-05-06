@@ -5,8 +5,10 @@ import adminClient from "./request";
 /**
  * 获取未关联的孤立映射列表（管理后台）
  */
-export async function getUnmappedMappingList(): Promise<AdminMapping[]> {
-  const response = await adminClient.get<AdminMapping[]>("/api/admin/get_unmapped_mapping_list");
+export async function getUnmappedMappingList(signal?: AbortSignal): Promise<AdminMapping[]> {
+  const response = await adminClient.get<AdminMapping[]>("/api/admin/get_unmapped_mapping_list", {
+    signal,
+  });
   return response.data;
 }
 

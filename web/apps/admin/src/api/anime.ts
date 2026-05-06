@@ -13,13 +13,17 @@ export async function getAnimeList(
   reviewStatus?: ReviewStatus | null,
   year?: number | null,
   season?: Season | null,
+  signal?: AbortSignal,
 ): Promise<AdminAnime[]> {
   const params: Record<string, string> = {};
   if (reviewStatus) params.reviewStatus = reviewStatus;
   if (year) params.year = year.toString();
   if (season) params.season = season;
 
-  const response = await adminClient.get<AdminAnime[]>("/api/admin/get_anime_list", { params });
+  const response = await adminClient.get<AdminAnime[]>("/api/admin/get_anime_list", {
+    params,
+    signal,
+  });
   return response.data;
 }
 

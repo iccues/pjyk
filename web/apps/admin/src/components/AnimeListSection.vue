@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Plus, Refresh } from "@element-plus/icons-vue";
+import { useQuery } from "@tanstack/vue-query";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { VList } from "virtua/vue";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref, toRaw, watch } from "vue";
 
 import { deleteAnime, getAnimeList, updateAnime } from "@/api/anime";
 import AdminAnimeItem from "@/components/AdminAnimeItem.vue";
@@ -28,36 +29,18 @@ const selectedYear = ref<number | null>(null);
 const selectedSeason = ref<Season | null>(null);
 const searchKeyword = ref("");
 
-const loading = ref(true);
-const error = ref<string | null>(null);
-
 // --- 2. 数据加载与筛选逻辑 ---
 
-const loadAnimeList = async () => {
-  try {
-    loading.value = true;
-    error.value = null;
-    const animes = await getAnimeList(
-      selectedReviewStatus.value,
-      selectedYear.value,
-      selectedSeason.value,
-    );
-    animeList.value = animes;
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : "加载动画列表失败";
-  } finally {
-    loading.value = false;
-  }
-};
-
-onMounted(() => {
-  loadAnimeList();
+const { isFetching, isError, error, data, refetch } = useQuery({
+  queryKey: ["admin-anime-list", selectedReviewStatus, selectedYear, selectedSeason],
+  queryFn: ({ signal }) =>
+    getAnimeList(selectedReviewStatus.value, selectedYear.value, selectedSeason.value, signal),
 });
 
 watch(
-  [selectedReviewStatus, selectedYear, selectedSeason],
-  () => {
-    loadAnimeList();
+  data,
+  (newVal) => {
+    if (newVal) animeList.value = structuredClone(toRaw(newVal));
   },
   { immediate: true },
 );
@@ -163,14 +146,14 @@ const handleUpdateReviewStatus = async (animeId: number, reviewStatus: ReviewSta
 </script>
 
 <template>
-  <div class="flex h-full flex-col" v-loading="loading">
+  <div class="flex h-full flex-col" v-loading="isFetching">
     <div class="mb-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <h2 class="m-0 text-xl font-semibold text-gray-800">动画列表</h2>
         <el-tag type="info">{{ filteredAnimeList.length }} / {{ animeList.length }}</el-tag>
       </div>
       <div class="flex items-center gap-2">
-        <el-button :icon="Refresh" circle size="small" @click="loadAnimeList" />
+        <el-button :icon="Refresh" circle size="small" @click="refetch" />
         <el-button type="primary" size="small" :icon="Plus" @click="handleEditAnime(null)">
           新建动画
         </el-button>
@@ -186,8 +169,8 @@ const handleUpdateReviewStatus = async (animeId: number, reviewStatus: ReviewSta
     />
 
     <el-alert
-      v-if="error"
-      :title="error"
+      v-if="isError"
+      :title="error?.message || '加载失败'"
       type="error"
       center
       show-icon
