@@ -97,7 +97,7 @@ const handleMappingToUnmapped = (evt: DraggableChangeEvent<AdminMapping>) => {
 </script>
 
 <template>
-  <div class="mx-auto flex h-full max-w-[1800px] flex-col overflow-hidden p-5">
+  <div class="mx-auto flex h-full max-w-[1800px] flex-col overflow-hidden p-5 pb-0">
     <el-row :gutter="24" class="flex-1 overflow-hidden">
       <!-- 左列：动画列表 -->
       <el-col :xs="24" :lg="12" class="h-full">

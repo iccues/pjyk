@@ -108,11 +108,7 @@ const handleSubmit = async () => {
       // 更新列表中的动画数据
       const idx = animeList.value.findIndex((a) => a.animeId === props.anime!.animeId);
       if (idx !== -1) {
-        // 保留 mappings，只更新其他字段
-        animeList.value[idx] = {
-          ...updated,
-          mappings: animeList.value[idx]?.mappings || [],
-        };
+        animeList.value[idx] = updated;
       }
 
       ElMessage.success("动画更新成功");

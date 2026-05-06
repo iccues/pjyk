@@ -66,7 +66,7 @@ const isAnimeMatch = (anime: AdminAnime, keyword: string) => {
   return anime.mappings.some(
     (m) =>
       String(m.mappingId) === keyword ||
-      m.platformId.toLowerCase().includes(keyword) ||
+      m.platformId === keyword ||
       titleMatches(m.mappingInfo?.title, keyword),
   );
 };
@@ -132,10 +132,7 @@ const handleUpdateReviewStatus = async (animeId: number, reviewStatus: ReviewSta
         animeList.value.splice(idx, 1);
         ElMessage.success("审核状态已更新，该动画已从当前筛选列表中移除");
       } else {
-        animeList.value[idx] = {
-          ...updated,
-          mappings: animeList.value[idx]?.mappings || [],
-        };
+        animeList.value[idx] = updated;
         ElMessage.success("审核状态更新成功");
       }
     }
@@ -146,7 +143,7 @@ const handleUpdateReviewStatus = async (animeId: number, reviewStatus: ReviewSta
 </script>
 
 <template>
-  <div class="flex h-full flex-col" v-loading="isFetching">
+  <div class="flex h-full flex-col">
     <div class="mb-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <h2 class="m-0 text-xl font-semibold text-gray-800">动画列表</h2>
@@ -170,6 +167,7 @@ const handleUpdateReviewStatus = async (animeId: number, reviewStatus: ReviewSta
 
     <el-alert
       v-if="isError"
+      v-loading="isFetching"
       :title="error?.message || '加载失败'"
       type="error"
       center
@@ -178,7 +176,12 @@ const handleUpdateReviewStatus = async (animeId: number, reviewStatus: ReviewSta
       class="mb-4"
     />
 
-    <VList v-else :data="filteredAnimeList" class="flex-1 overflow-auto pr-2">
+    <VList
+      v-else
+      v-loading="isFetching"
+      :data="filteredAnimeList"
+      class="flex-1 overflow-auto pr-2"
+    >
       <template #default="{ item: anime }">
         <div :key="anime.animeId" class="mb-3">
           <AdminAnimeItem

@@ -62,7 +62,7 @@ const handleDeleteMapping = async (mappingId: number) => {
 </script>
 
 <template>
-  <div class="flex h-full flex-col" v-loading="isFetching">
+  <div class="flex h-full flex-col">
     <div class="mb-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <h2 class="m-0 text-xl font-semibold text-gray-800">未关联映射</h2>
@@ -78,6 +78,7 @@ const handleDeleteMapping = async (mappingId: number) => {
 
     <el-alert
       v-if="isError"
+      v-loading="isFetching"
       :title="error?.message || '加载失败'"
       type="error"
       center
@@ -86,7 +87,7 @@ const handleDeleteMapping = async (mappingId: number) => {
       class="mb-4"
     />
 
-    <div v-else class="flex-1 overflow-hidden rounded p-2 transition-colors">
+    <div v-else v-loading="isFetching" class="flex-1 overflow-hidden rounded p-2 transition-colors">
       <draggable
         :model-value="mappingList"
         :group="{ name: 'mappings', pull: true, put: true }"
