@@ -4,7 +4,7 @@ import { PLATFORM_OPTIONS, SEASON_OPTIONS } from "@pjyk-web/shared/constants/ui-
 import { ElMessage } from "element-plus";
 import { ref } from "vue";
 
-import { calculateMetric, fetchAnime, fetchMapping, linkMappings } from "@/api/admin";
+import { calculateMetric, fetchAnime, fetchMapping, linkMappings } from "@/api/fetch";
 
 // 数据抓取相关
 const fetchDialogVisible = ref(false);

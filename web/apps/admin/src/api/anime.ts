@@ -1,7 +1,7 @@
 import type { AdminAnime, ReviewStatus } from "@/types/adminAnime";
 import type { Season } from "@/types/anime";
 
-import adminClient from "../request";
+import adminClient from "./request";
 
 /**
  * 获取所有动画列表（管理后台）
@@ -10,14 +10,14 @@ import adminClient from "../request";
  * @param season 可选的季度筛选
  */
 export async function getAnimeList(
-  reviewStatus?: ReviewStatus,
-  year?: number,
-  season?: Season,
+  reviewStatus?: ReviewStatus | null,
+  year?: number | null,
+  season?: Season | null,
 ): Promise<AdminAnime[]> {
   const params: Record<string, string> = {};
-  if (reviewStatus !== undefined) params.reviewStatus = reviewStatus;
-  if (year !== undefined) params.year = year.toString();
-  if (season !== undefined) params.season = season;
+  if (reviewStatus) params.reviewStatus = reviewStatus;
+  if (year) params.year = year.toString();
+  if (season) params.season = season;
 
   const response = await adminClient.get<AdminAnime[]>("/api/admin/get_anime_list", { params });
   return response.data;

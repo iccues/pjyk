@@ -4,7 +4,7 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import { VList } from "virtua/vue";
 import { computed, onMounted, ref, watch } from "vue";
 
-import { deleteAnime, getAnimeList, updateAnime } from "@/api/admin";
+import { deleteAnime, getAnimeList, updateAnime } from "@/api/anime";
 import AdminAnimeItem from "@/components/AdminAnimeItem.vue";
 import AnimeFormDialog from "@/components/AnimeFormDialog.vue";
 import FilterBar from "@/components/FilterBar.vue";
@@ -38,9 +38,9 @@ const loadAnimeList = async () => {
     loading.value = true;
     error.value = null;
     const animes = await getAnimeList(
-      selectedReviewStatus.value ?? undefined,
-      selectedYear.value ?? undefined,
-      selectedSeason.value ?? undefined,
+      selectedReviewStatus.value,
+      selectedYear.value,
+      selectedSeason.value,
     );
     animeList.value = animes;
   } catch (e) {

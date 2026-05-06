@@ -1,4 +1,4 @@
-import adminClient from "../request";
+import adminClient from "./request";
 
 /**
  * 抓取动画数据（完整流程：抓取映射、合并映射、计算评分）

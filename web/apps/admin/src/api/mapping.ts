@@ -1,6 +1,6 @@
 import type { AdminMapping } from "@/types/adminAnime";
 
-import adminClient from "../request";
+import adminClient from "./request";
 
 /**
  * 获取未关联的孤立映射列表（管理后台）

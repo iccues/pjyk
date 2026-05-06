@@ -1,4 +1,4 @@
-import { publicClient } from "../request";
+import { publicClient } from "./request";
 
 export interface OidcConfig {
   issuer: string;

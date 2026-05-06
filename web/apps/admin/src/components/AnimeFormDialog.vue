@@ -3,7 +3,7 @@ import { Picture } from "@element-plus/icons-vue";
 import { ElMessage, type FormInstance, type FormRules } from "element-plus";
 import { computed, ref, watch } from "vue";
 
-import { createAnime, updateAnime } from "@/api/admin";
+import { createAnime, updateAnime } from "@/api/anime";
 import type { AdminAnime } from "@/types/adminAnime";
 
 interface AnimeForm {

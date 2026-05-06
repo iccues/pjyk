@@ -3,7 +3,7 @@ import { getAllPlatformConfigs } from "@pjyk-web/shared/config/platforms.ts";
 import { ElMessage } from "element-plus";
 import { computed, ref } from "vue";
 
-import { createMapping } from "@/api/admin";
+import { createMapping } from "@/api/mapping";
 import type { AdminMapping } from "@/types/adminAnime";
 
 const visible = defineModel<boolean>("visible", { required: true });

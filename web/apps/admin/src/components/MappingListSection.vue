@@ -4,7 +4,7 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import { onMounted, ref } from "vue";
 import draggable from "vuedraggable";
 
-import { deleteMapping, getUnmappedMappingList } from "@/api/admin";
+import { deleteMapping, getUnmappedMappingList } from "@/api/mapping";
 import AdminMappingItem from "@/components/AdminMappingItem.vue";
 import MappingFormDialog from "@/components/MappingFormDialog.vue";
 import type { AdminMapping } from "@/types/adminAnime";

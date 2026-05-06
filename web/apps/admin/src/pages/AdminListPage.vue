@@ -2,7 +2,7 @@
 import { ElMessage } from "element-plus";
 import { ref } from "vue";
 
-import { updateMappingAnime } from "@/api/admin";
+import { updateMappingAnime } from "@/api/mapping";
 import AnimeListSection from "@/components/AnimeListSection.vue";
 import MappingListSection from "@/components/MappingListSection.vue";
 import type { AdminAnime, AdminMapping } from "@/types/adminAnime";
