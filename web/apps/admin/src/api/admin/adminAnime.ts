@@ -1,7 +1,7 @@
 import type { AdminAnime, ReviewStatus } from "@/types/adminAnime";
 import type { Season } from "@/types/anime";
 
-import { del, get, post, put } from "./adminHttp";
+import adminClient from "../request";
 
 /**
  * 获取所有动画列表（管理后台）
@@ -19,8 +19,8 @@ export async function getAnimeList(
   if (year !== undefined) params.year = year.toString();
   if (season !== undefined) params.season = season;
 
-  const options = Object.keys(params).length > 0 ? { params } : undefined;
-  return get<AdminAnime[]>("/api/admin/get_anime_list", options);
+  const response = await adminClient.get<AdminAnime[]>("/api/admin/get_anime_list", { params });
+  return response.data;
 }
 
 /**
@@ -38,7 +38,8 @@ export interface AnimeCreateRequest {
 }
 
 export async function createAnime(request: AnimeCreateRequest): Promise<AdminAnime> {
-  return post<AdminAnime>("/api/admin/create_anime", request);
+  const response = await adminClient.post<AdminAnime>("/api/admin/create_anime", request);
+  return response.data;
 }
 
 /**
@@ -58,7 +59,8 @@ export interface AnimeUpdateRequest {
 }
 
 export async function updateAnime(request: AnimeUpdateRequest): Promise<AdminAnime> {
-  return put<AdminAnime>("/api/admin/update_anime", request);
+  const response = await adminClient.put<AdminAnime>("/api/admin/update_anime", request);
+  return response.data;
 }
 
 /**
@@ -66,12 +68,14 @@ export async function updateAnime(request: AnimeUpdateRequest): Promise<AdminAni
  * @param animeId 动画 ID
  */
 export async function deleteAnime(animeId: number): Promise<void> {
-  return del<void>(`/api/admin/delete_anime/${animeId}`);
+  const response = await adminClient.delete<void>(`/api/admin/delete_anime/${animeId}`);
+  return response.data;
 }
 
 /**
  * 删除所有非 APPROVED 状态的动画（PENDING 和 REJECTED）
  */
 export async function deleteNonApprovedAnimes(): Promise<void> {
-  return del<void>("/api/admin/delete_non_approved_animes");
+  const response = await adminClient.delete<void>("/api/admin/delete_non_approved_animes");
+  return response.data;
 }

@@ -1,4 +1,4 @@
-import { get } from "./http";
+import { publicClient } from "../request";
 
 export interface OidcConfig {
   issuer: string;
@@ -6,5 +6,6 @@ export interface OidcConfig {
 }
 
 export async function getOidcConfig(): Promise<OidcConfig> {
-  return get<OidcConfig>("/api/config/oidc");
+  const request = await publicClient.get<OidcConfig>("/api/config/oidc");
+  return request.data;
 }
