@@ -2,25 +2,24 @@
 import { Plus, Refresh } from "@element-plus/icons-vue";
 import { useQuery } from "@tanstack/vue-query";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { storeToRefs } from "pinia";
 import { ref, toRaw, watch } from "vue";
-import { VueDraggable, type DraggableEvent } from "vue-draggable-plus";
+import { VueDraggable } from "vue-draggable-plus";
 
 import { deleteMapping, getUnmappedMappingList } from "@/api/mapping";
 import AdminMappingItem from "@/components/AdminMappingItem.vue";
 import MappingFormDialog from "@/components/MappingFormDialog.vue";
-import type { AdminMapping } from "@/types/adminAnime";
+import { useAdminListPageStore } from "@/stores/adminListPageStore.ts";
 
-const emit = defineEmits<{
-  mappingAdd: [evt: DraggableEvent<AdminMapping>];
-}>();
+// --- 1. Store 状态与核心逻辑 ---
 
-// --- 1. 状态与绑定 ---
+const { mappingList } = storeToRefs(useAdminListPageStore());
 
-const mappingList = defineModel<AdminMapping[]>("mappingList", { required: true });
+const { applyMappingChange, removeMappingFromUnmapped } = useAdminListPageStore();
 
 const mappingDialogVisible = ref(false);
 
-// --- 2. 数据加载逻辑 ---
+// --- 2. 数据加载 (TanStack Query) ---
 
 const { isFetching, isError, error, data, refetch } = useQuery({
   queryKey: ["admin-mapping-list"],
@@ -35,7 +34,7 @@ watch(
   { immediate: true },
 );
 
-// --- 3. UI 操作处理器 ---
+// --- 3. 组件本地 UI 操作 ---
 
 const handleDeleteMapping = async (mappingId: number) => {
   try {
@@ -50,9 +49,7 @@ const handleDeleteMapping = async (mappingId: number) => {
 
     await deleteMapping(mappingId);
 
-    const idx = mappingList.value.findIndex((m) => m.mappingId === mappingId);
-    if (idx !== -1) mappingList.value.splice(idx, 1);
-
+    removeMappingFromUnmapped(mappingId);
     ElMessage.success("删除成功");
   } catch (e) {
     if (e === "cancel") return;
@@ -92,7 +89,7 @@ const handleDeleteMapping = async (mappingId: number) => {
         :model-value="mappingList"
         :group="{ name: 'mappings', pull: true, put: true }"
         :sort="false"
-        @add="emit('mappingAdd', $event)"
+        @add="applyMappingChange($event.data, null)"
         class="flex h-full flex-col gap-3 overflow-y-auto pr-2"
       >
         <AdminMappingItem
@@ -105,6 +102,6 @@ const handleDeleteMapping = async (mappingId: number) => {
     </div>
 
     <!-- Mapping 表单对话框 -->
-    <MappingFormDialog v-model:visible="mappingDialogVisible" v-model:mappingList="mappingList" />
+    <MappingFormDialog v-model:visible="mappingDialogVisible" />
   </div>
 </template>

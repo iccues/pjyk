@@ -2,25 +2,23 @@
 import { Plus, Refresh } from "@element-plus/icons-vue";
 import { useQuery } from "@tanstack/vue-query";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { storeToRefs } from "pinia";
 import { VList } from "virtua/vue";
 import { computed, ref, toRaw, watch } from "vue";
-import { type DraggableEvent } from "vue-draggable-plus";
 
 import { deleteAnime, getAnimeList, updateAnime } from "@/api/anime";
 import AdminAnimeItem from "@/components/AdminAnimeItem.vue";
 import AnimeFormDialog from "@/components/AnimeFormDialog.vue";
 import FilterBar from "@/components/FilterBar.vue";
-import type { AdminAnime, AdminMapping, ReviewStatus } from "@/types/adminAnime";
+import { useAdminListPageStore } from "@/stores/adminListPageStore.ts";
+import type { AdminAnime, ReviewStatus } from "@/types/adminAnime";
 import type { Season } from "@/types/anime";
 
-const emit = defineEmits<{
-  mappingAdd: [evt: DraggableEvent<AdminMapping>, animeId: number];
-  addMappingToUnmapped: [mapping: AdminMapping];
-}>();
+// --- 1. Store 状态与核心逻辑 ---
 
-// --- 1. 状态与绑定 ---
+const { animeList } = storeToRefs(useAdminListPageStore());
 
-const animeList = defineModel<AdminAnime[]>("animeList", { required: true });
+const { applyMappingChange, addMappingToUnmapped, removeAnime } = useAdminListPageStore();
 
 const dialogVisible = ref(false);
 const editingAnime = ref<AdminAnime | null>(null);
@@ -30,7 +28,7 @@ const selectedYear = ref<number | null>(null);
 const selectedSeason = ref<Season | null>(null);
 const searchKeyword = ref("");
 
-// --- 2. 数据加载与筛选逻辑 ---
+// --- 2. 数据加载与筛选 (TanStack Query) ---
 
 const { isFetching, isError, error, data, refetch } = useQuery({
   queryKey: ["admin-anime-list", selectedReviewStatus, selectedYear, selectedSeason],
@@ -78,7 +76,7 @@ const filteredAnimeList = computed(() => {
   return animeList.value.filter((anime) => isAnimeMatch(anime, keyword));
 });
 
-// --- 3. 业务与 UI 操作 ---
+// --- 3. 组件本地 UI 操作 ---
 
 const handleEditAnime = (anime: AdminAnime | null) => {
   editingAnime.value = anime;
@@ -107,12 +105,10 @@ const handleDeleteAnime = async (animeId: number) => {
     await deleteAnime(animeId);
 
     mappingsToMove.forEach((mapping) => {
-      emit("addMappingToUnmapped", mapping);
+      addMappingToUnmapped(mapping);
     });
 
-    const idx = animeList.value.findIndex((a) => a.animeId === animeId);
-    if (idx !== -1) animeList.value.splice(idx, 1);
-
+    removeAnime(animeId);
     ElMessage.success("删除成功");
   } catch (e) {
     if (e === "cancel") return;
@@ -187,7 +183,7 @@ const handleUpdateReviewStatus = async (animeId: number, reviewStatus: ReviewSta
         <div :key="anime.animeId" class="mb-3">
           <AdminAnimeItem
             :anime="anime"
-            @mapping-add="(evt) => emit('mappingAdd', evt, anime.animeId)"
+            @mapping-add="applyMappingChange($event.data, anime.animeId)"
             @delete-anime="handleDeleteAnime"
             @edit-anime="handleEditAnime"
             @update-review-status="handleUpdateReviewStatus"
@@ -197,10 +193,6 @@ const handleUpdateReviewStatus = async (animeId: number, reviewStatus: ReviewSta
     </VList>
 
     <!-- 动画表单对话框 -->
-    <AnimeFormDialog
-      v-model:visible="dialogVisible"
-      v-model:animeList="animeList"
-      :anime="editingAnime"
-    />
+    <AnimeFormDialog v-model:visible="dialogVisible" :anime="editingAnime" />
   </div>
 </template>

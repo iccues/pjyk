@@ -16,6 +16,7 @@
     "axios": "^1.15.2",
     "element-plus": "^2.11.7",
     "oidc-client-ts": "^3.4.1",
+    "pinia": "^3.0.4",
     "tailwindcss": "^4.1.16",
     "virtua": "^0.48.2",
     "vue": "^3.5.22",

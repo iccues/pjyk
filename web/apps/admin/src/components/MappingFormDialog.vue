@@ -4,10 +4,11 @@ import { ElMessage } from "element-plus";
 import { computed, ref } from "vue";
 
 import { createMapping } from "@/api/mapping";
-import type { AdminMapping } from "@/types/adminAnime";
+import { useAdminListPageStore } from "@/stores/adminListPageStore";
 
 const visible = defineModel<boolean>("visible", { required: true });
-const mappingList = defineModel<AdminMapping[]>("mappingList", { required: true });
+
+const { addMappingToUnmapped } = useAdminListPageStore();
 
 const formData = ref({
   sourcePlatform: "",
@@ -36,7 +37,7 @@ const handleSubmit = async () => {
       formData.value.sourcePlatform,
       formData.value.platformId.trim(),
     );
-    mappingList.value.unshift(newMapping);
+    addMappingToUnmapped(newMapping);
     ElMessage.success("映射创建成功");
     handleClose();
   } catch (e) {

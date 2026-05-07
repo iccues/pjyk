@@ -4,6 +4,7 @@ import { ElMessage, type FormInstance, type FormRules } from "element-plus";
 import { computed, ref, watch } from "vue";
 
 import { createAnime, updateAnime } from "@/api/anime";
+import { useAdminListPageStore } from "@/stores/adminListPageStore";
 import type { AdminAnime } from "@/types/adminAnime";
 
 interface AnimeForm {
@@ -22,7 +23,8 @@ const props = defineProps<{
 }>();
 
 const visible = defineModel<boolean>("visible", { required: true });
-const animeList = defineModel<AdminAnime[]>("animeList", { required: true });
+
+const { upsertAnime } = useAdminListPageStore();
 
 const formRef = ref<FormInstance>();
 const formData = ref<AnimeForm>({
@@ -105,20 +107,13 @@ const handleSubmit = async () => {
         ...formData.value,
       });
 
-      // 更新列表中的动画数据
-      const idx = animeList.value.findIndex((a) => a.animeId === props.anime!.animeId);
-      if (idx !== -1) {
-        animeList.value[idx] = updated;
-      }
-
+      upsertAnime(updated);
       ElMessage.success("动画更新成功");
     } else {
       // 创建模式
       const created = await createAnime(formData.value);
 
-      // 将新动画添加到列表顶部
-      animeList.value.unshift(created);
-
+      upsertAnime(created);
       ElMessage.success("动画创建成功");
     }
 
