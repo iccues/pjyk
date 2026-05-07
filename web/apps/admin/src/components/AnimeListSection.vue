@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/vue-query";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { VList } from "virtua/vue";
 import { computed, ref, toRaw, watch } from "vue";
+import { type DraggableEvent } from "vue-draggable-plus";
 
 import { deleteAnime, getAnimeList, updateAnime } from "@/api/anime";
 import AdminAnimeItem from "@/components/AdminAnimeItem.vue";
@@ -13,7 +14,7 @@ import type { AdminAnime, AdminMapping, ReviewStatus } from "@/types/adminAnime"
 import type { Season } from "@/types/anime";
 
 const emit = defineEmits<{
-  "mapping-change": [evt: any, animeId: number];
+  mappingAdd: [evt: DraggableEvent<AdminMapping>, animeId: number];
   addMappingToUnmapped: [mapping: AdminMapping];
 }>();
 
@@ -186,7 +187,7 @@ const handleUpdateReviewStatus = async (animeId: number, reviewStatus: ReviewSta
         <div :key="anime.animeId" class="mb-3">
           <AdminAnimeItem
             :anime="anime"
-            @mapping-change="(evt) => emit('mapping-change', evt, anime.animeId)"
+            @mapping-add="(evt) => emit('mappingAdd', evt, anime.animeId)"
             @delete-anime="handleDeleteAnime"
             @edit-anime="handleEditAnime"
             @update-review-status="handleUpdateReviewStatus"

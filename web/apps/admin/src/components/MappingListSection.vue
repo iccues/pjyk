@@ -3,7 +3,7 @@ import { Plus, Refresh } from "@element-plus/icons-vue";
 import { useQuery } from "@tanstack/vue-query";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { ref, toRaw, watch } from "vue";
-import draggable from "vuedraggable";
+import { VueDraggable, type DraggableEvent } from "vue-draggable-plus";
 
 import { deleteMapping, getUnmappedMappingList } from "@/api/mapping";
 import AdminMappingItem from "@/components/AdminMappingItem.vue";
@@ -11,7 +11,7 @@ import MappingFormDialog from "@/components/MappingFormDialog.vue";
 import type { AdminMapping } from "@/types/adminAnime";
 
 const emit = defineEmits<{
-  "mapping-change": [evt: any];
+  mappingAdd: [evt: DraggableEvent<AdminMapping>];
 }>();
 
 // --- 1. 状态与绑定 ---
@@ -88,18 +88,20 @@ const handleDeleteMapping = async (mappingId: number) => {
     />
 
     <div v-else v-loading="isFetching" class="flex-1 overflow-hidden rounded p-2 transition-colors">
-      <draggable
+      <VueDraggable
         :model-value="mappingList"
         :group="{ name: 'mappings', pull: true, put: true }"
-        item-key="mappingId"
         :sort="false"
-        @change="emit('mapping-change', $event)"
+        @add="emit('mappingAdd', $event)"
         class="flex h-full flex-col gap-3 overflow-y-auto pr-2"
       >
-        <template #item="{ element }">
-          <AdminMappingItem :mapping="element" @delete-mapping="handleDeleteMapping" />
-        </template>
-      </draggable>
+        <AdminMappingItem
+          v-for="mapping in mappingList"
+          :key="mapping.mappingId"
+          :mapping="mapping"
+          @delete-mapping="handleDeleteMapping"
+        />
+      </VueDraggable>
     </div>
 
     <!-- Mapping 表单对话框 -->

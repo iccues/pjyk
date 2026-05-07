@@ -6,7 +6,6 @@ import { updateMappingAnime } from "@/api/mapping";
 import AnimeListSection from "@/components/AnimeListSection.vue";
 import MappingListSection from "@/components/MappingListSection.vue";
 import type { AdminAnime, AdminMapping } from "@/types/adminAnime";
-import type { DraggableChangeEvent } from "@/types/draggable";
 
 const animeList = ref<AdminAnime[]>([]);
 const mappingList = ref<AdminMapping[]>([]);
@@ -76,24 +75,6 @@ const applyMappingChange = async (mapping: AdminMapping, newAnimeId: number | nu
     ElMessage.error("更新失败: " + (e instanceof Error ? e.message : "未知错误"));
   }
 };
-
-// --- 3. UI 事件处理器 ---
-
-// 处理拖拽到动画
-const handleMappingToAnime = (evt: DraggableChangeEvent<AdminMapping>, animeId: number) => {
-  const mapping = evt.added?.element;
-  if (mapping) {
-    applyMappingChange(mapping, animeId);
-  }
-};
-
-// 处理拖拽到未关联列表
-const handleMappingToUnmapped = (evt: DraggableChangeEvent<AdminMapping>) => {
-  const mapping = evt.added?.element;
-  if (mapping) {
-    applyMappingChange(mapping, null);
-  }
-};
 </script>
 
 <template>
@@ -103,7 +84,7 @@ const handleMappingToUnmapped = (evt: DraggableChangeEvent<AdminMapping>) => {
       <el-col :xs="24" :lg="12" class="h-full">
         <AnimeListSection
           v-model:animeList="animeList"
-          @mapping-change="handleMappingToAnime"
+          @mapping-add="(evt, animeId) => applyMappingChange(evt.data, animeId)"
           @add-mapping-to-unmapped="addMappingToUnmapped"
         />
       </el-col>
@@ -112,7 +93,7 @@ const handleMappingToUnmapped = (evt: DraggableChangeEvent<AdminMapping>) => {
       <el-col :xs="24" :lg="12" class="h-full">
         <MappingListSection
           v-model:mappingList="mappingList"
-          @mapping-change="handleMappingToUnmapped"
+          @mapping-add="applyMappingChange($event.data, null)"
         />
       </el-col>
     </el-row>
