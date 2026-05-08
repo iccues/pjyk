@@ -108,15 +108,3 @@ const handleDelete = (e: Event) => {
     </div>
   </div>
 </template>
-
-<style scoped>
-@media (max-width: 768px) {
-  .flex.items-center {
-    flex-wrap: wrap;
-  }
-
-  .flex.flex-col {
-    width: auto !important;
-  }
-}
-</style>

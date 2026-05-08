@@ -142,17 +142,3 @@ const handleReviewStatusChange = (newStatus: ReviewStatus) => {
     </el-collapse-transition>
   </div>
 </template>
-
-<style scoped>
-@media (max-width: 768px) {
-  .flex.items-center.py-2 {
-    flex-wrap: wrap;
-  }
-
-  .flex-1.min-w-0 {
-    width: 100%;
-    order: -1;
-    margin-bottom: 0.5rem;
-  }
-}
-</style>

@@ -79,9 +79,3 @@ const handleClose = () => {
     </template>
   </el-dialog>
 </template>
-
-<style scoped>
-.list-disc {
-  padding-left: 1rem;
-}
-</style>

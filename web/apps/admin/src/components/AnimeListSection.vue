@@ -45,9 +45,7 @@ watch(
 );
 
 const titleMatches = (
-  title:
-    | { titleCn?: string; titleNative?: string; titleRomaji?: string; titleEn?: string }
-    | undefined,
+  title: { titleCn?: string; titleNative?: string; titleRomaji?: string; titleEn?: string },
   keyword: string,
 ) => {
   if (!title) return false;
