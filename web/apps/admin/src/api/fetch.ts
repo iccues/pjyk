@@ -1,4 +1,4 @@
-import { post } from "./adminHttp";
+import adminClient from "./request";
 
 /**
  * 抓取动画数据（完整流程：抓取映射、合并映射、计算评分）
@@ -11,9 +11,10 @@ export async function fetchAnime(
   season?: string,
   platform?: string,
 ): Promise<string> {
-  return post<string>("/api/admin/fetch/anime", null, {
+  const response = await adminClient.post<string>("/api/admin/fetch/anime", null, {
     params: { year: year.toString(), season, platform },
   });
+  return response.data;
 }
 
 /**
@@ -27,21 +28,24 @@ export async function fetchMapping(
   season?: string,
   platform?: string,
 ): Promise<string> {
-  return post<string>("/api/admin/fetch/mapping", null, {
+  const response = await adminClient.post<string>("/api/admin/fetch/mapping", null, {
     params: { year: year.toString(), season, platform },
   });
+  return response.data;
 }
 
 /**
  * 合并映射数据
  */
 export async function linkMappings(): Promise<string> {
-  return post<string>("/api/admin/fetch/link");
+  const response = await adminClient.post<string>("/api/admin/fetch/link", null);
+  return response.data;
 }
 
 /**
  * 计算所有动画的平均评分
  */
 export async function calculateMetric(): Promise<string> {
-  return post<string>("/api/admin/fetch/calculate_metric");
+  const response = await adminClient.post<string>("/api/admin/fetch/calculate_metric", null);
+  return response.data;
 }

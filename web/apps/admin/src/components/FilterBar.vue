@@ -5,20 +5,11 @@ import { REVIEW_STATUS_OPTIONS, SEASON_OPTIONS } from "@pjyk-web/shared/constant
 import type { ReviewStatus } from "@/types/adminAnime";
 import type { Season } from "@/types/anime";
 
-interface Props {
-  selectedReviewStatus?: ReviewStatus;
-  selectedYear?: number;
-  selectedSeason?: Season;
-}
-
-defineProps<Props>();
-
-const emit = defineEmits<{
-  "update:selectedReviewStatus": [value: ReviewStatus | undefined];
-  "update:selectedYear": [value: number | undefined];
-  "update:selectedSeason": [value: Season | undefined];
-  change: [];
-}>();
+const selectedReviewStatus = defineModel<ReviewStatus | null>("selectedReviewStatus", {
+  required: true,
+});
+const selectedYear = defineModel<number | null>("selectedYear", { required: true });
+const selectedSeason = defineModel<Season | null>("selectedSeason", { required: true });
 </script>
 
 <template>
@@ -27,14 +18,10 @@ const emit = defineEmits<{
     <span class="text-sm text-gray-600">筛选：</span>
 
     <el-select
-      :model-value="selectedReviewStatus"
+      v-model="selectedReviewStatus"
       placeholder="审核状态"
       size="small"
       style="width: 110px"
-      @update:model-value="
-        emit('update:selectedReviewStatus', $event);
-        emit('change');
-      "
     >
       <el-option
         v-for="option in REVIEW_STATUS_OPTIONS"
@@ -45,29 +32,21 @@ const emit = defineEmits<{
     </el-select>
 
     <el-date-picker
-      :model-value="selectedYear ? String(selectedYear) : null"
+      v-model="selectedYear"
       type="year"
       placeholder="年份"
       size="small"
       style="width: 100px"
       value-format="YYYY"
       clearable
-      @update:model-value="
-        emit('update:selectedYear', $event ? Number($event) : undefined);
-        emit('change');
-      "
     />
 
     <el-select
-      :model-value="selectedSeason"
+      v-model="selectedSeason"
       placeholder="季度"
       size="small"
       style="width: 100px"
       clearable
-      @update:model-value="
-        emit('update:selectedSeason', $event);
-        emit('change');
-      "
     >
       <el-option
         v-for="option in SEASON_OPTIONS"

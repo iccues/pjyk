@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { getAllPlatformConfigs } from "@pjyk-web/shared/config/platforms.ts";
 import { ElMessage } from "element-plus";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 
-const props = defineProps<{
-  visible: boolean;
-}>();
+import { createMapping } from "@/api/mapping";
+import { useAdminListPageStore } from "@/stores/adminListPageStore";
 
-const emit = defineEmits<{
-  close: [];
-  submit: [sourcePlatform: string, platformId: string];
-}>();
+const visible = defineModel<boolean>("visible", { required: true });
+
+const { addMappingToUnmapped } = useAdminListPageStore();
 
 const formData = ref({
   sourcePlatform: "",
@@ -25,20 +23,7 @@ const platformOptions = computed(() => {
   }));
 });
 
-// 当对话框关闭时重置表单
-watch(
-  () => props.visible,
-  (newVal) => {
-    if (!newVal) {
-      formData.value = {
-        sourcePlatform: "",
-        platformId: "",
-      };
-    }
-  },
-);
-
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (!formData.value.sourcePlatform) {
     ElMessage.warning("请选择平台");
     return;
@@ -47,11 +32,25 @@ const handleSubmit = () => {
     ElMessage.warning("请输入平台 ID");
     return;
   }
-  emit("submit", formData.value.sourcePlatform, formData.value.platformId.trim());
+  try {
+    const newMapping = await createMapping(
+      formData.value.sourcePlatform,
+      formData.value.platformId.trim(),
+    );
+    addMappingToUnmapped(newMapping);
+    ElMessage.success("映射创建成功");
+    handleClose();
+  } catch (e) {
+    ElMessage.error("创建失败: " + (e instanceof Error ? e.message : "未知错误"));
+  }
 };
 
 const handleClose = () => {
-  emit("close");
+  formData.value = {
+    sourcePlatform: "",
+    platformId: "",
+  };
+  visible.value = false;
 };
 </script>
 
@@ -80,9 +79,3 @@ const handleClose = () => {
     </template>
   </el-dialog>
 </template>
-
-<style scoped>
-.list-disc {
-  padding-left: 1rem;
-}
-</style>

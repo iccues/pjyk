@@ -3,7 +3,7 @@ import { Delete } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { ref } from "vue";
 
-import { deleteNonApprovedAnimes } from "@/api/admin";
+import { deleteNonApprovedAnimes } from "@/api/anime";
 
 const loading = ref(false);
 

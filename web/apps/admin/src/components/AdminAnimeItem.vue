@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ArrowDown, Delete, Edit } from "@element-plus/icons-vue";
 import { ref } from "vue";
-import draggable from "vuedraggable";
+import { VueDraggable, type DraggableEvent } from "vue-draggable-plus";
 
-import type { AdminAnime, ReviewStatus } from "@/types/adminAnime";
+import type { AdminAnime, AdminMapping, ReviewStatus } from "@/types/adminAnime";
 
 import AdminMappingItem from "./AdminMappingItem.vue";
 
@@ -12,7 +12,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  mappingChange: [evt: any];
+  mappingAdd: [evt: DraggableEvent<AdminMapping>];
   deleteAnime: [animeId: number];
   editAnime: [anime: AdminAnime];
   updateReviewStatus: [animeId: number, reviewStatus: ReviewStatus];
@@ -22,10 +22,6 @@ const isExpanded = ref(false);
 
 const toggleExpand = () => {
   isExpanded.value = !isExpanded.value;
-};
-
-const handleMappingChange = (evt: any) => {
-  emit("mappingChange", evt);
 };
 
 const handleDelete = (event: Event) => {
@@ -129,32 +125,20 @@ const handleReviewStatusChange = (newStatus: ReviewStatus) => {
 
     <el-collapse-transition>
       <div v-if="isExpanded" class="border-t border-gray-200 bg-gray-50 px-3 py-2 pb-3" @click.stop>
-        <draggable
+        <VueDraggable
           :model-value="anime.mappings"
           :group="{ name: 'mappings', pull: true, put: true }"
-          item-key="mappingId"
+          :sort="false"
           class="flex min-h-[60px] flex-col gap-1.5"
-          @change="handleMappingChange"
+          @add="(evt) => emit('mappingAdd', evt)"
         >
-          <template #item="{ element }">
-            <AdminMappingItem :mapping="element" />
-          </template>
-        </draggable>
+          <AdminMappingItem
+            v-for="mapping in anime.mappings"
+            :key="mapping.mappingId"
+            :mapping="mapping"
+          />
+        </VueDraggable>
       </div>
     </el-collapse-transition>
   </div>
 </template>
-
-<style scoped>
-@media (max-width: 768px) {
-  .flex.items-center.py-2 {
-    flex-wrap: wrap;
-  }
-
-  .flex-1.min-w-0 {
-    width: 100%;
-    order: -1;
-    margin-bottom: 0.5rem;
-  }
-}
-</style>

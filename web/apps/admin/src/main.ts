@@ -1,3 +1,5 @@
+import { QueryClient, VueQueryPlugin } from "@tanstack/vue-query";
+import { createPinia } from "pinia";
 import { createApp } from "vue";
 
 import App from "@/App.vue";
@@ -8,5 +10,20 @@ import "element-plus/dist/index.css";
 
 const app = createApp(App);
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+      refetchInterval: false,
+      staleTime: 0,
+      gcTime: 0,
+    },
+  },
+});
+
 app.use(router);
+app.use(VueQueryPlugin, { queryClient });
+app.use(createPinia());
 app.mount("#app");
