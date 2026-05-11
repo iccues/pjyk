@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true
+  }
+}

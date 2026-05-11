@@ -1,0 +1,19 @@
+{
+  "name": "@pjyk-web/tsconfig",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "base.json",
+    "vue-app.json",
+    "vite.json"
+  ],
+  "exports": {
+    "./base.json": "./base.json",
+    "./vue-app.json": "./vue-app.json",
+    "./vite.json": "./vite.json"
+  },
+  "devDependencies": {
+    "@tsconfig/node24": "^24.0.4",
+    "@vue/tsconfig": "^0.9.1"
+  }
+}

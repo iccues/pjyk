@@ -29,9 +29,9 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^7.0.0",
     "@graphql-codegen/client-preset": "^6.0.0",
+    "@pjyk-web/tsconfig": "workspace:*",
     "@types/markdown-it": "^14.1.2",
     "@vitejs/plugin-vue": "catalog:",
-    "@vue/tsconfig": "catalog:",
     "unplugin-auto-import": "catalog:",
     "unplugin-vue-components": "catalog:",
     "vite": "catalog:",

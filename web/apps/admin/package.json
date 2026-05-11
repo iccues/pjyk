@@ -24,8 +24,8 @@
     "vue-router": "catalog:"
   },
   "devDependencies": {
+    "@pjyk-web/tsconfig": "workspace:*",
     "@vitejs/plugin-vue": "catalog:",
-    "@vue/tsconfig": "catalog:",
     "unplugin-auto-import": "catalog:",
     "unplugin-vue-components": "catalog:",
     "vite": "catalog:",
