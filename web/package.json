@@ -9,11 +9,11 @@
     "lint:fix": "oxlint --fix"
   },
   "devDependencies": {
-    "@types/node": "^24.10.14",
-    "oxfmt": "^0.36.0",
-    "oxlint": "^1.50.0",
-    "turbo": "^2.8.11",
-    "typescript": "~5.9.3"
+    "@types/node": "^25.6.2",
+    "oxfmt": "^0.48.0",
+    "oxlint": "^1.63.0",
+    "turbo": "^2.9.10",
+    "typescript": "~6.0.3"
   },
-  "packageManager": "pnpm@10.29.3"
+  "packageManager": "pnpm@11.0.9+sha512.34ce82e6780233cf9cad8685029a8f81d2e06196c5a9bad98879f7424940c6817c4e4524fb7d38b8553ceed48b9758b8ebaf1abd3600c232c4c8cf7366086f38"
 }

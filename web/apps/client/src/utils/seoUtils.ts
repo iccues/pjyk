@@ -1,3 +1,4 @@
+import type { UseHeadInput } from "@unhead/vue";
 import type { ComputedRef } from "vue";
 
 type MaybeComputed<T> = ComputedRef<T> | T;
@@ -16,19 +17,23 @@ export interface SeoOptions {
  * 可直接传入 useHead()：
  *   useHead(buildSeoHead({ title, description, url, keywords }))
  */
-export function buildSeoHead({ title, description, url, keywords }: SeoOptions) {
-  const meta: object[] = [
-    { name: "description", content: description },
+export function buildSeoHead({ title, description, url, keywords }: SeoOptions): UseHeadInput {
+  const meta = [
+    { key: "description", name: "description", content: description },
     // Open Graph
-    { property: "og:title", content: title },
-    { property: "og:description", content: description },
+    { key: "og:title", property: "og:title", content: title },
+    { key: "og:description", property: "og:description", content: description },
     // Twitter Card
-    { name: "twitter:title", content: title },
-    { name: "twitter:description", content: description },
+    { key: "twitter:title", name: "twitter:title", content: title },
+    { key: "twitter:description", name: "twitter:description", content: description },
   ];
 
   if (keywords !== undefined) {
-    meta.splice(1, 0, { name: "keywords", content: keywords });
+    meta.splice(1, 0, {
+      key: "keywords",
+      name: "keywords",
+      content: keywords,
+    });
   }
 
   if (url !== undefined) {
@@ -36,6 +41,7 @@ export function buildSeoHead({ title, description, url, keywords }: SeoOptions) 
       meta.findIndex((m: any) => m.name === "twitter:title"),
       0,
       {
+        key: "og:url",
         property: "og:url",
         content: url,
       },
