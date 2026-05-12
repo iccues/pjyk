@@ -44,12 +44,12 @@ public class AnimeQueryResolver {
 
     @QueryMapping
     public AnimePage animeListBySearch(
-            @Argument String query,
+            @Argument String keyword,
             @Argument Integer pageNumber,
             @Argument Integer pageSize
     ) {
         var animePage = animeQueryService.getAnimeListBySearch(
-                query,
+                keyword,
                 pageNumber,
                 pageSize
         );

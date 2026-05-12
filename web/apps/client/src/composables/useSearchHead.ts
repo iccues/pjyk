@@ -7,26 +7,26 @@ import { buildSeoHead } from "@/utils/seoUtils";
 
 export function useSearchHead(searchParams: Ref<GetAnimeListBySearchQueryVariables>) {
   const pageTitle = computed(() => {
-    const query = searchParams.value.query?.trim();
-    if (query) {
-      return `${query} - 搜索结果 - 有希计划`;
+    const keyword = searchParams.value.keyword?.trim();
+    if (keyword) {
+      return `${keyword} - 搜索结果 - 有希计划`;
     }
     return "搜索动漫 - 有希计划";
   });
 
   const pageDescription = computed(() => {
-    const query = searchParams.value.query?.trim();
-    if (query) {
-      return `在有希计划上搜索关于“${query}”的番剧。Meta Anime 聚合多个数据源，为您提供最全面的动漫信息和评分。`;
+    const keyword = searchParams.value.keyword?.trim();
+    if (keyword) {
+      return `在有希计划上搜索关于“${keyword}”的番剧。Meta Anime 聚合多个数据源，为您提供最全面的动漫信息和评分。`;
     }
     return "在有希计划上搜索番剧。Meta Anime 聚合多个数据源，为您提供最全面的动漫信息和评分。";
   });
 
   const pageUrl = computed(() => {
     const url = new URL("https://www.yukiani.com/search");
-    const query = searchParams.value.query?.trim();
-    if (query) {
-      url.searchParams.set("q", query);
+    const keyword = searchParams.value.keyword?.trim();
+    if (keyword) {
+      url.searchParams.set("q", keyword);
     }
     if (searchParams.value.pageNumber) {
       url.searchParams.set("page", searchParams.value.pageNumber.toString());
@@ -36,9 +36,9 @@ export function useSearchHead(searchParams: Ref<GetAnimeListBySearchQueryVariabl
 
   const pageKeywords = computed(() => {
     const keywords = ["动漫搜索", "anime search", "番剧查询", "有希计划"];
-    const query = searchParams.value.query?.trim();
-    if (query) {
-      keywords.push(query);
+    const keyword = searchParams.value.keyword?.trim();
+    if (keyword) {
+      keywords.push(keyword);
     }
     return keywords.join(",");
   });

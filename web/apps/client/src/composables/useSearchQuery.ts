@@ -12,7 +12,7 @@ export function useSearchQuery() {
 
   // 查询参数
   const searchParams = ref<GetAnimeListBySearchQueryVariables>({
-    query: searchInput.value,
+    keyword: searchInput.value,
     pageNumber: route.query.page ? parseInt(route.query.page as string, 10) : 0,
     pageSize: 30,
   });
@@ -23,7 +23,7 @@ export function useSearchQuery() {
     (newQuery) => {
       searchInput.value = (newQuery.q as string) || "";
       searchParams.value = {
-        query: searchInput.value,
+        keyword: searchInput.value,
         pageNumber: newQuery.page ? parseInt(newQuery.page as string, 10) : 0,
         pageSize: 30,
       };
@@ -33,9 +33,9 @@ export function useSearchQuery() {
 
   // 处理搜索提交
   const handleSearch = () => {
-    const query = searchInput.value.trim();
+    const keyword = searchInput.value.trim();
     router.push({
-      query: query ? { q: query, page: 0 } : {},
+      query: keyword ? { q: keyword, page: 0 } : {},
     });
   };
 

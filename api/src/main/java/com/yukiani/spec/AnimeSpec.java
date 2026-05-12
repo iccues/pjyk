@@ -65,9 +65,9 @@ public class AnimeSpec {
         };
     }
 
-    public static Specification<Anime> similarTitle(String query) {
-        return (root, cq, cb) -> {
-            if (query == null || query.isBlank()) return null;
+    public static Specification<Anime> similarTitle(String keyword) {
+        return (root, query, criteriaBuilder) -> {
+            if (keyword == null || keyword.isBlank()) return null;
 
             Path<?> titlePath = root.get("title");
             float threshold = 0.0f;
@@ -75,31 +75,31 @@ public class AnimeSpec {
             List<String> fields = List.of("titleNative", "titleRomaji", "titleEn", "titleCn");
 
             // WHERE: 任意 title 字段相似度超过阈值，或包含子串（解决短词嵌入长词中 trigram 无交集的问题）
-            String likePattern = "%" + query + "%";
+            String likePattern = "%" + keyword + "%";
             List<Predicate> predicates = new ArrayList<>();
             for (String field : fields) {
-                Expression<Float> sim = cb.function(
+                Expression<Float> sim = criteriaBuilder.function(
                         "word_similarity", Float.class,
-                        cb.literal(query), titlePath.get(field));
-                predicates.add(cb.or(
-                        cb.greaterThan(sim, threshold),
-                        cb.like(titlePath.get(field), likePattern)
+                        criteriaBuilder.literal(keyword), titlePath.get(field));
+                predicates.add(criteriaBuilder.or(
+                        criteriaBuilder.greaterThan(sim, threshold),
+                        criteriaBuilder.like(titlePath.get(field), likePattern)
                 ));
             }
 
             // ORDER BY GREATEST(similarity(...)) DESC
-            if (cq != null && !Long.class.equals(cq.getResultType())) {
+            if (query != null && !Long.class.equals(query.getResultType())) {
                 @SuppressWarnings("unchecked")
                 Expression<Float>[] simExprs = fields.stream()
-                        .map(field -> cb.function(
+                        .map(field -> criteriaBuilder.function(
                                 "word_similarity", Float.class,
-                                cb.literal(query), titlePath.get(field)))
+                                criteriaBuilder.literal(keyword), titlePath.get(field)))
                         .toArray(Expression[]::new);
-                Expression<Float> greatest = cb.function("GREATEST", Float.class, simExprs);
-                cq.orderBy(cb.desc(greatest));
+                Expression<Float> greatest = criteriaBuilder.function("GREATEST", Float.class, simExprs);
+                query.orderBy(criteriaBuilder.desc(greatest));
             }
 
-            return cb.or(predicates.toArray(Predicate[]::new));
+            return criteriaBuilder.or(predicates.toArray(Predicate[]::new));
         };
     }
 }

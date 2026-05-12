@@ -18,10 +18,10 @@ const toggleSearch = () => {
 };
 
 const handleSearch = () => {
-  const query = searchQuery.value.trim();
+  const keyword = searchQuery.value.trim();
   const routeLocation = router.resolve({
     path: "/search",
-    query: query ? { q: query } : {},
+    query: keyword ? { q: keyword } : {},
   });
   window.open(routeLocation.href, "_blank");
   isSearchVisible.value = false;

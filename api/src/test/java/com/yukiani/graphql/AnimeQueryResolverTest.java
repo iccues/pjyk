@@ -7,10 +7,12 @@ import com.yukiani.repo.AnimeRepository;
 import com.yukiani.repo.MappingRepository;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -37,6 +39,17 @@ public class AnimeQueryResolverTest {
 
     @Resource
     private MappingRepository mappingRepository;
+
+    @Resource
+    private JdbcTemplate jdbcTemplate;
+
+    @BeforeEach
+    public void registerH2Functions() {
+        jdbcTemplate.execute("""
+                CREATE ALIAS IF NOT EXISTS WORD_SIMILARITY FOR
+                "com.yukiani.graphql.AnimeQueryResolverTest.wordSimilarity"
+                """);
+    }
 
     @AfterEach
     public void cleanup() {
@@ -161,6 +174,50 @@ public class AnimeQueryResolverTest {
                 .andExpect(jsonPath("$.data.animeList.content", hasSize(1)))
                 .andExpect(jsonPath("$.data.animeList.content[0].title.titleNative")
                         .value("冬季动画"));
+    }
+
+    // ============ 搜索测试 ============
+
+    @Test
+    public void testAnimeListBySearch_FilterByKeyword() throws Exception {
+        createAndSaveAnime("进击的巨人", LocalDate.of(2024, 1, 15), 9.0, 80000.0);
+        createAndSaveAnime("孤独摇滚", LocalDate.of(2024, 4, 2), 8.5, 50000.0);
+
+        String query = """
+                {
+                  "query": "{ animeListBySearch(keyword: \\"进击\\") { content { title { titleNative } } pageInfo { totalElements } } }"
+                }
+                """;
+
+        mockMvc.perform(post(GRAPHQL_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(query))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errors").doesNotExist())
+                .andExpect(jsonPath("$.data.animeListBySearch.content", hasSize(1)))
+                .andExpect(jsonPath("$.data.animeListBySearch.content[0].title.titleNative")
+                        .value("进击的巨人"))
+                .andExpect(jsonPath("$.data.animeListBySearch.pageInfo.totalElements").value(1));
+    }
+
+    @Test
+    public void testAnimeListBySearch_BlankKeywordReturnsEmptyPage() throws Exception {
+        createAndSaveAnime("进击的巨人", LocalDate.of(2024, 1, 15), 9.0, 80000.0);
+
+        String query = """
+                {
+                  "query": "{ animeListBySearch(keyword: \\"   \\") { content { animeId } pageInfo { totalElements totalPages } } }"
+                }
+                """;
+
+        mockMvc.perform(post(GRAPHQL_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(query))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errors").doesNotExist())
+                .andExpect(jsonPath("$.data.animeListBySearch.content", hasSize(0)))
+                .andExpect(jsonPath("$.data.animeListBySearch.pageInfo.totalElements").value(0))
+                .andExpect(jsonPath("$.data.animeListBySearch.pageInfo.totalPages").value(1));
     }
 
     // ============ 排序测试 ============
@@ -314,5 +371,17 @@ public class AnimeQueryResolverTest {
         anime.setReviewStatus(ReviewStatus.APPROVED);
 
         return animeRepository.save(anime);
+    }
+
+    public static Float wordSimilarity(String left, String right) {
+        if (left == null || right == null) return 0.0f;
+
+        String normalizedLeft = left.trim().toLowerCase();
+        String normalizedRight = right.trim().toLowerCase();
+        if (normalizedLeft.isEmpty() || normalizedRight.isEmpty()) return 0.0f;
+
+        return normalizedRight.contains(normalizedLeft) || normalizedLeft.contains(normalizedRight)
+                ? 1.0f
+                : 0.0f;
     }
 }

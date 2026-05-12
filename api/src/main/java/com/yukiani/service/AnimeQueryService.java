@@ -44,16 +44,16 @@ public class AnimeQueryService {
     }
 
     public Page<Anime> getAnimeListBySearch(
-            String query,
+            String keyword,
             Integer pageNumber,
             Integer pageSize
     ) {
-        if (query == null || query.isBlank()) return Page.empty();
+        if (keyword == null || keyword.isBlank()) return Page.empty();
 
         int limitedPageSize = Math.min(pageSize, 60);
 
         Specification<Anime> spec = Specification.allOf(
-                AnimeSpec.similarTitle(query),
+                AnimeSpec.similarTitle(keyword),
                 AnimeSpec.reviewStatusEquals(ReviewStatus.APPROVED)
         );
         PageRequest pageRequest = PageRequest.of(pageNumber, limitedPageSize);

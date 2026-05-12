@@ -8,7 +8,7 @@ type Query {
     ): AnimePage!
 
     animeListBySearch(
-        query: String
+        keyword: String
         pageNumber: Int = 0
         pageSize: Int = 30
     ): AnimePage!
