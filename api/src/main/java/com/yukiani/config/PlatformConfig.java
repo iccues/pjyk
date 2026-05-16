@@ -8,9 +8,14 @@ import lombok.Data;
 @Data
 public class PlatformConfig {
     /**
-     * 热度归一化乘数
+     * 热度权重
      */
-    private double popularityMultiplier = 1.0;
+    private double popularityWeight = 1;
+
+    /**
+     * 热度归一化 - 中位数
+     */
+    private double popularityMedian = 10000;
 
     /**
      * 评分权重

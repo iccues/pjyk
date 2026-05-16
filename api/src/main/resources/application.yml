@@ -17,17 +17,20 @@ spring:
 
 platform:
   bangumi:
-    popularity-multiplier: 166.7
+    popularity-weight: 2
+    popularity-median: 807.0
     score-weight: 2
-    score-mean: 5.81
-    score-std: 1.12
+    score-mean: 6.41
+    score-std: 0.99
   anilist:
-    popularity-multiplier: 11.1
+    popularity-weight: 1
+    popularity-median: 16513.5
     score-weight: 1
-    score-mean: 67.2
-    score-std: 9.67
+    score-mean: 67.5
+    score-std: 9.36
   myanimelist:
-    popularity-multiplier: 1.0
+    popularity-weight: 1
+    popularity-median: 25071.0
     score-weight: 1
-    score-mean: 6.99
-    score-std: 0.766
+    score-mean: 7.10
+    score-std: 0.780

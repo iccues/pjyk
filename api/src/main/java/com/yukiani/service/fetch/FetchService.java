@@ -47,6 +47,7 @@ public class FetchService {
 
     private void safeFetchMappings(AbstractAnimeFetchService service, Platform platform, int year, Season season) {
         try {
+            log.debug("{} fetch start for year={}, season={}", platform, year, season);
             service.fetchAndSaveMappings(year, season);
             log.debug("{} fetch completed for year={}, season={}", platform, year, season);
         } catch (Exception e) {
@@ -57,6 +58,7 @@ public class FetchService {
     @Async
     public void linkMappings() {
         try {
+            log.debug("link mappings start");
             titleBasedLinkService.linkAllOrphanedMappings();
             log.debug("link mappings completed");
         } catch (Exception e) {
@@ -66,7 +68,13 @@ public class FetchService {
 
     @Async
     public void calculateAllMetric() {
-        metricService.calculateAllMetric();
+        try {
+            log.debug("calculate metric start");
+            metricService.calculateAllMetric();
+            log.debug("calculate metric completed");
+        } catch (Exception e) {
+            log.error("calculate metric failed: {}", e.getMessage());
+        }
     }
 
     public AbstractAnimeFetchService getFetchService(Platform platform) {
