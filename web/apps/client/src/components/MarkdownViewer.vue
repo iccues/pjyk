@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import mk from "@vscode/markdown-it-katex";
+import { katex } from "@mdit/plugin-katex";
 import MarkdownIt from "markdown-it";
 
-import "katex/dist/katex.min.css";
 import "github-markdown-css/github-markdown-light.css";
 
 const props = defineProps<{
@@ -10,7 +9,7 @@ const props = defineProps<{
 }>();
 
 const md = new MarkdownIt();
-md.use(mk, { throwOnError: false });
+md.use(katex, { throwOnError: false, output: "mathml" });
 const content = md.render(props.raw);
 </script>
 

@@ -20,6 +20,8 @@ const subTitles = computed(() => {
   if (t.titleEn) arr.push(t.titleEn);
   return arr;
 });
+
+const formater = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
 </script>
 
 <template>
@@ -76,7 +78,9 @@ const subTitles = computed(() => {
           class="flex flex-col items-center text-pink-500 sm:items-start"
         >
           <span class="text-[12px] font-bold tracking-wider uppercase opacity-60">人气值</span>
-          <span class="text-[32px] leading-none font-black">{{ anime.popularity.toFixed(0) }}</span>
+          <span class="text-[32px] leading-none font-black tabular-nums">{{
+            formater.format(anime.popularity)
+          }}</span>
         </div>
       </div>
     </div>

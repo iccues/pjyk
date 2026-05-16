@@ -129,6 +129,9 @@ importers:
       '@graphql-typed-document-node/core':
         specifier: ^3.2.0
         version: 3.2.0(graphql@16.14.0)
+      '@mdit/plugin-katex':
+        specifier: ^0.25.2
+        version: 0.25.2(markdown-it@14.1.1)
       '@pjyk-web/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -740,6 +743,33 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@mdit/helper@0.23.2':
+    resolution: {integrity: sha512-w4oja7kZYnkSiodfn4Neg1gmlIkvQtmCBJTLvLFOaET7xt8KomDNPQeumpGobQ9dWkXFqBKHlxjTYgroPH+CvA==}
+    engines: {node: '>= 20'}
+    peerDependencies:
+      markdown-it: ^14.1.0
+    peerDependenciesMeta:
+      markdown-it:
+        optional: true
+
+  '@mdit/plugin-katex@0.25.2':
+    resolution: {integrity: sha512-r7nKvngZP2XXVGsYIXZt4UNxhTAxwSbLSXQtW445nJGhcp0ZrWmdPoz3AFZAX5x51inARab/lnZhD3uq01V5Yg==}
+    engines: {node: '>= 20'}
+    peerDependencies:
+      markdown-it: ^14.1.0
+    peerDependenciesMeta:
+      markdown-it:
+        optional: true
+
+  '@mdit/plugin-tex@0.24.2':
+    resolution: {integrity: sha512-nVKIJHQJHvgDByKMpCgFT6gdeEZUyzZby24BjCjxP2N10bkgK8IEwZIBu7G5n5WBw2D0kmFD4Top+YA2mjeiQQ==}
+    engines: {node: '>= 20'}
+    peerDependencies:
+      markdown-it: ^14.1.0
+    peerDependenciesMeta:
+      markdown-it:
+        optional: true
 
   '@napi-rs/wasm-runtime@1.1.4':
     resolution: {integrity: sha512-3NQNNgA1YSlJb/kMH1ildASP9HW7/7kYnRI2szWJaofaS1hWmbGI4H+d3+22aGzXXN9IJ+n+GiFVcGipJP18ow==}
@@ -3832,6 +3862,27 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@mdit/helper@0.23.2(markdown-it@14.1.1)':
+    dependencies:
+      '@types/markdown-it': 14.1.2
+    optionalDependencies:
+      markdown-it: 14.1.1
+
+  '@mdit/plugin-katex@0.25.2(markdown-it@14.1.1)':
+    dependencies:
+      '@mdit/helper': 0.23.2(markdown-it@14.1.1)
+      '@mdit/plugin-tex': 0.24.2(markdown-it@14.1.1)
+      '@types/markdown-it': 14.1.2
+      katex: 0.16.45
+    optionalDependencies:
+      markdown-it: 14.1.1
+
+  '@mdit/plugin-tex@0.24.2(markdown-it@14.1.1)':
+    dependencies:
+      '@types/markdown-it': 14.1.2
+    optionalDependencies:
+      markdown-it: 14.1.1
 
   '@napi-rs/wasm-runtime@1.1.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:

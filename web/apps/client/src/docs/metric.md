@@ -58,26 +58,27 @@ $$
 
 ### 第一步：归一化
 
-各平台的用户规模差异悬殊（MAL 动辄数十万关注，Bangumi 通常只有数千），直接相加会让 MAL 几乎完全主导结果。为此，各平台的原始关注人数先乘以对应**倍率**进行换算：
+各平台的用户规模差异悬殊（MAL 动辄数十万关注，Bangumi 通常只有数千），直接相加会让数据极不平衡。为此，各平台的原始关注人数会根据该平台的**热度中位数**进行归一化处理：
 
 $$
-normalizedPopularity = popularity \times multiplier
+normalizedPopularity = \frac{popularity}{median} \times 10000
 $$
 
 - **popularity**：该番剧在此平台的原始关注人数
-- **multiplier**：该平台的热度倍率，以 MAL 为基准（倍率 1.0）
+- **median**：该平台所有番剧热度的中位数（用于将不同规模的平台拉齐到同一基准）
+- **10000**：系数，用于将结果调整到更直观的数值区间
 
 > 各平台的数据来源略有不同：AniList 直接提供专门的 popularity 字段，而 Bangumi 和 MAL 则以**评分人数**作为热度的代理指标。
 
-> 倍率通过数据统计得出：对所有同时在 MAL 与目标平台有记录的番剧，计算两者关注人数的比值，取**中位数**作为最终倍率。
+### 第二步：加权累加
 
-### 第二步：累加
+与评分的加权平均不同，热度采用**加权累加**的方式，从而确保覆盖平台越多、关注人数越多的番剧，其最终热度值越高：
 
 $$
-\text{Total Popularity} = \sum normalizedPopularity_i
+\text{Total Popularity} = \sum (normalizedPopularity_i \times weight_i)
 $$
 
-与评分不同，热度直接累加各平台的归一化值，覆盖平台越多、关注人数越多，热度值越高。
+- **weight**：该平台的热度权重，反映了各平台数据的权位
 
 > 若某个平台对该番剧无关注数据，则跳过该平台。
 
