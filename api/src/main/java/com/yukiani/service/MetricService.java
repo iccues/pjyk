@@ -43,7 +43,7 @@ public class MetricService {
         for (Mapping mapping : anime.getMappings()) {
             Double normalizedScore = mapping.getNormalizedScore();
             if (normalizedScore != null) {
-                int weight = getWeight(mapping.getSourcePlatform());
+                int weight = getScoreWeight(mapping.getSourcePlatform());
                 totalScore += normalizedScore * weight;
                 totalWeight += weight;
             }
@@ -56,7 +56,7 @@ public class MetricService {
         }
     }
 
-    private int getWeight(Platform platform) {
+    private int getScoreWeight(Platform platform) {
         return platformConfigProperties.getConfig(platform).getScoreWeight();
     }
 
@@ -67,9 +67,14 @@ public class MetricService {
         for (Mapping mapping : anime.getMappings()) {
             Double normalizedPopularity = mapping.getNormalizedPopularity();
             if (normalizedPopularity != null && normalizedPopularity > 0) {
-                totalPopularity += normalizedPopularity;
+                double weight = getPopularityWeight(mapping.getSourcePlatform());
+                totalPopularity += normalizedPopularity * weight;
             }
         }
         anime.setPopularity(totalPopularity);
+    }
+
+    private double getPopularityWeight(Platform platform) {
+        return platformConfigProperties.getConfig(platform).getPopularityWeight();
     }
 }

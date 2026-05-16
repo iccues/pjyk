@@ -53,8 +53,8 @@ public abstract class AbstractAnimeFetchService {
 
     public double normalizePopularity(double rawPopularity) {
         PlatformConfig config = platformConfigProperties.getConfig(getPlatform());
-        double multiplier = config.getPopularityMultiplier();
-        return rawPopularity * multiplier;
+        double median = config.getPopularityMedian();
+        return rawPopularity / median * 10000;
     }
 
     protected MappingInfo extractMappingInfo(JsonNode jsonNode) {

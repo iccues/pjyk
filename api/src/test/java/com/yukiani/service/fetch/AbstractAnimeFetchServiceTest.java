@@ -53,7 +53,7 @@ public class AbstractAnimeFetchServiceTest {
         PlatformConfig bangumiConfig = new PlatformConfig();
         bangumiConfig.setScoreMean(6.0);
         bangumiConfig.setScoreStd(1.0);
-        bangumiConfig.setPopularityMultiplier(100.0);
+        bangumiConfig.setPopularityMedian(10000.0);
         lenient().when(platformConfigProperties.getConfig(Platform.Bangumi)).thenReturn(bangumiConfig);
     }
 
