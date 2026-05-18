@@ -26,7 +26,7 @@ const content = md.render(props.raw);
 }
 
 /* 块级公式超出时横向滚动，而非撑破布局 */
-.markdown-body :deep(.katex-display) {
+.markdown-body :deep(.katex-block) {
   overflow-x: auto;
   overflow-y: hidden;
 }

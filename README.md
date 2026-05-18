@@ -1,5 +1,7 @@
 # 有希计划 Project Yuki
 
+有希计划现已部署在 [`www.yukiani.com`](https://www.yukiani.com)。
+
 有希计划（Project Yuki）是一个番剧综合评分平台，整合 Bangumi、MyAnimeList、AniList 的评分与热度数据，提供更客观、更全面的番剧评价参考。项目按职责拆成三个部分：
 
 - `api`：后端服务，负责动漫数据、映射关系、抓取任务、GraphQL 查询和管理后台接口
@@ -39,3 +41,4 @@ docker compose up --build
 - 后端默认 GraphQL 路径是 `/api/graphql`
 - 前端通过 `/api/graphql` 和后端交互，`apps/client` 是公开站点，`apps/admin` 是管理后台
 - 数据分析模块默认连接本地 PostgreSQL
+- [`pjyk-labs`](https://github.com/iccues/pjyk-labs)：`pjyk` 的实验仓库，用于尝试其他技术栈的实现方式
