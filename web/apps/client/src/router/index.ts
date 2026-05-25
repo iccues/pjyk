@@ -23,15 +23,15 @@ const routes = [
       },
       {
         path: "docs/about",
-        component: () => import("@/pages/docs/AboutPage.vue"),
+        component: () => import("@/docs/pages/AboutPage.vue"),
       },
       {
         path: "docs/metric",
-        component: () => import("@/pages/docs/MetricPage.vue"),
+        component: () => import("@/docs/pages/MetricPage.vue"),
       },
       {
         path: "docs/platforms",
-        component: () => import("@/pages/docs/PlatformsPage.vue"),
+        component: () => import("@/docs/pages/PlatformsPage.vue"),
       },
       {
         path: ":pathMatch(.*)*",
