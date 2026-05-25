@@ -38,7 +38,7 @@ const formater = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
     </div>
 
     <!-- Score rows -->
-    <div class="grid grid-cols-2 gap-y-2 text-[14px]">
+    <div class="grid grid-cols-2 gap-y-1 text-[14px]">
       <template v-if="mapping.rawScore != null">
         <span class="text-gray-500">原始评分</span>
         <span class="font-bold text-indigo-600 tabular-nums">{{

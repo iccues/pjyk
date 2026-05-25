@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import Header from "@/components/Header.vue";
 import githubIcon from "@pjyk-web/shared/assets/github.svg";
+
+import Header from "@/components/Header.vue";
 </script>
 
 <template>

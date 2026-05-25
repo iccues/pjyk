@@ -3,6 +3,7 @@ import { useQuery } from "@urql/vue";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 
+import AnimeDetailSkeleton from "@/components/AnimeDetailSkeleton.vue";
 import AnimeHero from "@/components/AnimeHero.vue";
 import AnimePlatformCard from "@/components/AnimePlatformCard.vue";
 import { useAnimeDetailHead } from "@/composables/useAnimeDetailHead";
@@ -25,7 +26,7 @@ useAnimeDetailHead(anime);
 <template>
   <div class="mx-auto max-w-[1100px] p-5">
     <!-- States -->
-    <div v-if="fetching" class="py-20 text-center text-gray-400">加载中...</div>
+    <AnimeDetailSkeleton v-if="fetching" />
     <div v-else-if="error" class="py-20 text-center text-red-500">{{ error.message }}</div>
     <div v-else-if="!anime" class="py-20 text-center text-gray-500">未找到该番剧</div>
 

@@ -4,6 +4,7 @@ import type { CombinedError } from "@urql/vue";
 import type { AnimeListFragment } from "@/graphql/generated/graphql";
 
 import AnimeCard from "./AnimeCard.vue";
+import AnimeCardSkeleton from "./AnimeCardSkeleton.vue";
 
 const props = defineProps<{
   animeList?: AnimeListFragment;
@@ -14,11 +15,17 @@ const props = defineProps<{
 const emit = defineEmits<{
   "page-change": [page: number];
 }>();
+
+const skeletonCount = 6;
 </script>
 
 <template>
   <div v-if="error" class="py-10 text-center text-base text-red-600">{{ error }}</div>
-  <div v-else-if="fetching" class="py-10 text-center text-base text-gray-600">加载中...</div>
+  <div v-else-if="fetching">
+    <div class="grid grid-cols-[repeat(auto-fill,12.5rem)] justify-center gap-5">
+      <AnimeCardSkeleton v-for="index in skeletonCount" :key="index" />
+    </div>
+  </div>
   <div v-else-if="animeList && animeList.content.length > 0">
     <div class="grid grid-cols-[repeat(auto-fill,12.5rem)] justify-center gap-5">
       <AnimeCard v-for="anime in animeList.content" :key="anime.animeId" :anime="anime" />

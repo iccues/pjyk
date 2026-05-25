@@ -153,9 +153,6 @@ importers:
       graphql:
         specifier: ^16.14.0
         version: 16.14.0
-      katex:
-        specifier: ^0.16.45
-        version: 0.16.45
       markdown-it:
         specifier: ^14.1.1
         version: 14.1.1
