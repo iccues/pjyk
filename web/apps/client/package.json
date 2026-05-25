@@ -20,7 +20,6 @@
     "element-plus": "catalog:",
     "github-markdown-css": "^5.9.0",
     "graphql": "^16.14.0",
-    "katex": "^0.16.45",
     "markdown-it": "^14.1.1",
     "tailwindcss": "catalog:",
     "vue": "catalog:",

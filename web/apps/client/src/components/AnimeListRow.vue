@@ -7,6 +7,7 @@ import { GetAnimeListRowDocument, type Season, type SortBy } from "@/graphql/gen
 import { filtersToQuery } from "@/utils/queryUtils";
 
 import AnimeCard from "./AnimeCard.vue";
+import AnimeCardSkeleton from "./AnimeCardSkeleton.vue";
 
 const props = defineProps<{
   year?: number;
@@ -18,6 +19,7 @@ const props = defineProps<{
 const scrollContainer = ref<HTMLElement | null>(null);
 const showLeftButton = ref(false);
 const showRightButton = ref(false);
+const skeletonCount = 6;
 
 // 构建查看更多链接的查询参数
 const moreLink = computed(() => {
@@ -96,7 +98,13 @@ onMounted(updateButtonVisibility);
 
   <!-- 动画列表 -->
   <div v-if="error" class="py-10 text-center text-base text-red-600">{{ error }}</div>
-  <div v-else-if="fetching" class="py-10 text-center text-base text-gray-600">加载中...</div>
+  <div v-else-if="fetching">
+    <div
+      class="scrollbar-hide flex gap-5 overflow-x-auto px-[max(1.25rem,calc(50%-700px+1.25rem))] pb-4"
+    >
+      <AnimeCardSkeleton v-for="index in skeletonCount" :key="index" class="flex-shrink-0" />
+    </div>
+  </div>
 
   <div v-else-if="data && data?.animeList.content.length > 0" class="group/row relative">
     <!-- 滚动容器 -->
