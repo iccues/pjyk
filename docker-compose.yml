@@ -18,11 +18,11 @@ services:
       - pjyk-network
 
   # 后端服务
-  api:
+  server:
     build:
-      context: ./api
+      context: ./server
       dockerfile: Dockerfile
-    container_name: pjyk-api
+    container_name: pjyk-server
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pjyk
@@ -47,7 +47,7 @@ services:
       - "80:80"
       - "81:81"
     depends_on:
-      - api
+      - server
     networks:
       - pjyk-network
     restart: unless-stopped

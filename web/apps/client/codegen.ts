@@ -2,7 +2,7 @@ import type { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: "../../../api/src/main/resources/graphql/schema.graphqls",
+  schema: "../../../server/src/main/resources/graphql/schema.graphqls",
   documents: "src/**/*.graphql",
   generates: {
     "src/graphql/generated/": {
