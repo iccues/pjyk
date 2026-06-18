@@ -22,7 +22,7 @@ public class Mapping {
 
     @ToString.Exclude
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "anime_id")
     Anime anime;
 
