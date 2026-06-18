@@ -24,6 +24,13 @@ public class Anime {
     @Embedded
     AnimeTitles title = new AnimeTitles();
 
+    @PostLoad
+    protected void postLoad() {
+        if (title == null) {
+            title = new AnimeTitles();
+        }
+    }
+
     String coverImage;
 
     LocalDate startDate;

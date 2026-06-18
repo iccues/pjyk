@@ -250,4 +250,21 @@ public class AnimeRepoServiceTest {
         assertNotNull(result);
         assertEquals(existingAnime.getAnimeId(), result.getAnimeId());
     }
+
+    @Test
+    public void testAnimeTitleIsNotNullWhenAllFieldsAreNull() {
+        Anime anime = new Anime();
+        anime.setTitle(new AnimeTitles());
+        anime = animeRepository.save(anime);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        Anime reloaded = animeRepository.findById(anime.getAnimeId()).orElseThrow();
+        assertNotNull(reloaded.getTitle());
+        assertNull(reloaded.getTitle().getTitleNative());
+        assertNull(reloaded.getTitle().getTitleRomaji());
+        assertNull(reloaded.getTitle().getTitleEn());
+        assertNull(reloaded.getTitle().getTitleCn());
+    }
 }

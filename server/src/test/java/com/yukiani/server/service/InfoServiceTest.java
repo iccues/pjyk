@@ -208,6 +208,23 @@ public class InfoServiceTest {
         assertNull(anime.getTitle().getTitleNative());
     }
 
+    @Test
+    void testApplyMappingInfo_WithNullTitles() {
+        MappingInfo mappingInfo = new MappingInfo(
+                null,
+                "https://example.com/cover.jpg",
+                LocalDate.of(2024, 4, 1)
+        );
+        Mapping mappingWithoutTitles = new Mapping(Platform.AniList, "999", mappingInfo);
+
+        infoService.applyMappingInfo(anime, mappingWithoutTitles);
+
+        assertEquals("https://example.com/cover.jpg", anime.getCoverImage());
+        assertEquals(LocalDate.of(2024, 4, 1), anime.getStartDate());
+        assertNotNull(anime.getTitle());
+        assertNull(anime.getTitle().getTitleNative());
+    }
+
     // ==================== cleanInfo 测试 ====================
 
     @Test
