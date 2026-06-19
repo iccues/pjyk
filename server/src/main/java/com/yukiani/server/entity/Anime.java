@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,6 +25,13 @@ public class Anime {
     @Embedded
     AnimeTitles title = new AnimeTitles();
 
+    @PostLoad
+    protected void postLoad() {
+        if (title == null) {
+            title = new AnimeTitles();
+        }
+    }
+
     String coverImage;
 
     LocalDate startDate;
@@ -38,6 +46,7 @@ public class Anime {
     @OneToMany(mappedBy = "anime",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             fetch = FetchType.LAZY)
+    @BatchSize(size = 60)
     List<Mapping> mappings = new ArrayList<>();
 
     public void addMapping(Mapping mapping) {

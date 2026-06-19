@@ -1,40 +1,24 @@
 <script setup lang="ts">
 import { ArrowLeft, ArrowRight } from "@element-plus/icons-vue";
-import { useQuery } from "@urql/vue";
-import { computed, nextTick, onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
+import type { RouteLocationRaw } from "vue-router";
 
-import { GetAnimeListRowDocument, type Season, type SortBy } from "@/graphql/generated/graphql";
-import { filtersToQuery } from "@/utils/queryUtils";
+import type { AnimeCardFragment } from "@/graphql/generated/graphql";
 
 import AnimeCard from "./AnimeCard.vue";
 import AnimeCardSkeleton from "./AnimeCardSkeleton.vue";
 
 const props = defineProps<{
-  year?: number;
-  season?: Season;
-  sortBy?: SortBy;
-  title?: string;
+  title: string;
+  moreLink: RouteLocationRaw;
+  animeList?: AnimeCardFragment[];
+  fetching: boolean;
 }>();
 
 const scrollContainer = ref<HTMLElement | null>(null);
 const showLeftButton = ref(false);
 const showRightButton = ref(false);
 const skeletonCount = 6;
-
-// 构建查看更多链接的查询参数
-const moreLink = computed(() => {
-  const query = filtersToQuery(props);
-  const queryString = new URLSearchParams(query).toString();
-  return `/anime/list${queryString ? `?${queryString}` : ""}`;
-});
-
-const { data, fetching, error } = useQuery({
-  query: GetAnimeListRowDocument,
-  variables: computed(() => ({
-    ...props,
-    pageSize: 12,
-  })),
-});
 
 const updateButtonVisibility = () => {
   if (!scrollContainer.value) return;
@@ -74,10 +58,7 @@ const scrollRight = () => {
   });
 };
 
-watch(data, async () => {
-  await nextTick();
-  updateButtonVisibility();
-});
+watch(() => props.animeList, updateButtonVisibility, { flush: "post" });
 
 onMounted(updateButtonVisibility);
 </script>
@@ -97,8 +78,7 @@ onMounted(updateButtonVisibility);
   </div>
 
   <!-- 动画列表 -->
-  <div v-if="error" class="py-10 text-center text-base text-red-600">{{ error }}</div>
-  <div v-else-if="fetching">
+  <div v-if="fetching">
     <div
       class="scrollbar-hide flex gap-5 overflow-x-auto px-[max(1.25rem,calc(50%-700px+1.25rem))] pb-4"
     >
@@ -106,7 +86,7 @@ onMounted(updateButtonVisibility);
     </div>
   </div>
 
-  <div v-else-if="data && data?.animeList.content.length > 0" class="group/row relative">
+  <div v-else-if="animeList && animeList.length > 0" class="group/row relative">
     <!-- 滚动容器 -->
     <div
       ref="scrollContainer"
@@ -114,7 +94,7 @@ onMounted(updateButtonVisibility);
       class="scrollbar-hide flex gap-5 overflow-x-auto scroll-smooth px-[max(1.25rem,calc(50%-700px+1.25rem))] pb-4"
     >
       <AnimeCard
-        v-for="anime in data.animeList.content"
+        v-for="anime in animeList"
         :key="anime.animeId"
         :anime="anime"
         class="flex-shrink-0"

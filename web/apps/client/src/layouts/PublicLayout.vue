@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import bilibiliIcon from "@pjyk-web/shared/assets/bilibili.svg";
 import githubIcon from "@pjyk-web/shared/assets/github.svg";
 
 import Header from "./Header.vue";
@@ -27,6 +28,14 @@ import Header from "./Header.vue";
         aria-label="GitHub"
       >
         <img :src="githubIcon" class="size-5" />
+      </a>
+      <a
+        href="https://space.bilibili.com/286116568"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Bilibili"
+      >
+        <img :src="bilibiliIcon" class="size-5" />
       </a>
     </nav>
     <p>&copy; 2026 Project Yuki. All rights reserved.</p>

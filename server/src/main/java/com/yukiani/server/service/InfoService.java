@@ -29,7 +29,9 @@ public class InfoService {
         if (anime.getTitle() == null) {
             anime.setTitle(new AnimeTitles());
         }
-        anime.getTitle().merge(mappingInfo.getTitle());
+        if (mappingInfo.getTitle() != null) {
+            anime.getTitle().merge(mappingInfo.getTitle());
+        }
     }
 
     public void cleanInfo(Anime anime) {

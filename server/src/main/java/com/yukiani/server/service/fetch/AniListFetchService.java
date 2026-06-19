@@ -80,7 +80,7 @@ public class AniListFetchService extends AbstractAnimeFetchService {
     @Override
     protected List<JsonNode> fetchMappingJson(int year, Season season) {
         List<JsonNode> list = new ArrayList<>();
-        for (int i = 2; ; i++) {
+        for (int i = 1; ; i++) {
             JsonNode page = fetchPage(year, season, i);
             if (page == null) break;
 
