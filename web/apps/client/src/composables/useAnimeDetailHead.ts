@@ -19,7 +19,8 @@ export function useAnimeDetailHead(anime: Ref<GetAnimeDetailQuery["anime"] | und
     let desc = `在有希计划中查看《${title}》的详细信息。`;
     if (anime.value.averageScore) desc += ` 综合评分：${anime.value.averageScore.toFixed(1)}/100。`;
     if (anime.value.startDate) desc += ` 开播日期：${anime.value.startDate}。`;
-    desc += " Meta Anime 聚合多个数据源，为您提供最全面的动漫信息和评分。";
+    desc +=
+      " 有希计划整合 Bangumi、MyAnimeList、AniList 多平台数据，为您提供更客观、更全面的番剧评价参考。";
     return desc;
   });
 

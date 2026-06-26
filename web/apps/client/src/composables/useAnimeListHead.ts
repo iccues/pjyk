@@ -39,7 +39,9 @@ export function useAnimeListHead(animeListParams: Ref<GetAnimeListQueryVariables
     }
 
     parts.push(`动漫列表，按${SORT_BY_NAME_MAP[animeListParams.value.sortBy || "SCORE"]}排序。`);
-    parts.push("Meta Anime 聚合多个数据源，为您提供最全面的动漫信息和评分。");
+    parts.push(
+      "有希计划整合 Bangumi、MyAnimeList、AniList 多平台数据，为您提供更客观、更全面的番剧评价参考。",
+    );
 
     return parts.join("");
   });

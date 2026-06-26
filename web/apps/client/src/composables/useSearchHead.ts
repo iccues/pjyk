@@ -17,9 +17,9 @@ export function useSearchHead(searchParams: Ref<GetAnimeListBySearchQueryVariabl
   const pageDescription = computed(() => {
     const keyword = searchParams.value.keyword?.trim();
     if (keyword) {
-      return `在有希计划上搜索关于“${keyword}”的番剧。Meta Anime 聚合多个数据源，为您提供最全面的动漫信息和评分。`;
+      return `在有希计划上搜索关于“${keyword}”的番剧。有希计划整合 Bangumi、MyAnimeList、AniList 多平台数据，为您提供更客观、更全面的番剧评价参考。`;
     }
-    return "在有希计划上搜索番剧。Meta Anime 聚合多个数据源，为您提供最全面的动漫信息和评分。";
+    return "在有希计划上搜索番剧。有希计划整合 Bangumi、MyAnimeList、AniList 多平台数据，为您提供更客观、更全面的番剧评价参考。";
   });
 
   const pageUrl = computed(() => {
