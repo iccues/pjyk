@@ -2,8 +2,10 @@ package com.yukiani.server.service.fetch;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.yukiani.server.entity.AnimeTitles;
+import com.yukiani.server.entity.LocalDateRange;
 import com.yukiani.server.entity.Platform;
 import com.yukiani.server.entity.Season;
+import com.yukiani.server.service.SeasonService;
 import com.yukiani.server.util.RetryUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -74,7 +76,17 @@ public class BangumiFetchService extends AbstractAnimeFetchService {
 
     @Override
     protected List<JsonNode> fetchMappingJson(int year, Season season) {
-        JsonNode firstPage = fetchPage(year, season, 0);
+        LocalDateRange range = seasonService.getStartDateRange(year, season);
+        List<JsonNode> list = new ArrayList<>();
+        // 与榜单查询范围一致，日期递增同时处理冬季和全年抓取的跨年月份。
+        for (LocalDate month = range.start(); month.isBefore(range.end()); month = month.plusMonths(1)) {
+            list.addAll(fetchMonthMappings(month.getYear(), month.getMonthValue()));
+        }
+        return list;
+    }
+
+    private List<JsonNode> fetchMonthMappings(int year, int month) {
+        JsonNode firstPage = fetchPage(year, month, 0);
         if (firstPage == null) {
             return new ArrayList<>();
         }
@@ -82,12 +94,11 @@ public class BangumiFetchService extends AbstractAnimeFetchService {
         List<JsonNode> list = new ArrayList<>();
         firstPage.path("data").forEach(list::add);
 
-
         int total = firstPage.path("total").asInt();
         int totalPage = (total + pageSize - 1) / pageSize;
 
         for (int i = 1; i < totalPage; i++) {
-            JsonNode page = fetchPage(year, season, i);
+            JsonNode page = fetchPage(year, month, i);
             page.path("data").forEach(list::add);
         }
 
@@ -97,33 +108,35 @@ public class BangumiFetchService extends AbstractAnimeFetchService {
     @Resource
     WebClient bangumiWebClient;
 
+    @Resource
+    SeasonService seasonService;
+
     /** Bangumi 单次请求的最大记录数。 */
     final int pageSize = 50;
 
-    JsonNode fetchPage(int year, Season season, int page) {
-        Map<String, Object> queryParams = season != null
-                ? Map.of("year", year, "month", season.toMonth(), "limit", pageSize, "offset", page * pageSize)
-                : Map.of("year", year, "limit", pageSize, "offset", page * pageSize);
+    JsonNode fetchPage(int year, int month, int page) {
+        Map<String, Object> queryParams = Map.of(
+                "year", year, "month", month, "limit", pageSize, "offset", page * pageSize);
 
         return RetryUtil.executeWithRetry(
                 () -> bangumiWebClient.get()
                         .uri(uriBuilder -> {
+                            uriBuilder.path("/subjects").queryParam("type", 2);
                             queryParams.forEach(uriBuilder::queryParam);
                             return uriBuilder.build();
                         })
                         .retrieve()
                         .bodyToMono(JsonNode.class)
                         .block(),
-                String.format("Bangumi.fetchPage(year=%d, season=%s, page=%d)", year, season, page)
+                String.format("Bangumi.fetchPage(year=%d, month=%s, page=%d)", year, month, page)
         );
     }
 
     @Override
     protected JsonNode fetchSingleMappingJson(String platformId) {
-        WebClient singleClient = WebClient.create("https://api.bgm.tv/v0/subjects");
         return RetryUtil.executeWithRetry(
-                () -> singleClient.get()
-                        .uri("/{id}", platformId)
+                () -> bangumiWebClient.get()
+                        .uri("/subjects/{id}", platformId)
                         .retrieve()
                         .bodyToMono(JsonNode.class)
                         .block(),

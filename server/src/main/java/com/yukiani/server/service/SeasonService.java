@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Service
 public class SeasonService {
     /**
-     * 计算季度查询的左闭右开日期范围，并向前扩展一个月以容纳跨月排期。
+     * 计算查询的左闭右开日期范围，将自然季度或自然年整体前移一个月以容纳跨月排期。
      *
      * @param year   开播年份；为空时返回 {@code null}
      * @param season 开播季度；为空时覆盖全年

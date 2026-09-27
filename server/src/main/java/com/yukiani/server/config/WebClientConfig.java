@@ -15,7 +15,7 @@ public class WebClientConfig {
     @Bean
     public WebClient bangumiWebClient() {
         return WebClient.builder()
-                .baseUrl("https://api.bgm.tv/v0/subjects?type=2&sort=rank")
+                .baseUrl("https://api.bgm.tv/v0")
                 .exchangeStrategies(ExchangeStrategies.builder()
                         // 批量查询响应可能超过 WebClient 默认的 256 KiB 缓冲区。
                         .codecs(cfg -> cfg.defaultCodecs().maxInMemorySize(16 * 1024 * 1024))

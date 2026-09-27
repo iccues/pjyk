@@ -3,11 +3,11 @@ package com.yukiani.server.service.fetch;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yukiani.server.entity.Season;
+import com.yukiani.server.service.SeasonService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,7 +20,6 @@ import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,6 +45,7 @@ public class BangumiFetchServiceIntegrationTest {
         service = new BangumiFetchService();
         objectMapper = new ObjectMapper();
         ReflectionTestUtils.setField(service, "bangumiWebClient", mockWebClient);
+        ReflectionTestUtils.setField(service, "seasonService", new SeasonService());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class BangumiFetchServiceIntegrationTest {
         when(responseSpec.bodyToMono(JsonNode.class)).thenReturn(Mono.just(expectedResponse));
 
         // 执行测试
-        JsonNode result = service.fetchPage(2024, Season.SPRING, 0);
+        JsonNode result = service.fetchPage(2024, 4, 0);
 
         // 验证结果
         assertNotNull(result);
@@ -87,30 +87,17 @@ public class BangumiFetchServiceIntegrationTest {
         );
         JsonNode expectedResponse = objectMapper.readTree(jsonContent);
 
-        // Mock WebClient.create() 创建的临时客户端
-        WebClient mockSingleClient = mock(WebClient.class);
-        WebClient.RequestHeadersUriSpec mockSingleRequestSpec = mock(WebClient.RequestHeadersUriSpec.class);
-        WebClient.RequestHeadersSpec mockSingleHeadersSpec = mock(WebClient.RequestHeadersSpec.class);
-        WebClient.ResponseSpec mockSingleResponseSpec = mock(WebClient.ResponseSpec.class);
+        when(mockWebClient.get()).thenReturn(requestHeadersUriSpec);
+        when(requestHeadersUriSpec.uri("/subjects/{id}", "88888")).thenReturn(requestHeadersSpec);
+        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.bodyToMono(JsonNode.class)).thenReturn(Mono.just(expectedResponse));
 
-        try (MockedStatic<WebClient> webClientMock = mockStatic(WebClient.class)) {
-            webClientMock.when(() -> WebClient.create(anyString())).thenReturn(mockSingleClient);
+        JsonNode result = service.fetchSingleMappingJson("88888");
 
-            when(mockSingleClient.get()).thenReturn(mockSingleRequestSpec);
-            when(mockSingleRequestSpec.uri(anyString(), (Object) any())).thenReturn(mockSingleHeadersSpec);
-            when(mockSingleHeadersSpec.retrieve()).thenReturn(mockSingleResponseSpec);
-            when(mockSingleResponseSpec.bodyToMono(JsonNode.class)).thenReturn(Mono.just(expectedResponse));
-
-            // 执行测试
-            JsonNode result = service.fetchSingleMappingJson("88888");
-
-            // 验证结果
-            assertNotNull(result);
-            assertEquals("88888", result.path("id").asText());
-
-            // 验证 WebClient.create 被调用
-            webClientMock.verify(() -> WebClient.create("https://api.bgm.tv/v0/subjects"));
-        }
+        assertNotNull(result);
+        assertEquals("88888", result.path("id").asText());
+        verify(mockWebClient).get();
+        verify(requestHeadersUriSpec).uri("/subjects/{id}", "88888");
     }
 
     @Test
@@ -141,8 +128,8 @@ public class BangumiFetchServiceIntegrationTest {
         assertNotNull(result);
         assertEquals(2, result.size()); // 只有第一页有 2 条数据
 
-        // 验证 WebClient 被调用了 3 次（总共 3 页）
-        verify(mockWebClient, times(3)).get();
+        // 每个月有 3 页，季度共请求 9 次。
+        verify(mockWebClient, times(9)).get();
     }
 
     @Test
@@ -164,10 +151,62 @@ public class BangumiFetchServiceIntegrationTest {
 
         // 验证结果 - total=30 < pageSize(50), 计算: (30+50-1)/50 = 1 页
         assertNotNull(result);
-        assertEquals(1, result.size());
+        assertEquals(3, result.size());
 
-        // 验证 WebClient 只被调用了 1 次
-        verify(mockWebClient, times(1)).get();
+        // 季度的三个月各请求一次。
+        verify(mockWebClient, times(3)).get();
+    }
+
+    @Test
+    public void testFetchMappingJson_FetchesEveryMonthInSeason() throws Exception {
+        JsonNode emptyResponse = objectMapper.readTree("{\"total\": 0, \"data\": []}");
+        BangumiFetchService spyService = spy(service);
+        doReturn(emptyResponse).when(spyService).fetchPage(anyInt(), anyInt(), anyInt());
+
+        List<JsonNode> result = spyService.fetchMappingJson(2024, Season.SPRING);
+
+        assertTrue(result.isEmpty());
+        verify(spyService).fetchPage(2024, 3, 0);
+        verify(spyService).fetchPage(2024, 4, 0);
+        verify(spyService).fetchPage(2024, 5, 0);
+        verify(spyService, times(3)).fetchPage(anyInt(), anyInt(), anyInt());
+    }
+
+    @Test
+    public void testFetchMappingJson_WinterCrossesYearAndPaginatesEachMonth() throws Exception {
+        BangumiFetchService spyService = spy(service);
+        doReturn(objectMapper.readTree("{\"total\": 51, \"data\": [{\"id\": 1}]}"))
+                .when(spyService).fetchPage(2023, 12, 0);
+        doReturn(objectMapper.readTree("{\"total\": 51, \"data\": [{\"id\": 2}]}"))
+                .when(spyService).fetchPage(2023, 12, 1);
+        doReturn(objectMapper.readTree("{\"total\": 0, \"data\": []}"))
+                .when(spyService).fetchPage(2024, 1, 0);
+        doReturn(objectMapper.readTree("{\"total\": 1, \"data\": [{\"id\": 3}]}"))
+                .when(spyService).fetchPage(2024, 2, 0);
+
+        List<JsonNode> result = spyService.fetchMappingJson(2024, Season.WINTER);
+
+        assertEquals(List.of(1, 2, 3), result.stream().map(node -> node.path("id").asInt()).toList());
+        verify(spyService).fetchPage(2023, 12, 0);
+        verify(spyService).fetchPage(2023, 12, 1);
+        verify(spyService).fetchPage(2024, 1, 0);
+        verify(spyService).fetchPage(2024, 2, 0);
+        verify(spyService, times(4)).fetchPage(anyInt(), anyInt(), anyInt());
+    }
+
+    @Test
+    public void testFetchMappingJson_WholeYearRunsFromPreviousDecemberThroughNovember() throws Exception {
+        JsonNode emptyResponse = objectMapper.readTree("{\"total\": 0, \"data\": []}");
+        BangumiFetchService spyService = spy(service);
+        doReturn(emptyResponse).when(spyService).fetchPage(anyInt(), anyInt(), anyInt());
+
+        assertTrue(spyService.fetchMappingJson(2024, null).isEmpty());
+
+        verify(spyService).fetchPage(2023, 12, 0);
+        for (int month = 1; month <= 11; month++) {
+            verify(spyService).fetchPage(2024, month, 0);
+        }
+        verify(spyService, times(12)).fetchPage(anyInt(), anyInt(), anyInt());
     }
 
     @Test
@@ -189,10 +228,10 @@ public class BangumiFetchServiceIntegrationTest {
 
         // 验证结果 - 计算: (100+50-1)/50 = 2 页
         assertNotNull(result);
-        assertEquals(4, result.size()); // 2页 * 2条数据 = 4条
+        assertEquals(12, result.size()); // 3个月 * 2页 * 2条数据 = 12条
 
-        // 验证 WebClient 被调用了 2 次
-        verify(mockWebClient, times(2)).get();
+        // 三个月各请求 2 页。
+        verify(mockWebClient, times(6)).get();
     }
 
     @Test
@@ -242,8 +281,8 @@ public class BangumiFetchServiceIntegrationTest {
         assertNotNull(result);
         assertEquals(0, result.size());
 
-        // 验证 WebClient 只被调用了一次
-        verify(mockWebClient, times(1)).get();
+        // 季度的三个月各请求一次。
+        verify(mockWebClient, times(3)).get();
     }
 
     @Test
@@ -255,7 +294,7 @@ public class BangumiFetchServiceIntegrationTest {
         when(responseSpec.bodyToMono(JsonNode.class)).thenReturn(Mono.empty());
 
         // 执行测试
-        JsonNode result = service.fetchPage(2024, Season.SPRING, 0);
+        JsonNode result = service.fetchPage(2024, 4, 0);
 
         // 验证结果为 null
         assertNull(result);

@@ -13,7 +13,6 @@ import { filtersToQuery } from "@/utils/queryUtils";
 
 // 获取当前年份和季度
 const now = new Date();
-now.setMonth(now.getMonth() - 1);
 const currentYear = now.getFullYear();
 const currentMonth = now.getMonth() + 1; // JavaScript 月份从0开始
 
