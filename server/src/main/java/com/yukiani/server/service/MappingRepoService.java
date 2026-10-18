@@ -28,9 +28,12 @@ public class MappingRepoService {
      *
      * <p>每次保存都会追加一条原始指标快照，包括指标未变化或两项指标均为空的情况。
      * Mapping 与快照在同一事务中写入。</p>
+     *
+     * @return 保存后受管理的 Mapping。新增时不是传入的对象本身：Mapping 的 version 初始为 0，
+     *         save 会按合并处理并返回新的实例，调用方应使用返回值
      */
     @Transactional
-    public void saveOrUpdate(Mapping m) {
+    public Mapping saveOrUpdate(Mapping m) {
         var existing = repo.findBySourcePlatformAndPlatformId(m.getSourcePlatform(), m.getPlatformId());
         if (existing != null) {
             existing.setRawScore(m.getRawScore());
@@ -45,12 +48,14 @@ public class MappingRepoService {
                 metricService.calculateMetric(anime);
             }
 
-            repo.save(existing);
+            existing = repo.save(existing);
             recordMetricHistory(existing);
-        } else {
-            repo.save(m);
-            recordMetricHistory(m);
+            return existing;
         }
+
+        m = repo.save(m);
+        recordMetricHistory(m);
+        return m;
     }
 
     /** 将 Mapping 当前的原始指标和更新时间保存为历史记录。 */

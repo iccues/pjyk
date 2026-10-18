@@ -58,14 +58,12 @@ class PlatformSyncRunnerTest {
     @Test
     void run_SeparatesSuccessFromItemFailures() {
         when(fetchService.fetchAndSaveMapping("1")).thenReturn(saved(NOW));
-        // 未抛异常但 update_time 没有前进，说明平台数据不完整未能保存
-        when(fetchService.fetchAndSaveMapping("2")).thenReturn(saved(LAST_SYNCED));
-        when(fetchService.fetchAndSaveMapping("3")).thenThrow(fetchFailure(404));
+        when(fetchService.fetchAndSaveMapping("2")).thenThrow(fetchFailure(404));
 
-        PlatformSyncRunner.Result result = runner.run(candidates(3));
+        PlatformSyncRunner.Result result = runner.run(candidates(2));
 
         assertEquals(List.of(1L), result.succeeded());
-        assertEquals(List.of(2L, 3L), result.failed());
+        assertEquals(List.of(2L), result.failed());
     }
 
     // ==================== 熔断 ====================

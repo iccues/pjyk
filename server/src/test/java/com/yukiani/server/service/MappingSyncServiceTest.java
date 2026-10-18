@@ -183,18 +183,6 @@ class MappingSyncServiceTest {
     }
 
     @Test
-    void runSyncRound_NotUpdated_CountsAsFailure() {
-        // 抓取未抛异常，但平台数据不完整未能保存，update_time 没有前进
-        givenCandidates(candidate(1, Platform.MyAnimeList, YESTERDAY_NOON));
-        when(fetchService.getFetchService(Platform.MyAnimeList)).thenReturn(malFetchService);
-        when(malFetchService.fetchAndSaveMapping("1")).thenReturn(saved(YESTERDAY_NOON));
-
-        mappingSyncService.runSyncRound(NOW);
-
-        assertTrue(mappingSyncService.backoffs.containsKey(1L));
-    }
-
-    @Test
     void runSyncRound_SkipsMappingInBackoff() {
         givenCandidates(candidate(1, Platform.MyAnimeList, YESTERDAY_NOON));
         mappingSyncService.backoffs.put(1L,

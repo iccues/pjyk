@@ -10,7 +10,6 @@ import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.Platform;
 import com.yukiani.server.entity.Season;
 import com.yukiani.server.exception.FetchFailedException;
-import com.yukiani.server.repo.MappingRepository;
 import com.yukiani.server.service.MappingRepoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,9 +32,6 @@ public class AbstractAnimeFetchServiceTest {
     private MappingRepoService mappingRepoService;
 
     @Mock
-    private MappingRepository mappingRepository;
-
-    @Mock
     private PlatformConfigProperties platformConfigProperties;
 
     private TestAnimeFetchService testService;
@@ -45,7 +41,6 @@ public class AbstractAnimeFetchServiceTest {
     public void setUp() {
         testService = new TestAnimeFetchService();
         testService.mappingRepoService = mappingRepoService;
-        testService.mappingRepository = mappingRepository;
         testService.platformConfigProperties = platformConfigProperties;
         objectMapper = new ObjectMapper();
 
@@ -82,7 +77,7 @@ public class AbstractAnimeFetchServiceTest {
     }
 
     @Test
-    public void testProcessAndSaveMapping_WithScore() throws Exception {
+    public void testBuildMapping_WithScore() throws Exception {
         // 准备 JSON 数据（带评分）
         String jsonString = """
                 {
@@ -94,14 +89,18 @@ public class AbstractAnimeFetchServiceTest {
         JsonNode jsonNode = objectMapper.readTree(jsonString);
 
         // 调用方法
-        testService.processAndSaveMapping(jsonNode);
+        Mapping mapping = testService.buildMapping(jsonNode);
 
-        // 验证：应该调用 saveOrUpdate
-        verify(mappingRepoService, times(1)).saveOrUpdate(any(Mapping.class));
+        // 验证：只构造不保存
+        assertEquals(Platform.Bangumi, mapping.getSourcePlatform());
+        assertEquals("12345", mapping.getPlatformId());
+        assertEquals(8.5, mapping.getRawScore(), 0.0001);
+        assertNotNull(mapping.getNormalizedScore());
+        verifyNoInteractions(mappingRepoService);
     }
 
     @Test
-    public void testProcessAndSaveMapping_AdjustsScoreBeforeNormalization() throws Exception {
+    public void testBuildMapping_AdjustsScoreBeforeNormalization() throws Exception {
         String jsonString = """
                 {
                     "id": "12345",
@@ -112,16 +111,12 @@ public class AbstractAnimeFetchServiceTest {
                 """;
         JsonNode jsonNode = objectMapper.readTree(jsonString);
 
-        testService.processAndSaveMapping(jsonNode);
+        Mapping mapping = testService.buildMapping(jsonNode);
 
-        var mappingCaptor = org.mockito.ArgumentCaptor.forClass(Mapping.class);
-        verify(mappingRepoService).saveOrUpdate(mappingCaptor.capture());
-        Mapping savedMapping = mappingCaptor.getValue();
-
-        assertEquals(9.0, savedMapping.getRawScore(), 0.0001);
-        assertEquals(80.0, savedMapping.getRawPopularity(), 0.0001);
-        assertEquals(1000.0, savedMapping.getNormalizedPopularity(), 0.0001);
-        assertEquals(75.0, savedMapping.getNormalizedScore(), 0.0001);
+        assertEquals(9.0, mapping.getRawScore(), 0.0001);
+        assertEquals(80.0, mapping.getRawPopularity(), 0.0001);
+        assertEquals(1000.0, mapping.getNormalizedPopularity(), 0.0001);
+        assertEquals(75.0, mapping.getNormalizedScore(), 0.0001);
     }
 
     @Test
@@ -146,7 +141,7 @@ public class AbstractAnimeFetchServiceTest {
     }
 
     @Test
-    public void testProcessAndSaveMapping_WithoutScore() throws Exception {
+    public void testBuildMapping_WithoutScore() throws Exception {
         // 准备 JSON 数据（无评分）
         String jsonString = """
                 {
@@ -157,13 +152,19 @@ public class AbstractAnimeFetchServiceTest {
                 """;
         JsonNode jsonNode = objectMapper.readTree(jsonString);
 
-        // 调用方法
-        testService.processAndSaveMapping(jsonNode);
+        // 调用方法并验证：无有效评分时归一化评分为空
+        assertNull(testService.buildMapping(jsonNode).getNormalizedScore());
+    }
 
-        // 验证：应该调用 saveOrUpdate
-        var mappingCaptor = org.mockito.ArgumentCaptor.forClass(Mapping.class);
-        verify(mappingRepoService).saveOrUpdate(mappingCaptor.capture());
-        assertNull(mappingCaptor.getValue().getNormalizedScore());
+    @Test
+    public void testBuildMapping_KeepsMissingFieldsAsNull() throws Exception {
+        // 构造时不做校验，缺失的 platformId 和开播日期留给调用方判断
+        Mapping mapping = testService.buildMapping(objectMapper.readTree("""
+                { "title": "Empty Media" }
+                """));
+
+        assertNull(mapping.getPlatformId());
+        assertNull(mapping.getMappingInfo().getStartDate());
     }
 
     @Test
@@ -172,13 +173,15 @@ public class AbstractAnimeFetchServiceTest {
         String jsonString1 = """
                 {
                     "id": "1",
-                    "title": "Anime 1"
+                    "title": "Anime 1",
+                    "startDate": "2024-04-01"
                 }
                 """;
         String jsonString2 = """
                 {
                     "id": "2",
-                    "title": "Anime 2"
+                    "title": "Anime 2",
+                    "startDate": "2024-04-08"
                 }
                 """;
 
@@ -193,6 +196,27 @@ public class AbstractAnimeFetchServiceTest {
 
         // 验证：应该处理所有节点
         verify(mappingRepoService, times(2)).saveOrUpdate(any(Mapping.class));
+    }
+
+    @Test
+    public void testFetchAndSaveMappings_SkipsIncompleteEntries() throws Exception {
+        // 缺少开播日期或 platformId 的条目跳过，其余照常保存
+        testService.mockMediaList = List.of(
+                objectMapper.readTree("""
+                        { "id": "1", "title": "Anime 1", "startDate": "2024-04-01" }
+                        """),
+                objectMapper.readTree("""
+                        { "id": "2", "title": "Anime 2" }
+                        """),
+                objectMapper.readTree("""
+                        { "title": "Anime 3", "startDate": "2024-04-08" }
+                        """));
+
+        testService.fetchAndSaveMappings(2024, Season.SPRING);
+
+        var mappingCaptor = org.mockito.ArgumentCaptor.forClass(Mapping.class);
+        verify(mappingRepoService).saveOrUpdate(mappingCaptor.capture());
+        assertEquals("1", mappingCaptor.getValue().getPlatformId());
     }
 
     @Test
@@ -213,18 +237,55 @@ public class AbstractAnimeFetchServiceTest {
         titles.setTitleNative("New Mapping");
         MappingInfo mappingInfo = new MappingInfo(titles, null, null);
 
-        // Mock repository
+        // Mock 保存结果
         Mapping savedMapping = new Mapping(Platform.Bangumi, "12345", mappingInfo);
-        when(mappingRepository.findBySourcePlatformAndPlatformId(Platform.Bangumi, "12345"))
-                .thenReturn(savedMapping);
+        when(mappingRepoService.saveOrUpdate(any(Mapping.class))).thenReturn(savedMapping);
 
         // 调用方法
         Mapping result = testService.fetchAndSaveMapping("12345");
 
-        // 验证
-        assertNotNull(result);
-        assertEquals("12345", result.getPlatformId());
+        // 验证：直接返回保存后的 Mapping
+        assertSame(savedMapping, result);
         verify(mappingRepoService, times(1)).saveOrUpdate(any(Mapping.class));
+    }
+
+    @Test
+    public void testFetchAndSaveMapping_WithoutStartDate_StillSaved() throws Exception {
+        // 单条抓取时开播日期缺失照常保存，评分和热度仍会更新
+        testService.mockSingleNode = objectMapper.readTree("""
+                { "id": "12345", "title": "No Date", "score": 8.0 }
+                """);
+
+        testService.fetchAndSaveMapping("12345");
+
+        var mappingCaptor = org.mockito.ArgumentCaptor.forClass(Mapping.class);
+        verify(mappingRepoService).saveOrUpdate(mappingCaptor.capture());
+        assertNull(mappingCaptor.getValue().getMappingInfo().getStartDate());
+        assertEquals(8.0, mappingCaptor.getValue().getRawScore(), 0.0001);
+    }
+
+    @Test
+    public void testFetchAndSaveMapping_MissingPlatformId_Throws() throws Exception {
+        // 平台返回的数据缺少 platformId 时不能静默返回旧数据
+        testService.mockSingleNode = objectMapper.readTree("""
+                { "title": "Empty Media" }
+                """);
+
+        assertThrows(FetchFailedException.class, () -> testService.fetchAndSaveMapping("12345"));
+
+        verify(mappingRepoService, never()).saveOrUpdate(any(Mapping.class));
+    }
+
+    @Test
+    public void testFetchAndSaveMapping_DifferentPlatformId_Throws() throws Exception {
+        // 平台返回了其他条目，保存它并不能更新请求的 Mapping
+        testService.mockSingleNode = objectMapper.readTree("""
+                { "id": "99999", "title": "Another Anime", "startDate": "2024-04-01" }
+                """);
+
+        assertThrows(FetchFailedException.class, () -> testService.fetchAndSaveMapping("12345"));
+
+        verify(mappingRepoService, never()).saveOrUpdate(any(Mapping.class));
     }
 
     @Test
@@ -325,9 +386,10 @@ public class AbstractAnimeFetchServiceTest {
 
         @Override
         protected LocalDate extractStartDate(JsonNode jsonNode) {
-            String dateStr = jsonNode.path("startDate").asText();
+            // 与各平台实现一致：缺少开播日期时返回 null
+            String dateStr = jsonNode.path("startDate").asText(null);
             if (dateStr == null || dateStr.isEmpty()) {
-                return LocalDate.of(2024, 1, 1);
+                return null;
             }
             return LocalDate.parse(dateStr);
         }
@@ -346,7 +408,7 @@ public class AbstractAnimeFetchServiceTest {
 
         @Override
         protected String extractPlatformId(JsonNode jsonNode) {
-            return jsonNode.path("id").asText();
+            return jsonNode.path("id").asText(null);
         }
 
         @Override

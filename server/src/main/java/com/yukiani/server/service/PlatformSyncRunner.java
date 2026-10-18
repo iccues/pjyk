@@ -1,6 +1,5 @@
 package com.yukiani.server.service;
 
-import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.Platform;
 import com.yukiani.server.repo.SyncCandidate;
 import com.yukiani.server.service.fetch.AbstractAnimeFetchService;
@@ -125,19 +124,11 @@ class PlatformSyncRunner {
         PLATFORM_FAILURE
     }
 
-    /**
-     * 抓取并保存单条 Mapping。
-     *
-     * <p>{@code update_time} 前进才算成功；抓取未抛异常但平台数据不完整未能保存时，算条目级失败。</p>
-     */
+    /** 抓取并保存单条 Mapping；{@code fetchAndSaveMapping} 正常返回即表示已保存。 */
     private Outcome sync(SyncCandidate candidate) {
         try {
-            Mapping saved = service.fetchAndSaveMapping(candidate.platformId());
-            if (saved != null && saved.getUpdateTime().isAfter(candidate.updateTime())) {
-                return Outcome.SUCCESS;
-            }
-            log.warn("Mapping {}:{} was fetched but not updated", platform, candidate.platformId());
-            return Outcome.ITEM_FAILURE;
+            service.fetchAndSaveMapping(candidate.platformId());
+            return Outcome.SUCCESS;
         } catch (Exception e) {
             log.warn("Failed to sync mapping {}:{} - {}", platform, candidate.platformId(), e.getMessage());
             return isPlatformFailure(e) ? Outcome.PLATFORM_FAILURE : Outcome.ITEM_FAILURE;

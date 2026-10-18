@@ -64,10 +64,13 @@ public class MappingRepoServiceTest {
         newMapping.setMappingInfo(testMappingInfo);
         newMapping.setUpdateTime(Instant.now());
 
-        mappingRepoService.saveOrUpdate(newMapping);
+        Mapping result = mappingRepoService.saveOrUpdate(newMapping);
 
         Mapping saved = mappingRepository.findBySourcePlatformAndPlatformId(Platform.MyAnimeList, "12345");
         assertNotNull(saved);
+        // 返回的是持久化后的实例，带有生成的 mappingId
+        assertSame(saved, result);
+        assertNotNull(result.getMappingId());
         assertEquals(Platform.MyAnimeList, saved.getSourcePlatform());
         assertEquals("12345", saved.getPlatformId());
         assertEquals(8.5, saved.getRawScore());
@@ -101,10 +104,12 @@ public class MappingRepoServiceTest {
         Instant newUpdateTime = Instant.now();
         updateMapping.setUpdateTime(newUpdateTime);
 
-        mappingRepoService.saveOrUpdate(updateMapping);
+        Mapping result = mappingRepoService.saveOrUpdate(updateMapping);
 
         Mapping updated = mappingRepository.findBySourcePlatformAndPlatformId(Platform.MyAnimeList, "12345");
         assertNotNull(updated);
+        // 返回的是数据库中已有的那一行，而不是传入的 updateMapping
+        assertSame(updated, result);
         assertEquals(originalId, updated.getMappingId());
         assertEquals(8.5, updated.getRawScore());
         assertEquals(85.0, updated.getNormalizedScore());
