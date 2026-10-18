@@ -5,7 +5,6 @@ import com.yukiani.server.config.PlatformConfig;
 import com.yukiani.server.config.PlatformConfigProperties;
 import com.yukiani.server.entity.*;
 import com.yukiani.server.exception.FetchFailedException;
-import com.yukiani.server.repo.MappingRepository;
 import com.yukiani.server.service.MappingRepoService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +24,6 @@ public abstract class AbstractAnimeFetchService {
     @Resource
     protected MappingRepoService mappingRepoService;
 
-    @Resource
-    protected MappingRepository mappingRepository;
     @Resource
     protected PlatformConfigProperties platformConfigProperties;
 
@@ -142,23 +139,16 @@ public abstract class AbstractAnimeFetchService {
     protected abstract JsonNode fetchSingleMappingJson(String platformId);
 
     /**
-     * 提取、归一化并幂等保存单条平台数据。
+     * 从单条平台数据构造 Mapping 并计算归一化指标，不做校验也不保存。
      *
-     * <p>缺少 platformId 或开播日期的数据不会进入主数据关联流程。</p>
+     * <p>platformId 和开播日期可能为 {@code null}，由调用方按需检查后再保存。</p>
      */
-    void processAndSaveMapping(JsonNode jsonNode) {
-        String platformId = extractPlatformId(jsonNode);
-        MappingInfo mappingInfo = extractMappingInfo(jsonNode);
-        if (platformId == null || mappingInfo.getStartDate() == null) return;
-
-        Mapping mapping = new Mapping(getPlatform(), platformId, mappingInfo);
-
-        double rawPopularity = extractRawPopularity(jsonNode);
-        mapping.setRawPopularity(rawPopularity);
+    Mapping buildMapping(JsonNode jsonNode) {
+        Mapping mapping = new Mapping(getPlatform(), extractPlatformId(jsonNode), extractMappingInfo(jsonNode));
+        mapping.setRawPopularity(extractRawPopularity(jsonNode));
         mapping.setRawScore(extractRawScore(jsonNode));
-
         recalculateMetrics(mapping);
-        mappingRepoService.saveOrUpdate(mapping);
+        return mapping;
     }
 
     /**
@@ -184,7 +174,7 @@ public abstract class AbstractAnimeFetchService {
     }
 
     /**
-     * 抓取并保存指定年份和季度的全部平台 Mapping。
+     * 抓取并保存指定年份和季度的全部平台 Mapping，缺少 platformId 或开播日期的条目会被跳过。
      *
      * @param season 开播季度；为空时抓取全年
      * @throws FetchFailedException 平台请求或数据处理失败时抛出
@@ -194,25 +184,32 @@ public abstract class AbstractAnimeFetchService {
         try {
             List<JsonNode> mediaList = fetchMappingJson(year, season);
             for (JsonNode jsonNode : mediaList) {
-                processAndSaveMapping(jsonNode);
+                Mapping mapping = buildMapping(jsonNode);
+                // 缺少 platformId 或开播日期的条目无法参与主数据关联，不必保存。
+                if (mapping.getPlatformId() == null || mapping.getMappingInfo().getStartDate() == null) {
+                    continue;
+                }
+                mappingRepoService.saveOrUpdate(mapping);
             }
         } catch (WebClientResponseException e) {
             log.warn("Failed to fetch mappings from {} for year={}, season={}: {} {}",
                     getPlatform(), year, season, e.getStatusCode(), e.getResponseBodyAsString());
             throw new FetchFailedException(getPlatform(),
-                    String.format("year=%d, season=%s", year, season));
+                    String.format("year=%d, season=%s", year, season), e);
         } catch (Exception e) {
             log.error("Unexpected error fetching mappings from {} for year={}, season={}: {}",
                     getPlatform(), year, season, e.getMessage());
             throw new FetchFailedException(getPlatform(),
-                    String.format("year=%d, season=%s", year, season));
+                    String.format("year=%d, season=%s", year, season), e);
         }
     }
 
     /**
-     * 抓取并保存指定平台资源。
+     * 抓取并保存指定平台资源；正常返回即表示请求的 Mapping 已保存。
      *
-     * @throws FetchFailedException 平台请求、数据处理或结果读取失败时抛出
+     * <p>开播日期缺失时照常保存，主数据关联流程会自行忽略没有开播日期的 Mapping。</p>
+     *
+     * @throws FetchFailedException 平台请求失败、返回的 platformId 与请求不一致或数据处理失败时抛出
      */
     @Transactional
     public Mapping fetchAndSaveMapping(String platformId) {
@@ -222,18 +219,24 @@ public abstract class AbstractAnimeFetchService {
                 log.warn("{} API returned null for platformId={}", getPlatform(), platformId);
                 throw new FetchFailedException(getPlatform(), platformId);
             }
-            processAndSaveMapping(jsonNode);
-            return mappingRepository.findBySourcePlatformAndPlatformId(getPlatform(), platformId);
+            Mapping mapping = buildMapping(jsonNode);
+            // 平台返回其他条目或缺少 platformId 时，保存它并不能更新请求的 Mapping。
+            if (!platformId.equals(mapping.getPlatformId())) {
+                log.warn("{} returned platformId={} for requested platformId={}",
+                        getPlatform(), mapping.getPlatformId(), platformId);
+                throw new FetchFailedException(getPlatform(), platformId);
+            }
+            return mappingRepoService.saveOrUpdate(mapping);
         } catch (WebClientResponseException e) {
             log.warn("Failed to fetch mapping from {} for platformId={}: {} {}",
                     getPlatform(), platformId, e.getStatusCode(), e.getResponseBodyAsString());
-            throw new FetchFailedException(getPlatform(), platformId);
+            throw new FetchFailedException(getPlatform(), platformId, e);
         } catch (FetchFailedException e) {
             throw e;
         } catch (Exception e) {
             log.error("Unexpected error fetching mapping from {} for platformId={}: {}",
                     getPlatform(), platformId, e.getMessage());
-            throw new FetchFailedException(getPlatform(), platformId);
+            throw new FetchFailedException(getPlatform(), platformId, e);
         }
     }
 }

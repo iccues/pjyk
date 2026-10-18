@@ -16,6 +16,11 @@ public abstract class BusinessException extends RuntimeException {
         this.code = code;
     }
 
+    public BusinessException(String code, String message, Throwable cause) {
+        super(message, cause);
+        this.code = code;
+    }
+
     public Response<Void> toResponse() {
         return Response.fail(code, super.getMessage());
     }
