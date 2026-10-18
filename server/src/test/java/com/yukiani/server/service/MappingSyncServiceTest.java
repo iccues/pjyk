@@ -3,6 +3,7 @@ package com.yukiani.server.service;
 import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.Platform;
 import com.yukiani.server.entity.ReviewStatus;
+import com.yukiani.server.exception.FetchFailedException;
 import com.yukiani.server.repo.MappingRepository;
 import com.yukiani.server.repo.SyncCandidate;
 import com.yukiani.server.service.fetch.AbstractAnimeFetchService;
@@ -16,11 +17,14 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -254,6 +258,52 @@ class MappingSyncServiceTest {
         assertTrue(mappingSyncService.backoffs.isEmpty());
     }
 
+    // ==================== 与平台层的衔接 ====================
+
+    @Test
+    void runSyncRound_CircuitOpenOnOnePlatform_OthersUnaffected() {
+        // MAL 全部返回 503 触发熔断：已请求的条目照常进入退避，Bangumi 照常同步
+        int threshold = PlatformSyncRunner.CIRCUIT_THRESHOLD;
+        List<SyncCandidate> candidates = new ArrayList<>(malCandidates(threshold + 1));
+        candidates.add(candidate(100, Platform.Bangumi, YESTERDAY_NOON));
+        givenCandidates(candidates);
+        when(fetchService.getFetchService(Platform.MyAnimeList)).thenReturn(malFetchService);
+        when(fetchService.getFetchService(Platform.Bangumi)).thenReturn(bangumiFetchService);
+        when(malFetchService.fetchAndSaveMapping(anyString())).thenThrow(fetchFailure(503));
+        when(bangumiFetchService.fetchAndSaveMapping("100")).thenReturn(saved(NOW));
+
+        mappingSyncService.runSyncRound(NOW);
+
+        verify(malFetchService, times(threshold)).fetchAndSaveMapping(anyString());
+        verify(malFetchService, never()).fetchAndSaveMapping(String.valueOf(threshold + 1));
+        verify(bangumiFetchService).fetchAndSaveMapping("100");
+        assertEquals(threshold, mappingSyncService.backoffs.size());
+        assertFalse(mappingSyncService.backoffs.containsKey((long) threshold + 1), "Skipped mapping is not charged");
+        assertFalse(mappingSyncService.backoffs.containsKey(100L));
+    }
+
+    @Test
+    void runSyncRound_PersistentlyFailingMappings_DoNotBlockOthersAcrossRounds() {
+        // 最旧的几条持续返回 500、触发熔断，其后一条正常：下一轮应换由正常条目先请求
+        int threshold = PlatformSyncRunner.CIRCUIT_THRESHOLD;
+        String healthy = String.valueOf(threshold + 1);
+        givenCandidates(malCandidates(threshold + 1));
+        when(fetchService.getFetchService(Platform.MyAnimeList)).thenReturn(malFetchService);
+        when(malFetchService.fetchAndSaveMapping(anyString())).thenThrow(fetchFailure(500));
+        doReturn(saved(NOW.plus(Duration.ofHours(1)))).when(malFetchService).fetchAndSaveMapping(healthy);
+
+        mappingSyncService.runSyncRound(NOW);
+        verify(malFetchService, never()).fetchAndSaveMapping(healthy);
+
+        // 第一轮的退避此时正好到期，但有失败记录的条目排在最后
+        mappingSyncService.runSyncRound(NOW.plus(Duration.ofHours(1)));
+
+        verify(malFetchService).fetchAndSaveMapping(healthy);
+        assertFalse(mappingSyncService.backoffs.containsKey((long) threshold + 1));
+        assertEquals(Duration.ofHours(2), mappingSyncService.backoffs.get(1L).delay(),
+                "Persistently failing mappings keep backing off");
+    }
+
     // ==================== 辅助方法 ====================
 
     private static boolean isDue(SyncCandidate candidate) {
@@ -281,8 +331,25 @@ class MappingSyncServiceTest {
         return mapping;
     }
 
+    /** mappingId 从 1 开始的 MAL 候选，update_time 依次递增以固定处理顺序。 */
+    private static List<SyncCandidate> malCandidates(int count) {
+        return IntStream.rangeClosed(1, count)
+                .mapToObj(id -> candidate(id, Platform.MyAnimeList, at(TODAY.minusDays(1), id)))
+                .toList();
+    }
+
+    /** 与真实调用链一样，把平台响应异常包装在 FetchFailedException 里。 */
+    private static FetchFailedException fetchFailure(int status) {
+        return new FetchFailedException(Platform.MyAnimeList, "1",
+                WebClientResponseException.create(status, "Status " + status, null, null, null));
+    }
+
     private void givenCandidates(SyncCandidate... candidates) {
+        givenCandidates(List.of(candidates));
+    }
+
+    private void givenCandidates(List<SyncCandidate> candidates) {
         when(mappingRepository.findSyncCandidates(ReviewStatus.APPROVED, TODAY, at(TODAY, 0)))
-                .thenReturn(List.of(candidates));
+                .thenReturn(candidates);
     }
 }

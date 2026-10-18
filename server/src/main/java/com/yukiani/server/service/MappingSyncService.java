@@ -1,11 +1,9 @@
 package com.yukiani.server.service;
 
-import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.Platform;
 import com.yukiani.server.entity.ReviewStatus;
 import com.yukiani.server.repo.MappingRepository;
 import com.yukiani.server.repo.SyncCandidate;
-import com.yukiani.server.service.fetch.AbstractAnimeFetchService;
 import com.yukiani.server.service.fetch.FetchService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -87,9 +85,12 @@ public class MappingSyncService {
         Set<Long> dueIds = due.stream().map(SyncCandidate::mappingId).collect(Collectors.toSet());
         backoffs.keySet().retainAll(dueIds);
 
+        // 有失败记录的排在最后，避免持续失败的条目每轮都先被请求、触发熔断而挡住其他条目；
+        // 同组内按 update_time 从旧到新。
         List<SyncCandidate> toSync = due.stream()
                 .filter(candidate -> !inBackoff(candidate.mappingId(), roundStart))
-                .sorted(Comparator.comparing(SyncCandidate::updateTime))
+                .sorted(Comparator.comparing((SyncCandidate candidate) -> backoffs.containsKey(candidate.mappingId()))
+                        .thenComparing(SyncCandidate::updateTime))
                 .toList();
         log.info("Mapping sync round - Due: {}, In backoff: {}", due.size(), due.size() - toSync.size());
 
@@ -136,52 +137,13 @@ public class MappingSyncService {
         return backoff != null && roundStart.isBefore(backoff.nextAttemptAt());
     }
 
-    /** 按 update_time 从旧到新串行同步同一平台的 Mapping。 */
+    /** 交给平台层串行同步本平台的 Mapping，再按结果更新单条退避。 */
     private void syncPlatform(Platform platform, List<SyncCandidate> candidates, Instant roundStart) {
-        AbstractAnimeFetchService service = fetchService.getFetchService(platform);
-        long startTime = System.currentTimeMillis();
-        int success = 0;
-        int failed = 0;
-
-        for (SyncCandidate candidate : candidates) {
-            try {
-                Thread.sleep(requestInterval);
-            } catch (InterruptedException e) {
-                // 应用关闭等情况下停止本轮；未处理的 Mapping 仍然到期，下一轮继续。
-                Thread.currentThread().interrupt();
-                break;
-            }
-            if (syncMapping(service, candidate)) {
-                backoffs.remove(candidate.mappingId());
-                success++;
-            } else {
-                recordFailure(candidate.mappingId(), roundStart);
-                failed++;
-            }
-        }
-
-        log.info("Mapping sync [{}] completed - Total: {}, Success: {}, Failed: {}, Duration: {}ms",
-                platform, candidates.size(), success, failed, System.currentTimeMillis() - startTime);
-    }
-
-    /**
-     * 抓取并保存单条 Mapping。
-     *
-     * @return {@code update_time} 前进时返回 {@code true}；抓取失败或平台数据不完整未能保存时返回 {@code false}
-     */
-    private boolean syncMapping(AbstractAnimeFetchService service, SyncCandidate candidate) {
-        try {
-            Mapping saved = service.fetchAndSaveMapping(candidate.platformId());
-            if (saved != null && saved.getUpdateTime().isAfter(candidate.updateTime())) {
-                return true;
-            }
-            log.warn("Mapping {}:{} was fetched but not updated",
-                    candidate.sourcePlatform(), candidate.platformId());
-        } catch (Exception e) {
-            log.warn("Failed to sync mapping {}:{} - {}",
-                    candidate.sourcePlatform(), candidate.platformId(), e.getMessage());
-        }
-        return false;
+        PlatformSyncRunner runner = new PlatformSyncRunner(
+                platform, fetchService.getFetchService(platform), requestInterval);
+        PlatformSyncRunner.Result result = runner.run(candidates);
+        result.succeeded().forEach(backoffs::remove);
+        result.failed().forEach(id -> recordFailure(id, roundStart));
     }
 
     /** 记录一次失败：首次退避 1 小时，之后每次翻倍，最长 7 天。 */

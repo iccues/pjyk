@@ -250,6 +250,7 @@ public class AbstractAnimeFetchServiceTest {
 
         // 验证异常信息
         assertTrue(exception.getMessage().contains("Bangumi"));
+        assertInstanceOf(WebClientResponseException.class, exception.getCause(), "Original exception should be kept as cause");
 
         // 验证：不应该调用 saveOrUpdate
         verify(mappingRepoService, never()).saveOrUpdate(any(Mapping.class));
@@ -266,6 +267,7 @@ public class AbstractAnimeFetchServiceTest {
 
         // 验证异常信息
         assertTrue(exception.getMessage().contains("Bangumi"));
+        assertEquals("Generic error during fetch", exception.getCause().getMessage());
 
         // 验证：不应该调用 saveOrUpdate
         verify(mappingRepoService, never()).saveOrUpdate(any(Mapping.class));
@@ -283,6 +285,7 @@ public class AbstractAnimeFetchServiceTest {
         // 验证异常信息
         assertTrue(exception.getMessage().contains("Bangumi"));
         assertTrue(exception.getMessage().contains("12345"));
+        assertInstanceOf(WebClientResponseException.class, exception.getCause(), "Original exception should be kept as cause");
 
         // 验证：不应该调用 saveOrUpdate
         verify(mappingRepoService, never()).saveOrUpdate(any(Mapping.class));
@@ -300,6 +303,7 @@ public class AbstractAnimeFetchServiceTest {
         // 验证异常信息
         assertTrue(exception.getMessage().contains("Bangumi"));
         assertTrue(exception.getMessage().contains("12345"));
+        assertEquals("Generic error during single fetch", exception.getCause().getMessage());
 
         // 验证：不应该调用 saveOrUpdate
         verify(mappingRepoService, never()).saveOrUpdate(any(Mapping.class));

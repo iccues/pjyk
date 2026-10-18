@@ -200,12 +200,12 @@ public abstract class AbstractAnimeFetchService {
             log.warn("Failed to fetch mappings from {} for year={}, season={}: {} {}",
                     getPlatform(), year, season, e.getStatusCode(), e.getResponseBodyAsString());
             throw new FetchFailedException(getPlatform(),
-                    String.format("year=%d, season=%s", year, season));
+                    String.format("year=%d, season=%s", year, season), e);
         } catch (Exception e) {
             log.error("Unexpected error fetching mappings from {} for year={}, season={}: {}",
                     getPlatform(), year, season, e.getMessage());
             throw new FetchFailedException(getPlatform(),
-                    String.format("year=%d, season=%s", year, season));
+                    String.format("year=%d, season=%s", year, season), e);
         }
     }
 
@@ -227,13 +227,13 @@ public abstract class AbstractAnimeFetchService {
         } catch (WebClientResponseException e) {
             log.warn("Failed to fetch mapping from {} for platformId={}: {} {}",
                     getPlatform(), platformId, e.getStatusCode(), e.getResponseBodyAsString());
-            throw new FetchFailedException(getPlatform(), platformId);
+            throw new FetchFailedException(getPlatform(), platformId, e);
         } catch (FetchFailedException e) {
             throw e;
         } catch (Exception e) {
             log.error("Unexpected error fetching mapping from {} for platformId={}: {}",
                     getPlatform(), platformId, e.getMessage());
-            throw new FetchFailedException(getPlatform(), platformId);
+            throw new FetchFailedException(getPlatform(), platformId, e);
         }
     }
 }
