@@ -75,12 +75,34 @@ class MappingSyncServiceTest {
         assertFalse(isDue(new SyncCandidate(1L, 1L, startDate, Platform.MyAnimeList, "1", at(TODAY, 0))));
     }
 
+    @Test
+    void isDue_DailyTier_IncludesPremiereDayAndUnairedWithin30Days() {
+        long animeId = scheduledDaysAgo(1);
+
+        assertTrue(isDue(new SyncCandidate(1L, animeId, TODAY, Platform.MyAnimeList, "1", YESTERDAY_NOON)),
+                "Premiere day");
+        assertTrue(isDue(new SyncCandidate(1L, animeId, TODAY.plusDays(30), Platform.MyAnimeList, "1", YESTERDAY_NOON)),
+                "30 days before premiere");
+        // 开播前 31 天属于每 30 天档，该 animeId 的排班日在昨天且昨天已同步
+        assertFalse(isDue(new SyncCandidate(1L, animeId, TODAY.plusDays(31), Platform.MyAnimeList, "1", YESTERDAY_NOON)),
+                "31 days before premiere");
+    }
+
+    @Test
+    void isDue_NoStartDate_Monthly() {
+        assertTrue(isDue(new SyncCandidate(1L, scheduledDaysAgo(0), null, Platform.MyAnimeList, "1", YESTERDAY_NOON)),
+                "Scheduled today");
+        assertFalse(isDue(new SyncCandidate(1L, scheduledDaysAgo(29), null, Platform.MyAnimeList, "1",
+                        at(TODAY.minusDays(29), 12))),
+                "Synced on its scheduled day 29 days ago");
+    }
+
     /**
-     * 30 天以上的档位按 animeId 分片：今天是排班日时到期；
+     * 间隔大于 1 天的档位按 animeId 分片：今天是排班日时到期；
      * 排班日在昨天时，以昨天上海时间零点为界判断是否已同步。
      */
     @ParameterizedTest
-    @CsvSource({"60", "120", "365"})
+    @CsvSource({"120", "200", "400", "-60"})
     void isDue_FollowsAnimeIdShard(int startDaysAgo) {
         LocalDate startDate = TODAY.minusDays(startDaysAgo);
         Instant yesterdayStart = at(TODAY.minusDays(1), 0);
@@ -107,11 +129,11 @@ class MappingSyncServiceTest {
     }
 
     /**
-     * 每个档位的最后一天仍按本档同步，次日起切换到下一档。
+     * 开播后每个档位的最后一天仍按本档同步，次日起切换到下一档。
      * animeId 选为下一档中排班日在昨天或更早、本档中排班日为今天。
      */
     @ParameterizedTest
-    @CsvSource({"29, 1", "89, 2", "179, 7"})
+    @CsvSource({"89, 1", "179, 3", "364, 7"})
     void isDue_TierBoundaries(int lastDayOfTier, int scheduledDaysAgoInNextTier) {
         long animeId = scheduledDaysAgo(scheduledDaysAgoInNextTier);
 
@@ -126,18 +148,18 @@ class MappingSyncServiceTest {
     @Test
     void runSyncRound_QueriesWithShanghaiToday() {
         // 上海时间 10 月 16 日 00:30 对应 UTC 10 月 15 日 16:30，应按 10 月 16 日查询
-        when(mappingRepository.findSyncCandidates(any(), any(), any())).thenReturn(List.of());
+        when(mappingRepository.findSyncCandidates(any(), any())).thenReturn(List.of());
 
         mappingSyncService.runSyncRound(TODAY.atTime(0, 30).atZone(MappingSyncService.SYNC_ZONE).toInstant());
 
-        verify(mappingRepository).findSyncCandidates(ReviewStatus.APPROVED, TODAY, at(TODAY, 0));
+        verify(mappingRepository).findSyncCandidates(ReviewStatus.APPROVED, at(TODAY, 0));
     }
 
     @Test
     void runSyncRound_SyncsOnlyDueMappings() {
         SyncCandidate due = candidate(1, Platform.MyAnimeList, YESTERDAY_NOON);
-        // 隔天档，排班日为昨天且昨天已同步
-        SyncCandidate notDue = new SyncCandidate(2L, scheduledDaysAgo(1), TODAY.minusDays(60),
+        // 每 3 天档，排班日为昨天且昨天已同步
+        SyncCandidate notDue = new SyncCandidate(2L, scheduledDaysAgo(1), TODAY.minusDays(120),
                 Platform.MyAnimeList, "2", YESTERDAY_NOON);
         givenCandidates(due, notDue);
         when(fetchService.getFetchService(Platform.MyAnimeList)).thenReturn(malFetchService);
@@ -337,7 +359,7 @@ class MappingSyncServiceTest {
     }
 
     private void givenCandidates(List<SyncCandidate> candidates) {
-        when(mappingRepository.findSyncCandidates(ReviewStatus.APPROVED, TODAY, at(TODAY, 0)))
+        when(mappingRepository.findSyncCandidates(ReviewStatus.APPROVED, at(TODAY, 0)))
                 .thenReturn(candidates);
     }
 }

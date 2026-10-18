@@ -76,7 +76,7 @@ public class MappingSyncService {
         Instant roundStart = now.truncatedTo(ChronoUnit.MINUTES);
 
         List<SyncCandidate> due = mappingRepository
-                .findSyncCandidates(ReviewStatus.APPROVED, today, today.atStartOfDay(SYNC_ZONE).toInstant())
+                .findSyncCandidates(ReviewStatus.APPROVED, today.atStartOfDay(SYNC_ZONE).toInstant())
                 .stream()
                 .filter(candidate -> isDue(candidate, today))
                 .toList();
@@ -111,22 +111,32 @@ public class MappingSyncService {
      */
     static boolean isDue(SyncCandidate candidate, LocalDate today) {
         long day = today.toEpochDay();
-        int interval = syncIntervalDays(day - candidate.startDate().toEpochDay());
+        int interval = syncIntervalDays(candidate.startDate(), today);
         // 排班日满足 day % interval == animeId % interval，这里取不晚于今天的最近一个。
         long scheduledDay = day - Math.floorMod(day - candidate.animeId(), interval);
         Instant scheduledStart = LocalDate.ofEpochDay(scheduledDay).atStartOfDay(SYNC_ZONE).toInstant();
         return candidate.updateTime().isBefore(scheduledStart);
     }
 
-    /** 开播越久同步越稀疏：30 天内每天，90 天内隔天，180 天内每周，之后每 30 天。 */
-    private static int syncIntervalDays(long daysSinceStart) {
-        if (daysSinceStart < 30) {
-            return 1;
+    /**
+     * 开播前后变化最快的阶段同步最密：开播前 30 天至开播后 90 天每天，180 天内每 3 天，
+     * 一年内每 7 天；更早、更久或开播日期未定的每 30 天。
+     */
+    private static int syncIntervalDays(LocalDate startDate, LocalDate today) {
+        if (startDate == null) {
+            return 30;
+        }
+        long daysSinceStart = today.toEpochDay() - startDate.toEpochDay();
+        if (daysSinceStart < -30) {
+            return 30;
         }
         if (daysSinceStart < 90) {
-            return 2;
+            return 1;
         }
         if (daysSinceStart < 180) {
+            return 3;
+        }
+        if (daysSinceStart < 365) {
             return 7;
         }
         return 30;
