@@ -9,16 +9,13 @@ WORKDIR /app
 COPY package.json ./
 RUN corepack prepare --activate
 
-# 安装依赖
+# 只凭 lockfile 下载依赖，源码改动不会让这一层缓存失效
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY apps/client/package.json ./apps/client/
-COPY apps/admin/package.json ./apps/admin/
-COPY packages/shared/package.json ./packages/shared/
-RUN pnpm install --frozen-lockfile
+RUN pnpm fetch
 
-# 构建
+# 安装并构建
 COPY . .
-RUN pnpm turbo run build
+RUN pnpm install --offline --frozen-lockfile && pnpm -r build
 
 # 生产阶段
 FROM nginx:1.29.4

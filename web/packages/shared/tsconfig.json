@@ -1,12 +1,3 @@
 {
-  "extends": "@pjyk-web/tsconfig/base.json",
-  "compilerOptions": {
-    "moduleResolution": "bundler",
-    "types": ["vite/client"],
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true
-  },
-  "include": ["src/**/*"]
+  "extends": "@pjyk-web/tsconfig/vue-app.json"
 }
