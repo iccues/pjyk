@@ -4,7 +4,7 @@
 
 - `apps/client`：公开站点，提供首页、搜索、列表、详情和文档页
 - `apps/admin`：后台管理站点
-- `packages/shared`：前后端共享的前端常量、平台配置和工具函数
+- `packages/shared`：两个应用共用的平台配置和平台图标
 - `packages/tsconfig`：统一的 TypeScript 配置基座
 
 ## 技术栈
@@ -34,7 +34,7 @@ web/
 
 - `apps/client` 通过 GraphQL 拉取番剧列表、搜索结果和详情
 - `apps/admin` 提供后台页面和管理能力
-- `packages/shared` 包含平台图标、平台 URL 配置、筛选选项、日期工具等
+- `packages/shared` 包含平台图标和平台 URL 配置
 - `packages/tsconfig` 提供 `vue-app.json`（应用源码和 shared）、`vite.json`（`vite.config.ts`），路径用 `${configDir}` 指向引用它的项目
 
 ## 快速开始

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { User } from "@element-plus/icons-vue";
+import { ElIcon } from "element-plus";
 </script>
 
 <template>

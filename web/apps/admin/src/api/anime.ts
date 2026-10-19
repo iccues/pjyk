@@ -5,14 +5,14 @@ import adminClient from "./request";
 
 /**
  * 获取所有动画列表（管理后台）
- * @param reviewStatus 可选的审核状态筛选
+ * @param reviewStatus 可选的审核状态筛选，空字符串表示全部
  * @param year 可选的年份筛选
- * @param season 可选的季度筛选
+ * @param season 可选的季度筛选，空字符串表示全部
  */
 export async function getAnimeList(
-  reviewStatus?: ReviewStatus | null,
+  reviewStatus?: ReviewStatus | "",
   year?: number | null,
-  season?: Season | null,
+  season?: Season | "",
   signal?: AbortSignal,
 ): Promise<AdminAnime[]> {
   const params: Record<string, string> = {};

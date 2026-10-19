@@ -91,12 +91,11 @@ const arrowClass =
             class="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 rounded-full bg-indigo-500/70 transition-transform duration-200 group-hover:scale-x-100"
           ></span>
         </span>
-        <!-- el-icon 通过父元素继承颜色。 -->
         <span
           aria-hidden="true"
           class="inline-flex shrink-0 text-gray-400 transition duration-200 group-hover:translate-x-0.5 group-hover:text-indigo-600"
         >
-          <el-icon :size="18"><ArrowRightBold /></el-icon>
+          <ArrowRightBold class="size-4.5" />
         </span>
       </RouterLink>
     </h2>
@@ -109,7 +108,7 @@ const arrowClass =
         :class="arrowClass"
         aria-label="向左滚动"
       >
-        <el-icon :size="20"><ArrowLeftBold /></el-icon>
+        <ArrowLeftBold class="size-5" />
       </button>
       <button
         :disabled="!canScrollRight"
@@ -117,7 +116,7 @@ const arrowClass =
         :class="arrowClass"
         aria-label="向右滚动"
       >
-        <el-icon :size="20"><ArrowRightBold /></el-icon>
+        <ArrowRightBold class="size-5" />
       </button>
     </div>
   </div>

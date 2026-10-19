@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ElCol, ElRow } from "element-plus";
+
 import AnimeListSection from "@/components/AnimeListSection.vue";
 import MappingListSection from "@/components/MappingListSection.vue";
 </script>

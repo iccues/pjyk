@@ -1,8 +1,8 @@
-import { SEASON_NAME_MAP, SORT_BY_NAME_MAP } from "@pjyk-web/shared/constants/ui-options.ts";
 import { useHead } from "@unhead/vue";
 import type { Ref } from "vue";
 import { computed } from "vue";
 
+import { SEASON_NAME_MAP, SORT_BY_NAME_MAP } from "@/constants/ui-options";
 import type { GetAnimeListQueryVariables } from "@/graphql/generated/graphql";
 import { buildSeoHead } from "@/utils/seoUtils";
 

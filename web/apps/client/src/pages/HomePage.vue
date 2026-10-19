@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { SEASON_NAME_MAP } from "@pjyk-web/shared/constants/ui-options.ts";
 import { useQuery } from "@urql/vue";
 import type { RouteLocationRaw } from "vue-router";
 
 import AnimeListRow from "@/components/AnimeListRow.vue";
 import HomeHero from "@/components/HomeHero.vue";
+import { SEASON_NAME_MAP } from "@/constants/ui-options";
 import {
   GetHomeAnimeRowsDocument,
   type GetAnimeListQueryVariables,

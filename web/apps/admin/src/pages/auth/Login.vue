@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ElButton } from "element-plus";
+
 import { login } from "@/auth/oidc";
 </script>
 

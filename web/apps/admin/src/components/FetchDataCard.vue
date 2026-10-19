@@ -1,21 +1,29 @@
 <script setup lang="ts">
 import { Download, Refresh, SetUp } from "@element-plus/icons-vue";
-import { PLATFORM_OPTIONS, SEASON_OPTIONS } from "@pjyk-web/shared/constants/ui-options.ts";
-import { ElMessage } from "element-plus";
+import {
+  ElAlert,
+  ElButton,
+  ElCard,
+  ElDatePicker,
+  ElDialog,
+  ElForm,
+  ElFormItem,
+  ElIcon,
+  ElMessage,
+  ElOption,
+  ElSelect,
+} from "element-plus";
 import { ref } from "vue";
 
 import { fetchAnime, fetchMapping, linkMappings, recalculateMetrics } from "@/api/fetch";
+import { PLATFORM_OPTIONS, SEASON_OPTIONS } from "@/constants/ui-options";
 
 // 数据抓取相关
 const fetchDialogVisible = ref(false);
 const fetchYear = ref(new Date().getFullYear());
-const fetchSeason = ref<string | undefined>(undefined);
-const fetchPlatform = ref<string | undefined>(undefined);
+const fetchSeason = ref("");
+const fetchPlatform = ref("");
 const fetchLoading = ref(false);
-
-// 使用含"全部"选项的季度选项
-const seasonOptions = SEASON_OPTIONS;
-const platformOptions = PLATFORM_OPTIONS;
 
 // 打开抓取对话框
 const handleOpenFetchDialog = () => {
@@ -126,8 +134,8 @@ const handleCalculateScores = async () => {
             placeholder="选择季度（留空则抓取全年）"
           >
             <el-option
-              v-for="option in seasonOptions"
-              :key="option.value ?? 'ALL'"
+              v-for="option in SEASON_OPTIONS"
+              :key="option.value"
               :label="option.label"
               :value="option.value"
             />
@@ -140,8 +148,8 @@ const handleCalculateScores = async () => {
             placeholder="选择平台（留空则抓取全部）"
           >
             <el-option
-              v-for="option in platformOptions"
-              :key="option.value ?? 'ALL'"
+              v-for="option in PLATFORM_OPTIONS"
+              :key="option.value"
               :label="option.label"
               :value="option.value"
             />

@@ -1,6 +1,19 @@
 <script setup lang="ts">
 import { Picture } from "@element-plus/icons-vue";
-import { ElMessage, type FormInstance, type FormRules } from "element-plus";
+import {
+  ElButton,
+  ElDatePicker,
+  ElDialog,
+  ElDivider,
+  ElForm,
+  ElFormItem,
+  ElIcon,
+  ElImage,
+  ElInput,
+  ElMessage,
+  type FormInstance,
+  type FormRules,
+} from "element-plus";
 import { computed, ref, watch } from "vue";
 
 import { createAnime, updateAnime } from "@/api/anime";

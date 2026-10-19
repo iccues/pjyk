@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { List } from "@element-plus/icons-vue";
+import { ElCard, ElIcon } from "element-plus";
 
 import FetchDataCard from "@/components/FetchDataCard.vue";
 </script>

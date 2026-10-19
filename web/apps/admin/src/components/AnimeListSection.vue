@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Plus, Refresh } from "@element-plus/icons-vue";
 import { useQuery } from "@tanstack/vue-query";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElAlert, ElButton, ElInput, ElMessage, ElMessageBox, ElTag, vLoading } from "element-plus";
 import { storeToRefs } from "pinia";
 import { VList } from "virtua/vue";
 import { computed, ref, toRaw, watch } from "vue";
@@ -23,9 +23,9 @@ const { applyMappingChange, addMappingToUnmapped, removeAnime } = useAdminListPa
 const dialogVisible = ref(false);
 const editingAnime = ref<AdminAnime | null>(null);
 
-const selectedReviewStatus = ref<ReviewStatus | null>("PENDING");
+const selectedReviewStatus = ref<ReviewStatus | "">("PENDING");
 const selectedYear = ref<number | null>(null);
-const selectedSeason = ref<Season | null>(null);
+const selectedSeason = ref<Season | "">("");
 const searchKeyword = ref("");
 
 // --- 2. 数据加载与筛选 (TanStack Query) ---
@@ -145,7 +145,7 @@ const handleUpdateReviewStatus = async (animeId: number, reviewStatus: ReviewSta
         <el-tag type="info">{{ filteredAnimeList.length }} / {{ animeList.length }}</el-tag>
       </div>
       <div class="flex items-center gap-2">
-        <el-button :icon="Refresh" circle size="small" @click="refetch" />
+        <el-button :icon="Refresh" circle size="small" @click="refetch()" />
         <el-button type="primary" size="small" :icon="Plus" @click="handleEditAnime(null)">
           新建动画
         </el-button>
