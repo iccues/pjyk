@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="T extends string | number | undefined">
-import { computed, onBeforeUnmount, onMounted, ref, useId } from "vue";
+import { onClickOutside } from "@vueuse/core";
+import { computed, ref, useId } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 import type { SelectOption } from "@/constants/ui-options";
@@ -31,17 +32,7 @@ const toggleDropdown = () => {
   isOpen.value = !isOpen.value;
 };
 
-const handlePointerDown = (event: PointerEvent) => {
-  if (!dropdown.value?.contains(event.target as Node)) closeDropdown();
-};
-
-onMounted(() => {
-  document.addEventListener("pointerdown", handlePointerDown);
-});
-
-onBeforeUnmount(() => {
-  document.removeEventListener("pointerdown", handlePointerDown);
-});
+onClickOutside(dropdown, closeDropdown);
 </script>
 
 <template>

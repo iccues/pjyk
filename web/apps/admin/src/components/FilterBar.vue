@@ -3,8 +3,7 @@ import { Filter } from "@element-plus/icons-vue";
 import { ElDatePicker, ElIcon, ElOption, ElSelect } from "element-plus";
 
 import { REVIEW_STATUS_OPTIONS, SEASON_OPTIONS } from "@/constants/ui-options";
-import type { ReviewStatus } from "@/types/adminAnime";
-import type { Season } from "@/types/anime";
+import type { ReviewStatus, Season } from "@/types/adminAnime";
 
 const selectedReviewStatus = defineModel<ReviewStatus | "">("selectedReviewStatus", {
   required: true,

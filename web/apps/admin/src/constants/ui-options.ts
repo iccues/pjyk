@@ -5,8 +5,7 @@
  * 选中"全部"时输入框显示 placeholder。
  */
 
-import type { ReviewStatus } from "@/types/adminAnime";
-import type { Season } from "@/types/anime";
+import type { ReviewStatus, Season } from "@/types/adminAnime";
 
 type SelectOption<T> = { label: string; value: T };
 

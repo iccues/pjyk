@@ -17,6 +17,7 @@
     "@tailwindcss/vite": "catalog:",
     "@unhead/vue": "^3.1.0",
     "@urql/vue": "^2.1.0",
+    "@vueuse/core": "^14.3.0",
     "github-markdown-css": "^5.9.0",
     "graphql": "^16.14.0",
     "markdown-it": "^14.1.1",

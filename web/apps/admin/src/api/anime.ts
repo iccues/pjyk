@@ -1,5 +1,4 @@
-import type { AdminAnime, ReviewStatus } from "@/types/adminAnime";
-import type { Season } from "@/types/anime";
+import type { AdminAnime, ReviewStatus, Season } from "@/types/adminAnime";
 
 import adminClient from "./request";
 

@@ -11,8 +11,7 @@ import AdminAnimeItem from "@/components/AdminAnimeItem.vue";
 import AnimeFormDialog from "@/components/AnimeFormDialog.vue";
 import FilterBar from "@/components/FilterBar.vue";
 import { useAdminListPageStore } from "@/stores/adminListPageStore.ts";
-import type { AdminAnime, ReviewStatus } from "@/types/adminAnime";
-import type { Season } from "@/types/anime";
+import type { AdminAnime, ReviewStatus, Season } from "@/types/adminAnime";
 
 // --- 1. Store 状态与核心逻辑 ---
 

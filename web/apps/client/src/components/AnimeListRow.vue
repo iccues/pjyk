@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ArrowLeftBold, ArrowRightBold } from "@element-plus/icons-vue";
-import { ref, watch } from "vue";
+import { useResizeObserver } from "@vueuse/core";
+import { ref } from "vue";
 import { RouterLink, type RouteLocationRaw } from "vue-router";
 
 import type { AnimeCardFragment } from "@/graphql/generated/graphql";
@@ -8,7 +9,7 @@ import type { AnimeCardFragment } from "@/graphql/generated/graphql";
 import AnimeCard from "./AnimeCard.vue";
 import AnimeCardSkeleton from "./AnimeCardSkeleton.vue";
 
-const props = defineProps<{
+defineProps<{
   title: string;
   moreLink: RouteLocationRaw;
   animeList?: AnimeCardFragment[];
@@ -57,19 +58,8 @@ const scroll = (direction: -1 | 1) => {
   container.scrollTo({ left: (index + direction * 2) * step, behavior: "smooth" });
 };
 
-// 列表或容器变化时刷新滚动状态。
-watch(
-  [scrollContainer, () => props.animeList],
-  ([container], _, onCleanup) => {
-    updateScrollState();
-    if (!container) return;
-
-    const observer = new ResizeObserver(updateScrollState);
-    observer.observe(container);
-    onCleanup(() => observer.disconnect());
-  },
-  { flush: "post" },
-);
+// 容器挂载和尺寸变化时刷新滚动状态。
+useResizeObserver(scrollContainer, updateScrollState);
 
 const cardWidthClass = "w-[var(--card-width)] shrink-0";
 

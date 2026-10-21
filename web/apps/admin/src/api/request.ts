@@ -1,7 +1,8 @@
 import axios from "axios";
 
 import { oidcManager } from "@/auth/oidc";
-import type { Response } from "@/types/response";
+
+type Response<T> = { success: true; data: T } | { success: false; message: string };
 
 // 响应拦截器：成功解包和业务错误处理
 const onResponseFulfilled = (response: any) => {

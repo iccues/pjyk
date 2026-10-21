@@ -5,7 +5,7 @@ import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig({
   plugins: [vue(), tailwindcss()],
   resolve: {
     alias: {
@@ -13,14 +13,11 @@ export default defineConfig(({ mode }) => ({
     },
   },
   server: {
-    proxy:
-      mode === "development"
-        ? {
-            "/api": {
-              target: "http://localhost:8080",
-              changeOrigin: true,
-            },
-          }
-        : undefined,
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+      },
+    },
   },
-}));
+});
