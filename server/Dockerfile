@@ -13,8 +13,8 @@ RUN gradle dependencies --no-daemon || true
 # 复制源代码
 COPY src ./src
 
-# 构建应用（跳过测试以加快构建速度）
-RUN gradle build -x test --no-daemon
+# 构建 Spring Boot 可执行 JAR
+RUN gradle bootJar --no-daemon
 
 # 运行阶段 - 使用更小的基础镜像
 FROM eclipse-temurin:21-jre
