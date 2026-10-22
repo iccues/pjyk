@@ -26,8 +26,6 @@
   "devDependencies": {
     "@pjyk-web/tsconfig": "workspace:*",
     "@vitejs/plugin-vue": "catalog:",
-    "unplugin-auto-import": "catalog:",
-    "unplugin-vue-components": "catalog:",
     "vite": "catalog:",
     "vue-tsc": "catalog:"
   }

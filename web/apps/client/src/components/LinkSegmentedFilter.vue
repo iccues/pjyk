@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends string | number | undefined">
-import type { SelectOption } from "@pjyk-web/shared/constants/ui-options.ts";
 import type { RouteLocationRaw } from "vue-router";
+
+import type { SelectOption } from "@/constants/ui-options";
 
 import LinkButton from "./LinkButton.vue";
 

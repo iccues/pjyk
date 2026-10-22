@@ -39,7 +39,7 @@ const formater = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
         aria-hidden="true"
         class="ml-auto inline-flex shrink-0 text-gray-400 transition-colors group-hover:text-gray-600 [&_svg]:stroke-current [&_svg]:stroke-60"
       >
-        <el-icon :size="14"><TopRight /></el-icon>
+        <TopRight class="size-3.5" />
       </span>
     </div>
 

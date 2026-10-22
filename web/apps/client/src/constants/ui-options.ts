@@ -1,13 +1,10 @@
 /**
  * UI 选项常量
  *
- * 此文件包含用于 UI 组件的选项常量，如下拉菜单、筛选器等。
+ * 筛选器用到的选项，以及 SEO、文案用到的名称映射。
  */
 
-export type ReviewStatus = "PENDING" | "APPROVED" | "REJECTED";
-export type Season = "WINTER" | "SPRING" | "SUMMER" | "FALL";
-export type SortBy = "SCORE" | "POPULARITY";
-export type Platform = "AniList" | "Bangumi" | "MyAnimeList";
+import type { Season, SortBy } from "@/graphql/generated/graphql";
 
 /**
  * 选项的通用形状：label 用于展示，value 用于取值
@@ -28,31 +25,11 @@ export const SEASON_OPTIONS: SelectOption<Season | undefined>[] = [
 ];
 
 /**
- * 审核状态选项
- */
-export const REVIEW_STATUS_OPTIONS: SelectOption<ReviewStatus | undefined>[] = [
-  { label: "全部", value: undefined },
-  { label: "待审核", value: "PENDING" },
-  { label: "已通过", value: "APPROVED" },
-  { label: "已拒绝", value: "REJECTED" },
-];
-
-/**
  * 排序选项
  */
 export const SORT_BY_OPTIONS: SelectOption<SortBy>[] = [
   { label: "按评分", value: "SCORE" },
   { label: "按人气", value: "POPULARITY" },
-];
-
-/**
- * 平台选项
- */
-export const PLATFORM_OPTIONS: SelectOption<Platform | undefined>[] = [
-  { label: "全部", value: undefined },
-  { label: "Bangumi", value: "Bangumi" },
-  { label: "AniList", value: "AniList" },
-  { label: "MyAnimeList", value: "MyAnimeList" },
 ];
 
 /**
@@ -72,3 +49,19 @@ export const SORT_BY_NAME_MAP: Record<SortBy, string> = {
   SCORE: "评分",
   POPULARITY: "人气",
 };
+
+/**
+ * 生成年份选项（从指定年份到当前年份）
+ * @param startYear 开始的年份
+ * @returns 年份选项数组，包含"全部"选项和年份选项
+ */
+export function generateYearOptionsFrom(startYear: number): SelectOption<number | undefined>[] {
+  const currentYear = new Date().getFullYear();
+  const years: SelectOption<number | undefined>[] = [{ label: "全部", value: undefined }];
+
+  for (let year = currentYear; year >= startYear; year--) {
+    years.push({ label: `${year}年`, value: year });
+  }
+
+  return years;
+}

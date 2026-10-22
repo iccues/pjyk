@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { SEASON_OPTIONS, SORT_BY_OPTIONS } from "@pjyk-web/shared/constants/ui-options.ts";
-import { generateYearOptionsFrom } from "@pjyk-web/shared/utils/dateUtils.ts";
 import type { RouteLocationRaw } from "vue-router";
 
+import { generateYearOptionsFrom, SEASON_OPTIONS, SORT_BY_OPTIONS } from "@/constants/ui-options";
 import type { GetAnimeListQueryVariables } from "@/graphql/generated/graphql";
 
 import LinkDropdownFilter from "./LinkDropdownFilter.vue";

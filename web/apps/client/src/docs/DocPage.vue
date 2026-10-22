@@ -1,16 +1,36 @@
 <script setup lang="ts">
 import { katex } from "@mdit/plugin-katex";
+import { useHead } from "@unhead/vue";
+import { computedAsync } from "@vueuse/core";
 import MarkdownIt from "markdown-it";
+import { computed } from "vue";
+
+import { buildSeoHead } from "@/utils/seoUtils";
 
 import "github-markdown-css/github-markdown-light.css";
 
+// load 返回 md 原文，title 和 description 用于页面 SEO
 const props = defineProps<{
-  raw: string;
+  load: () => Promise<{ default: string }>;
+  title: string;
+  description: string;
 }>();
 
 const md = new MarkdownIt();
 md.use(katex, { throwOnError: false, output: "mathml" });
-const content = md.render(props.raw);
+
+// 渲染后的文档 HTML，load 变化时重新加载，并丢弃过期的结果
+const content = computedAsync(async () => {
+  const { default: raw } = await props.load();
+  return md.render(raw);
+}, "");
+
+useHead(
+  buildSeoHead({
+    title: computed(() => props.title),
+    description: computed(() => props.description),
+  }),
+);
 </script>
 
 <template>

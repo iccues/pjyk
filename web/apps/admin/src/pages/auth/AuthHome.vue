@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ElButton } from "element-plus";
 import type { User } from "oidc-client-ts";
 import { onMounted, ref } from "vue";
 

@@ -67,7 +67,7 @@ const cellClass = "inline-flex size-9 items-center justify-center rounded-[10px]
           :class="cellClass"
           aria-label="第一页"
         >
-          <el-icon :size="18"><DArrowLeft /></el-icon>
+          <DArrowLeft class="size-4.5" />
         </LinkButton>
 
         <LinkButton
@@ -76,7 +76,7 @@ const cellClass = "inline-flex size-9 items-center justify-center rounded-[10px]
           :class="cellClass"
           aria-label="上一页"
         >
-          <el-icon :size="18"><ArrowLeft /></el-icon>
+          <ArrowLeft class="size-4.5" />
         </LinkButton>
 
         <LinkButton
@@ -98,7 +98,7 @@ const cellClass = "inline-flex size-9 items-center justify-center rounded-[10px]
           :class="cellClass"
           aria-label="下一页"
         >
-          <el-icon :size="18"><ArrowRight /></el-icon>
+          <ArrowRight class="size-4.5" />
         </LinkButton>
 
         <LinkButton
@@ -107,7 +107,7 @@ const cellClass = "inline-flex size-9 items-center justify-center rounded-[10px]
           :class="cellClass"
           aria-label="最后一页"
         >
-          <el-icon :size="18"><DArrowRight /></el-icon>
+          <DArrowRight class="size-4.5" />
         </LinkButton>
       </nav>
 
@@ -119,7 +119,7 @@ const cellClass = "inline-flex size-9 items-center justify-center rounded-[10px]
           :class="cellClass"
           aria-label="上一页"
         >
-          <el-icon :size="18"><ArrowLeft /></el-icon>
+          <ArrowLeft class="size-4.5" />
         </LinkButton>
 
         <template v-for="(item, index) in pageItems" :key="item ?? `ellipsis-${index}`">
@@ -143,7 +143,7 @@ const cellClass = "inline-flex size-9 items-center justify-center rounded-[10px]
           :class="cellClass"
           aria-label="下一页"
         >
-          <el-icon :size="18"><ArrowRight /></el-icon>
+          <ArrowRight class="size-4.5" />
         </LinkButton>
       </nav>
     </template>

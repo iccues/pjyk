@@ -1,4 +1,9 @@
-import type { AnimeTitles } from "./anime";
+export interface AnimeTitles {
+  titleNative: string;
+  titleRomaji: string;
+  titleEn: string;
+  titleCn: string;
+}
 
 export interface AdminAnime {
   animeId: number;
@@ -26,3 +31,5 @@ export interface MappingInfo {
 }
 
 export type ReviewStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export type Season = "WINTER" | "SPRING" | "SUMMER" | "FALL";

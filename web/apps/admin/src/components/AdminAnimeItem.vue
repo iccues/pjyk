@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ArrowDown, Delete, Edit } from "@element-plus/icons-vue";
+import { ElButton, ElCollapseTransition, ElIcon, ElImage, ElOption, ElSelect } from "element-plus";
 import { ref } from "vue";
 import { VueDraggable, type DraggableEvent } from "vue-draggable-plus";
 

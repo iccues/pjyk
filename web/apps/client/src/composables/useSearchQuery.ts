@@ -1,4 +1,4 @@
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
 
 import type { GetAnimeListBySearchQueryVariables } from "@/graphql/generated/graphql";
@@ -10,23 +10,18 @@ export function useSearchQuery() {
   // 搜索输入
   const searchInput = ref((route.query.q as string) || "");
 
-  // 查询参数
-  const searchParams = ref<GetAnimeListBySearchQueryVariables>({
-    keyword: searchInput.value,
+  // 搜索查询参数，由当前路由的 query 计算
+  const searchParams = computed<GetAnimeListBySearchQueryVariables>(() => ({
+    keyword: (route.query.q as string) || "",
     pageNumber: route.query.page ? parseInt(route.query.page as string, 10) : 0,
     pageSize: 30,
-  });
+  }));
 
-  // 路由变化时同步查询参数
+  // 路由变化时同步搜索输入
   watch(
     () => route.query,
     (newQuery) => {
       searchInput.value = (newQuery.q as string) || "";
-      searchParams.value = {
-        keyword: searchInput.value,
-        pageNumber: newQuery.page ? parseInt(newQuery.page as string, 10) : 0,
-        pageSize: 30,
-      };
     },
     { deep: true },
   );

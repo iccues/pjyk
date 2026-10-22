@@ -1,4 +1,4 @@
-import { ref, watch } from "vue";
+import { computed } from "vue";
 import { useRoute, type RouteLocationRaw } from "vue-router";
 
 import type { GetAnimeListQueryVariables } from "@/graphql/generated/graphql";
@@ -7,23 +7,11 @@ import { filtersToQuery, queryToFilters } from "@/utils/queryUtils";
 export function useAnimeListQuery() {
   const route = useRoute();
 
-  // 初始化参数
-  const animeListParams = ref<GetAnimeListQueryVariables>({
+  // 列表查询参数，由当前路由的 query 计算
+  const animeListParams = computed<GetAnimeListQueryVariables>(() => ({
     ...queryToFilters(route.query),
     pageSize: 30,
-  });
-
-  // 监听路由变化，同步到组件状态
-  watch(
-    () => route.query,
-    (newQuery) => {
-      animeListParams.value = {
-        ...queryToFilters(newQuery),
-        pageSize: 30,
-      };
-    },
-    { deep: true },
-  );
+  }));
 
   // 根据筛选变化生成链接，并重置到第 1 页
   const createFilterLink = (changes: Partial<GetAnimeListQueryVariables>): RouteLocationRaw => {

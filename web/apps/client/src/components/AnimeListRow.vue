@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ArrowLeftBold, ArrowRightBold } from "@element-plus/icons-vue";
-import { ref, watch } from "vue";
+import { useResizeObserver } from "@vueuse/core";
+import { ref } from "vue";
 import { RouterLink, type RouteLocationRaw } from "vue-router";
 
 import type { AnimeCardFragment } from "@/graphql/generated/graphql";
@@ -8,7 +9,7 @@ import type { AnimeCardFragment } from "@/graphql/generated/graphql";
 import AnimeCard from "./AnimeCard.vue";
 import AnimeCardSkeleton from "./AnimeCardSkeleton.vue";
 
-const props = defineProps<{
+defineProps<{
   title: string;
   moreLink: RouteLocationRaw;
   animeList?: AnimeCardFragment[];
@@ -57,19 +58,8 @@ const scroll = (direction: -1 | 1) => {
   container.scrollTo({ left: (index + direction * 2) * step, behavior: "smooth" });
 };
 
-// 列表或容器变化时刷新滚动状态。
-watch(
-  [scrollContainer, () => props.animeList],
-  ([container], _, onCleanup) => {
-    updateScrollState();
-    if (!container) return;
-
-    const observer = new ResizeObserver(updateScrollState);
-    observer.observe(container);
-    onCleanup(() => observer.disconnect());
-  },
-  { flush: "post" },
-);
+// 容器挂载和尺寸变化时刷新滚动状态。
+useResizeObserver(scrollContainer, updateScrollState);
 
 const cardWidthClass = "w-[var(--card-width)] shrink-0";
 
@@ -91,12 +81,11 @@ const arrowClass =
             class="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 rounded-full bg-indigo-500/70 transition-transform duration-200 group-hover:scale-x-100"
           ></span>
         </span>
-        <!-- el-icon 通过父元素继承颜色。 -->
         <span
           aria-hidden="true"
           class="inline-flex shrink-0 text-gray-400 transition duration-200 group-hover:translate-x-0.5 group-hover:text-indigo-600"
         >
-          <el-icon :size="18"><ArrowRightBold /></el-icon>
+          <ArrowRightBold class="size-4.5" />
         </span>
       </RouterLink>
     </h2>
@@ -109,7 +98,7 @@ const arrowClass =
         :class="arrowClass"
         aria-label="向左滚动"
       >
-        <el-icon :size="20"><ArrowLeftBold /></el-icon>
+        <ArrowLeftBold class="size-5" />
       </button>
       <button
         :disabled="!canScrollRight"
@@ -117,7 +106,7 @@ const arrowClass =
         :class="arrowClass"
         aria-label="向右滚动"
       >
-        <el-icon :size="20"><ArrowRightBold /></el-icon>
+        <ArrowRightBold class="size-5" />
       </button>
     </div>
   </div>

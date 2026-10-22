@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { Filter } from "@element-plus/icons-vue";
-import { REVIEW_STATUS_OPTIONS, SEASON_OPTIONS } from "@pjyk-web/shared/constants/ui-options.js";
+import { ElDatePicker, ElIcon, ElOption, ElSelect } from "element-plus";
 
-import type { ReviewStatus } from "@/types/adminAnime";
-import type { Season } from "@/types/anime";
+import { REVIEW_STATUS_OPTIONS, SEASON_OPTIONS } from "@/constants/ui-options";
+import type { ReviewStatus, Season } from "@/types/adminAnime";
 
-const selectedReviewStatus = defineModel<ReviewStatus | null>("selectedReviewStatus", {
+const selectedReviewStatus = defineModel<ReviewStatus | "">("selectedReviewStatus", {
   required: true,
 });
 const selectedYear = defineModel<number | null>("selectedYear", { required: true });
-const selectedSeason = defineModel<Season | null>("selectedSeason", { required: true });
+const selectedSeason = defineModel<Season | "">("selectedSeason", { required: true });
 </script>
 
 <template>
@@ -41,13 +41,7 @@ const selectedSeason = defineModel<Season | null>("selectedSeason", { required: 
       clearable
     />
 
-    <el-select
-      v-model="selectedSeason"
-      placeholder="季度"
-      size="small"
-      style="width: 100px"
-      clearable
-    >
+    <el-select v-model="selectedSeason" placeholder="季度" size="small" style="width: 100px">
       <el-option
         v-for="option in SEASON_OPTIONS"
         :key="option.label"

@@ -1,11 +1,3 @@
 {
-  "extends": "@pjyk-web/tsconfig/vue-app.json",
-  "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/**/*.test.vue"]
+  "extends": "@pjyk-web/tsconfig/vue-app.json"
 }

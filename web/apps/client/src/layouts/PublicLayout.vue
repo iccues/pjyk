@@ -26,7 +26,7 @@ import LinkButton from "@/components/LinkButton.vue";
 
         <!-- 搜索入口统一跳转到搜索页。 -->
         <LinkButton to="/search" class="size-10 justify-center rounded-[10px]" aria-label="搜索">
-          <el-icon :size="20"><Search /></el-icon>
+          <Search class="size-5" />
         </LinkButton>
       </div>
     </header>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Delete } from "@element-plus/icons-vue";
 import { getPlatformConfig } from "@pjyk-web/shared/config/platforms.ts";
+import { ElButton, ElImage, ElTag } from "element-plus";
 import { computed } from "vue";
 
 import type { AdminMapping } from "@/types/adminAnime";

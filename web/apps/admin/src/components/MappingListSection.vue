@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Plus, Refresh } from "@element-plus/icons-vue";
 import { useQuery } from "@tanstack/vue-query";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElAlert, ElButton, ElMessage, ElMessageBox, ElTag, vLoading } from "element-plus";
 import { storeToRefs } from "pinia";
 import { ref, toRaw, watch } from "vue";
 import { VueDraggable } from "vue-draggable-plus";
@@ -66,7 +66,7 @@ const handleDeleteMapping = async (mappingId: number) => {
         <el-tag type="warning">{{ mappingList.length }}</el-tag>
       </div>
       <div class="flex items-center gap-2">
-        <el-button :icon="Refresh" circle size="small" @click="refetch" />
+        <el-button :icon="Refresh" circle size="small" @click="refetch()" />
         <el-button type="primary" size="small" :icon="Plus" @click="mappingDialogVisible = true">
           新建映射
         </el-button>
