@@ -1,13 +1,13 @@
 package com.yukiani.server.service.fetch;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yukiani.server.config.PlatformConfig;
 import com.yukiani.server.config.PlatformConfigProperties;
 import com.yukiani.server.entity.AnimeTitles;
 import com.yukiani.server.entity.Platform;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;

@@ -1,7 +1,5 @@
 package com.yukiani.server.service.fetch;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yukiani.server.config.PlatformConfig;
 import com.yukiani.server.config.PlatformConfigProperties;
 import com.yukiani.server.entity.MappingInfo;
@@ -17,6 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -387,7 +387,7 @@ public class AbstractAnimeFetchServiceTest {
         @Override
         protected LocalDate extractStartDate(JsonNode jsonNode) {
             // 与各平台实现一致：缺少开播日期时返回 null
-            String dateStr = jsonNode.path("startDate").asText(null);
+            String dateStr = jsonNode.path("startDate").asString(null);
             if (dateStr == null || dateStr.isEmpty()) {
                 return null;
             }
@@ -397,18 +397,18 @@ public class AbstractAnimeFetchServiceTest {
         @Override
         protected AnimeTitles extractTitles(JsonNode jsonNode) {
             AnimeTitles titles = new AnimeTitles();
-            titles.setTitleNative(jsonNode.path("title").asText());
+            titles.setTitleNative(jsonNode.path("title").asString());
             return titles;
         }
 
         @Override
         protected String extractCoverImage(JsonNode jsonNode) {
-            return jsonNode.path("coverImage").asText();
+            return jsonNode.path("coverImage").asString();
         }
 
         @Override
         protected String extractPlatformId(JsonNode jsonNode) {
-            return jsonNode.path("id").asText(null);
+            return jsonNode.path("id").asString(null);
         }
 
         @Override

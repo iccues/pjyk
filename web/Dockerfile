@@ -1,5 +1,5 @@
 # 构建阶段
-FROM node:25.2.1 AS build
+FROM node:24.22.1 AS build
 
 RUN npm install -g corepack --force && corepack enable
 
@@ -18,7 +18,7 @@ COPY . .
 RUN pnpm install --offline --frozen-lockfile && pnpm -r build
 
 # 生产阶段
-FROM nginx:1.29.4
+FROM nginx:1.30.6
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/apps/client/dist /usr/share/nginx/client

@@ -1,6 +1,5 @@
 package com.yukiani.server.service.fetch;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.yukiani.server.config.PlatformConfig;
 import com.yukiani.server.config.PlatformConfigProperties;
 import com.yukiani.server.entity.*;
@@ -10,6 +9,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import tools.jackson.databind.JsonNode;
 
 import java.time.LocalDate;
 import java.util.List;

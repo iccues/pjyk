@@ -8,13 +8,13 @@ allowBuilds:
 catalog:
   # dependencies
   "@element-plus/icons-vue": ^2.3.2
-  "@tailwindcss/vite": ^4.2.4
-  "element-plus": ^2.14.0
-  "tailwindcss": ^4.2.4
-  "vue": ^3.5.34
-  "vue-router": ^5.0.6
+  "@tailwindcss/vite": ^4.3.3
+  "element-plus": ^2.14.7
+  "tailwindcss": ^4.3.3
+  "vue": ^3.5.44
+  "vue-router": ^5.4.0
 
   # dev dependencies
-  "@vitejs/plugin-vue": ^6.0.6
-  vite: ^8.0.11
-  vue-tsc: ^3.2.8
+  "@vitejs/plugin-vue": ^6.0.10
+  vite: ^8.3.5
+  vue-tsc: ^3.3.13

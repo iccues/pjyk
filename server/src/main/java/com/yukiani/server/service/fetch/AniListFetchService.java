@@ -1,6 +1,5 @@
 package com.yukiani.server.service.fetch;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.yukiani.server.entity.AnimeTitles;
 import com.yukiani.server.entity.Platform;
 import com.yukiani.server.entity.Season;
@@ -8,6 +7,7 @@ import com.yukiani.server.util.RetryUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import tools.jackson.databind.JsonNode;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -50,20 +50,20 @@ public class AniListFetchService extends AbstractAnimeFetchService {
     protected AnimeTitles extractTitles(JsonNode jsonNode) {
         JsonNode titleJson = jsonNode.path("title");
         AnimeTitles titles = new AnimeTitles();
-        titles.setTitleNative(titleJson.path("native").asText(null));
-        titles.setTitleRomaji(titleJson.path("romaji").asText(null));
-        titles.setTitleEn(titleJson.path("english").asText(null));
+        titles.setTitleNative(titleJson.path("native").asString(null));
+        titles.setTitleRomaji(titleJson.path("romaji").asString(null));
+        titles.setTitleEn(titleJson.path("english").asString(null));
         return titles;
     }
 
     @Override
     protected String extractCoverImage(JsonNode jsonNode) {
-        return jsonNode.path("coverImage").path("extraLarge").asText(null);
+        return jsonNode.path("coverImage").path("extraLarge").asString(null);
     }
 
     @Override
     protected String extractPlatformId(JsonNode jsonNode) {
-        return jsonNode.path("id").asText(null);
+        return jsonNode.path("id").asString(null);
     }
 
     @Override

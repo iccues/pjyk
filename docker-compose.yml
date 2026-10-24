@@ -1,7 +1,7 @@
 services:
   # PostgreSQL 数据库
   postgres:
-    image: postgres:17.7
+    image: postgres:17.11
     container_name: pjyk-postgres
     environment:
       POSTGRES_DB: pjyk

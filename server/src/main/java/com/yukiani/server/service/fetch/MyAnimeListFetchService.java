@@ -1,6 +1,5 @@
 package com.yukiani.server.service.fetch;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.yukiani.server.entity.AnimeTitles;
 import com.yukiani.server.entity.Platform;
 import com.yukiani.server.entity.Season;
@@ -8,6 +7,7 @@ import com.yukiani.server.util.RetryUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import tools.jackson.databind.JsonNode;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -27,7 +27,7 @@ public class MyAnimeListFetchService extends AbstractAnimeFetchService {
 
     @Override
     protected LocalDate extractStartDate(JsonNode jsonNode) {
-        String dateStr = jsonNode.path("start_date").asText(null);
+        String dateStr = jsonNode.path("start_date").asString(null);
 
         if (dateStr == null || dateStr.isBlank()) {
             return null;
@@ -44,19 +44,19 @@ public class MyAnimeListFetchService extends AbstractAnimeFetchService {
     protected AnimeTitles extractTitles(JsonNode jsonNode) {
         JsonNode titleJson = jsonNode.path("alternative_titles");
         AnimeTitles titles = new AnimeTitles();
-        titles.setTitleEn(titleJson.path("en").asText(null));
-        titles.setTitleNative(titleJson.path("ja").asText(null));
+        titles.setTitleEn(titleJson.path("en").asString(null));
+        titles.setTitleNative(titleJson.path("ja").asString(null));
         return titles;
     }
 
     @Override
     protected String extractCoverImage(JsonNode jsonNode) {
-        return jsonNode.path("main_picture").path("large").asText(null);
+        return jsonNode.path("main_picture").path("large").asString(null);
     }
 
     @Override
     protected String extractPlatformId(JsonNode jsonNode) {
-        return jsonNode.path("id").asText(null);
+        return jsonNode.path("id").asString(null);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class MyAnimeListFetchService extends AbstractAnimeFetchService {
     private void extractMediaItems(JsonNode page, List<JsonNode> list) {
         page.path("data").forEach(jsonNode -> {
             JsonNode node = jsonNode.path("node");
-            String mediaType = node.path("media_type").asText();
+            String mediaType = node.path("media_type").asString();
             // Season API 也会返回 music 和 pv，此类条目不参与动画主数据聚合。
             if ("music".equals(mediaType) || "pv".equals(mediaType)) {
                 return;

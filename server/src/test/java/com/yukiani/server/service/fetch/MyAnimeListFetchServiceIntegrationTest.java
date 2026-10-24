@@ -1,7 +1,5 @@
 package com.yukiani.server.service.fetch;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yukiani.server.entity.Season;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -95,7 +95,7 @@ public class MyAnimeListFetchServiceIntegrationTest {
 
         // 验证结果
         assertNotNull(result);
-        assertEquals("54321", result.path("id").asText());
+        assertEquals("54321", result.path("id").asString());
 
         // 验证 WebClient 被正确调用
         verify(mockWebClient).get();
@@ -132,9 +132,9 @@ public class MyAnimeListFetchServiceIntegrationTest {
         assertEquals(3, result.size());
 
         // 验证 ID
-        assertEquals("12345", result.get(0).path("id").asText());
-        assertEquals("12346", result.get(1).path("id").asText());
-        assertEquals("12347", result.get(2).path("id").asText());
+        assertEquals("12345", result.get(0).path("id").asString());
+        assertEquals("12346", result.get(1).path("id").asString());
+        assertEquals("12347", result.get(2).path("id").asString());
 
         // 验证 WebClient 被调用了两次
         verify(mockWebClient, times(2)).get();
@@ -185,10 +185,10 @@ public class MyAnimeListFetchServiceIntegrationTest {
         assertEquals(2, result.size());
 
         // 验证保留的是 tv 和 movie
-        assertEquals("11111", result.get(0).path("id").asText());
-        assertEquals("tv", result.get(0).path("media_type").asText());
-        assertEquals("44444", result.get(1).path("id").asText());
-        assertEquals("movie", result.get(1).path("media_type").asText());
+        assertEquals("11111", result.get(0).path("id").asString());
+        assertEquals("tv", result.get(0).path("media_type").asString());
+        assertEquals("44444", result.get(1).path("id").asString());
+        assertEquals("movie", result.get(1).path("media_type").asString());
     }
 
     @Test
@@ -202,7 +202,7 @@ public class MyAnimeListFetchServiceIntegrationTest {
 
         // 验证原始数据包含 pv
         JsonNode pvNode = responseWithMusicPV.path("data").get(2).path("node");
-        assertEquals("pv", pvNode.path("media_type").asText());
+        assertEquals("pv", pvNode.path("media_type").asString());
 
         // Mock WebClient
         when(mockWebClient.get()).thenReturn(requestHeadersUriSpec);
@@ -215,7 +215,7 @@ public class MyAnimeListFetchServiceIntegrationTest {
 
         // 验证 pv 被过滤掉
         result.forEach(node -> {
-            String mediaType = node.path("media_type").asText();
+            String mediaType = node.path("media_type").asString();
             assertNotEquals("pv", mediaType);
             assertNotEquals("music", mediaType);
         });
@@ -247,9 +247,9 @@ public class MyAnimeListFetchServiceIntegrationTest {
 
         // 验证所有有效类型都被接受
         assertEquals(3, result.size());
-        assertEquals("tv", result.get(0).path("media_type").asText());
-        assertEquals("movie", result.get(1).path("media_type").asText());
-        assertEquals("ova", result.get(2).path("media_type").asText());
+        assertEquals("tv", result.get(0).path("media_type").asString());
+        assertEquals("movie", result.get(1).path("media_type").asString());
+        assertEquals("ova", result.get(2).path("media_type").asString());
     }
 
     @Test
