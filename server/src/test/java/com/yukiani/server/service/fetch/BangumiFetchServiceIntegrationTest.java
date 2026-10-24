@@ -1,7 +1,5 @@
 package com.yukiani.server.service.fetch;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yukiani.server.entity.Season;
 import com.yukiani.server.service.SeasonService;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -95,7 +95,7 @@ public class BangumiFetchServiceIntegrationTest {
         JsonNode result = service.fetchSingleMappingJson("88888");
 
         assertNotNull(result);
-        assertEquals("88888", result.path("id").asText());
+        assertEquals("88888", result.path("id").asString());
         verify(mockWebClient).get();
         verify(requestHeadersUriSpec).uri("/subjects/{id}", "88888");
     }

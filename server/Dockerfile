@@ -1,5 +1,5 @@
 # 多阶段构建 - 构建阶段
-FROM gradle:8.14.3-jdk21 AS build
+FROM gradle:9.8.2-jdk21 AS build
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ COPY src ./src
 RUN gradle bootJar --no-daemon
 
 # 运行阶段 - 使用更小的基础镜像
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:21.0.12.1_1-jre
 
 WORKDIR /app
 

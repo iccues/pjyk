@@ -1,7 +1,5 @@
 package com.yukiani.server.service.fetch;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yukiani.server.entity.Season;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -96,7 +96,7 @@ public class AniListFetchServiceIntegrationTest {
         assertNotNull(result);
         assertTrue(result.has("id"));
         assertTrue(result.has("title"));
-        assertEquals("55555", result.path("id").asText());
+        assertEquals("55555", result.path("id").asString());
 
         // 验证 WebClient 被正确调用
         verify(mockWebClient).post();
@@ -132,9 +132,9 @@ public class AniListFetchServiceIntegrationTest {
         assertEquals(3, result.size());
 
         // 验证 ID
-        assertEquals("98765", result.get(0).path("id").asText());
-        assertEquals("98766", result.get(1).path("id").asText());
-        assertEquals("98767", result.get(2).path("id").asText());
+        assertEquals("98765", result.get(0).path("id").asString());
+        assertEquals("98766", result.get(1).path("id").asString());
+        assertEquals("98767", result.get(2).path("id").asString());
 
         // 验证 WebClient 被调用了两次
         verify(mockWebClient, times(2)).post();
@@ -189,7 +189,7 @@ public class AniListFetchServiceIntegrationTest {
         assertNotNull(result);
         assertTrue(result.has("id"));
         assertTrue(result.has("title"));
-        assertEquals("55555", result.path("id").asText());
+        assertEquals("55555", result.path("id").asString());
     }
 
     @Test

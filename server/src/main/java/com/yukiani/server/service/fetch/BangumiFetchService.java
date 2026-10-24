@@ -1,6 +1,5 @@
 package com.yukiani.server.service.fetch;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.yukiani.server.entity.AnimeTitles;
 import com.yukiani.server.entity.LocalDateRange;
 import com.yukiani.server.entity.Platform;
@@ -10,6 +9,7 @@ import com.yukiani.server.util.RetryUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import tools.jackson.databind.JsonNode;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -29,7 +29,7 @@ public class BangumiFetchService extends AbstractAnimeFetchService {
 
     @Override
     protected LocalDate extractStartDate(JsonNode jsonNode) {
-        String dateStr = jsonNode.path("date").asText(null);
+        String dateStr = jsonNode.path("date").asString(null);
 
         if (dateStr == null || dateStr.isBlank()) {
             return null;
@@ -45,19 +45,19 @@ public class BangumiFetchService extends AbstractAnimeFetchService {
     @Override
     protected AnimeTitles extractTitles(JsonNode jsonNode) {
         AnimeTitles titles = new AnimeTitles();
-        titles.setTitleNative(jsonNode.path("name").asText(null));
-        titles.setTitleCn(jsonNode.path("name_cn").asText(null));
+        titles.setTitleNative(jsonNode.path("name").asString(null));
+        titles.setTitleCn(jsonNode.path("name_cn").asString(null));
         return titles;
     }
 
     @Override
     protected String extractCoverImage(JsonNode jsonNode) {
-        return jsonNode.path("images").path("common").asText(null);
+        return jsonNode.path("images").path("common").asString(null);
     }
 
     @Override
     protected String extractPlatformId(JsonNode jsonNode) {
-        return jsonNode.path("id").asText(null);
+        return jsonNode.path("id").asString(null);
     }
 
     @Override
