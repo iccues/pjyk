@@ -15,9 +15,9 @@ export function useAnimeListHead(animeListParams: Ref<GetAnimeListQueryVariables
       if (animeListParams.value.season) {
         parts.push(SEASON_NAME_MAP[animeListParams.value.season]);
       }
-      parts.push("动漫");
+      parts.push("动画");
     } else {
-      parts.push("全部动漫");
+      parts.push("全部动画");
     }
 
     if (animeListParams.value.sortBy === "POPULARITY") {
@@ -38,9 +38,9 @@ export function useAnimeListHead(animeListParams: Ref<GetAnimeListQueryVariables
       parts.push(SEASON_NAME_MAP[animeListParams.value.season]);
     }
 
-    parts.push(`动漫列表，按${SORT_BY_NAME_MAP[animeListParams.value.sortBy || "SCORE"]}排序。`);
+    parts.push(`动画列表，按${SORT_BY_NAME_MAP[animeListParams.value.sortBy || "SCORE"]}排序。`);
     parts.push(
-      "有希计划整合 Bangumi、MyAnimeList、AniList 多平台数据，为您提供更客观、更全面的番剧评价参考。",
+      "有希计划整合 Bangumi、MyAnimeList、AniList 多平台数据，为您提供更客观、更全面的动画评价参考。",
     );
 
     return parts.join("");
@@ -57,8 +57,8 @@ export function useAnimeListHead(animeListParams: Ref<GetAnimeListQueryVariables
   });
 
   const pageKeywords = computed(() => {
-    const keywords = ["动漫列表", "anime", "番剧", "动画评分"];
-    if (animeListParams.value.year) keywords.push(`${animeListParams.value.year}年动漫`);
+    const keywords = ["动画列表", "anime", "动画", "番剧", "新番", "动画评分"];
+    if (animeListParams.value.year) keywords.push(`${animeListParams.value.year}年动画`);
     if (animeListParams.value.season)
       keywords.push(`${SEASON_NAME_MAP[animeListParams.value.season]}新番`);
     return keywords.join(",");

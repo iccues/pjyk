@@ -1,6 +1,6 @@
 # pjyk-analysis
 
-`pjyk-analysis` 是有希计划的数据分析模块，直接连接 PostgreSQL，读取动漫、映射和平台数据，输出评分与热度统计结果。
+`pjyk-analysis` 是有希计划的数据分析模块，直接连接 PostgreSQL，读取动画、映射和平台数据，输出评分与热度统计结果。
 
 ## 技术栈
 

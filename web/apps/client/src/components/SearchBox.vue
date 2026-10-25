@@ -4,7 +4,7 @@ const keyword = defineModel<string>({ required: true });
 
 defineEmits<{ submit: [] }>();
 
-withDefaults(defineProps<{ placeholder?: string }>(), { placeholder: "搜索番剧…" });
+withDefaults(defineProps<{ placeholder?: string }>(), { placeholder: "搜索动画…" });
 </script>
 
 <template>
@@ -17,7 +17,7 @@ withDefaults(defineProps<{ placeholder?: string }>(), { placeholder: "搜索番�
       v-model="keyword"
       type="text"
       :placeholder="placeholder"
-      aria-label="搜索番剧"
+      aria-label="搜索动画"
       class="w-full min-w-0 border-none bg-transparent px-4 py-2.5 text-[15px] text-gray-900 placeholder:text-gray-400 focus:outline-none pointer-coarse:text-base"
     />
     <button

@@ -71,7 +71,7 @@ const handleLinkMappings = async () => {
   }
 };
 
-// 计算动漫指标
+// 计算动画指标
 const handleCalculateScores = async () => {
   try {
     fetchLoading.value = true;
@@ -109,7 +109,7 @@ const handleCalculateScores = async () => {
           @click="handleCalculateScores"
           :loading="fetchLoading"
         >
-          计算动漫指标
+          计算动画指标
         </el-button>
       </div>
     </el-card>

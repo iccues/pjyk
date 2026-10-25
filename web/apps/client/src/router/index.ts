@@ -31,7 +31,7 @@ const routes = [
           load: () => import("@/docs/content/about.md?raw"),
           title: "关于 - 有希计划",
           description:
-            "有希计划是一个整合 Bangumi、MyAnimeList、AniList 多平台数据的番剧综合评分平台。",
+            "有希计划是一个整合 Bangumi、MyAnimeList、AniList 多平台数据的动画综合评分平台。",
         },
       },
       {
@@ -41,7 +41,7 @@ const routes = [
           load: () => import("@/docs/content/metric.md?raw"),
           title: "评分与热度说明 - 有希计划",
           description:
-            "了解有希计划的番剧评分与热度数据是如何通过多平台归一化处理后综合计算得出的。",
+            "了解有希计划的动画评分与热度数据是如何通过多平台归一化处理后综合计算得出的。",
         },
       },
       {

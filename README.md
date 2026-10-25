@@ -2,9 +2,9 @@
 
 有希计划现已部署在 [`www.yukiani.com`](https://www.yukiani.com)。
 
-有希计划（Project Yuki）是一个番剧综合评分平台，整合 Bangumi、MyAnimeList、AniList 的评分与热度数据，提供更客观、更全面的番剧评价参考。项目按职责拆成三个部分：
+有希计划（Project Yuki）是一个动画综合评分平台，整合 Bangumi、MyAnimeList、AniList 的评分与热度数据，提供更客观、更全面的动画评价参考。项目按职责拆成三个部分：
 
-- `server`：后端服务，负责动漫数据、映射关系、抓取任务、GraphQL 查询和管理后台接口
+- `server`：后端服务，负责动画数据、映射关系、抓取任务、GraphQL 查询和管理后台接口
 - `web`：前端 monorepo，包含前台 `apps/client`、后台 `apps/admin`，以及共享包 `packages/shared`、`packages/tsconfig`
 - `analysis`：数据分析工具，直接连数据库读取评分和热度数据，输出统计结果
 

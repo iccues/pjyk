@@ -24,7 +24,7 @@ const handleSearch = () => {
   <section>
     <div class="container-page py-12 text-center sm:py-16">
       <h1 class="m-0 text-[26px] leading-tight font-bold text-gray-900 sm:text-[32px]">
-        更全面的番剧评分
+        更全面的动画评分
       </h1>
       <p class="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-gray-600">
         有希计划整合 Bangumi、MyAnimeList、AniList 的评分与热度数据，归一化后给出统一的综合评价。
@@ -33,7 +33,7 @@ const handleSearch = () => {
       <SearchBox v-model="keyword" class="mx-auto mt-7" @submit="handleSearch" />
 
       <div class="mt-4 flex flex-wrap items-center justify-center gap-1">
-        <LinkButton to="/anime/list" :class="quickLinkClass">全部番剧</LinkButton>
+        <LinkButton to="/anime/list" :class="quickLinkClass">全部动画</LinkButton>
         <LinkButton to="/docs/metric" :class="quickLinkClass">评分说明</LinkButton>
       </div>
     </div>

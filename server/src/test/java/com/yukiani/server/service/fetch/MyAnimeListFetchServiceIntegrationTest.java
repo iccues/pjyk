@@ -127,7 +127,7 @@ public class MyAnimeListFetchServiceIntegrationTest {
         // 执行测试
         List<JsonNode> result = service.fetchMappingJson(2024, Season.SPRING);
 
-        // 验证结果 - 应该有 3 个动漫（page1 有 2 个，page2 有 1 个）
+        // 验证结果 - 应该有 3 部动画（page1 有 2 个，page2 有 1 个）
         assertNotNull(result);
         assertEquals(3, result.size());
 

@@ -8,26 +8,26 @@ export function useAnimeDetailHead(anime: Ref<GetAnimeDetailQuery["anime"] | und
   const pageTitle = computed(() => {
     if (!anime.value) return "有希计划";
     const t = anime.value.title;
-    const mainTitle = t.titleCn || t.titleNative || t.titleRomaji || t.titleEn || "未命名番剧";
+    const mainTitle = t.titleCn || t.titleNative || t.titleRomaji || t.titleEn || "未命名动画";
     return `${mainTitle} - 有希计划`;
   });
 
   const pageDescription = computed(() => {
-    if (!anime.value) return "加载番剧详情中...";
+    if (!anime.value) return "加载动画详情中...";
     const t = anime.value.title;
     const title = t.titleCn || t.titleNative || "";
     let desc = `在有希计划中查看《${title}》的详细信息。`;
     if (anime.value.averageScore) desc += ` 综合评分：${anime.value.averageScore.toFixed(1)}/100。`;
     if (anime.value.startDate) desc += ` 开播日期：${anime.value.startDate}。`;
     desc +=
-      " 有希计划整合 Bangumi、MyAnimeList、AniList 多平台数据，为您提供更客观、更全面的番剧评价参考。";
+      " 有希计划整合 Bangumi、MyAnimeList、AniList 多平台数据，为您提供更客观、更全面的动画评价参考。";
     return desc;
   });
 
   const pageKeywords = computed(() => {
-    if (!anime.value) return "动漫,anime,番剧";
+    if (!anime.value) return "动画,anime,番剧";
     const t = anime.value.title;
-    const keywords = ["动漫", "anime", "番剧"];
+    const keywords = ["动画", "anime", "番剧"];
     if (t.titleCn) keywords.push(t.titleCn);
     if (t.titleNative) keywords.push(t.titleNative);
     if (t.titleRomaji) keywords.push(t.titleRomaji);

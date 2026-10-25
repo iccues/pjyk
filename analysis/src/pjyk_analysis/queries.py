@@ -25,7 +25,7 @@ def get_platform_popularity(platform: str) -> pandas.DataFrame:
     return pandas.read_sql(query, engine, params={"platform": platform})
 
 def get_score_data() -> pandas.DataFrame:
-    """读取每部动漫跨平台的评分数据。"""
+    """读取每部动画跨平台的评分数据。"""
     query = """
     SELECT
         a.anime_id,
@@ -41,7 +41,7 @@ def get_score_data() -> pandas.DataFrame:
     return df.dropna()
 
 def get_popularity_data() -> pandas.DataFrame:
-    """读取每部动漫跨平台的流行度数据。"""
+    """读取每部动画跨平台的流行度数据。"""
     query = """
     SELECT
         a.anime_id,

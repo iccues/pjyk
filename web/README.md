@@ -32,7 +32,7 @@ web/
 
 ## 工作区说明
 
-- `apps/client` 通过 GraphQL 拉取番剧列表、搜索结果和详情
+- `apps/client` 通过 GraphQL 拉取动画列表、搜索结果和详情
 - `apps/admin` 提供后台页面和管理能力
 - `packages/shared` 包含平台图标和平台 URL 配置
 - `packages/tsconfig` 提供 `vue-app.json`（应用源码和 shared）、`vite.json`（`vite.config.ts`），路径用 `${configDir}` 指向引用它的项目
@@ -88,5 +88,5 @@ pnpm --filter @pjyk-web/client codegen
 ## 运行约定
 
 - 前台默认通过 `/api/graphql` 调用后端
-- 公开站点的主要路由包括首页、搜索、番剧详情、番剧列表和文档页
+- 公开站点的主要路由包括首页、搜索、动画详情、动画列表和文档页
 - 后台页面依赖登录/OIDC 配置，并通过后端管理接口读写数据

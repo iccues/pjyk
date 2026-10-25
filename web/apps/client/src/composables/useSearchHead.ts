@@ -11,15 +11,15 @@ export function useSearchHead(searchParams: Ref<GetAnimeListBySearchQueryVariabl
     if (keyword) {
       return `${keyword} - 搜索结果 - 有希计划`;
     }
-    return "搜索动漫 - 有希计划";
+    return "搜索动画 - 有希计划";
   });
 
   const pageDescription = computed(() => {
     const keyword = searchParams.value.keyword?.trim();
     if (keyword) {
-      return `在有希计划上搜索关于“${keyword}”的番剧。有希计划整合 Bangumi、MyAnimeList、AniList 多平台数据，为您提供更客观、更全面的番剧评价参考。`;
+      return `在有希计划上搜索关于“${keyword}”的动画。有希计划整合 Bangumi、MyAnimeList、AniList 多平台数据，为您提供更客观、更全面的动画评价参考。`;
     }
-    return "在有希计划上搜索番剧。有希计划整合 Bangumi、MyAnimeList、AniList 多平台数据，为您提供更客观、更全面的番剧评价参考。";
+    return "在有希计划上搜索动画。有希计划整合 Bangumi、MyAnimeList、AniList 多平台数据，为您提供更客观、更全面的动画评价参考。";
   });
 
   const pageUrl = computed(() => {
@@ -35,7 +35,7 @@ export function useSearchHead(searchParams: Ref<GetAnimeListBySearchQueryVariabl
   });
 
   const pageKeywords = computed(() => {
-    const keywords = ["动漫搜索", "anime search", "番剧查询", "有希计划"];
+    const keywords = ["动画搜索", "anime search", "动画查询", "番剧查询", "新番", "有希计划"];
     const keyword = searchParams.value.keyword?.trim();
     if (keyword) {
       keywords.push(keyword);

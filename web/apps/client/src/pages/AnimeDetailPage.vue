@@ -32,7 +32,7 @@ useAnimeDetailHead(anime);
     {{ error.message }}
   </div>
   <div v-else-if="!anime" class="container-detail py-20 text-center text-gray-500">
-    未找到该番剧
+    未找到该动画
   </div>
 
   <template v-else>
