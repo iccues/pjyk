@@ -9,7 +9,15 @@
 	}
 
 	handle /api/* {
-		reverse_proxy server:8080
+		reverse_proxy https://yukiani.com {
+			header_up Host yukiani.com
+			transport http {
+				versions 1.1 2
+				keepalive 2m
+				dial_timeout 10s
+				response_header_timeout 30s
+			}
+		}
 	}
 
 	# 静态资源长期缓存
@@ -26,14 +34,18 @@
 	}
 }
 
-# web-client
-:80 {
+# 国内公开站：静态页面本地提供，API 反代日本站。
+www.yukiani.cn {
 	root * /srv/client
 	import spa
 }
 
-# web-admin
-:81 {
-	root * /srv/admin
-	import spa
+yukiani.cn {
+	redir https://www.yukiani.cn{uri} 308
+}
+
+# 容器健康检查不依赖域名解析、证书签发或日本上游。
+http://127.0.0.1 {
+	respond /health "OK"
+	respond 404
 }
