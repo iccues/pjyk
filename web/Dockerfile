@@ -18,15 +18,13 @@ COPY . .
 RUN pnpm install --offline --frozen-lockfile && pnpm -r build
 
 # 生产阶段
-FROM nginx:1.30.6
+FROM caddy:2.11.7
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/apps/client/dist /usr/share/nginx/client
-COPY --from=build /app/apps/admin/dist /usr/share/nginx/admin
+COPY Caddyfile /etc/caddy/Caddyfile
+COPY --from=build /app/apps/client/dist /srv/client
+COPY --from=build /app/apps/admin/dist /srv/admin
 
 EXPOSE 80 81
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD curl --fail --silent --show-error http://localhost/health > /dev/null || exit 1
-
-CMD ["nginx", "-g", "daemon off;"]
+  CMD wget -q --spider http://127.0.0.1/health || exit 1
