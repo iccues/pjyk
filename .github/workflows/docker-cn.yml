@@ -41,6 +41,7 @@ jobs:
           context: web
           file: web/Dockerfile
           push: true
+          provenance: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           # 构建阶段与 main 相同，额外读取 docker.yml 的 web 缓存
