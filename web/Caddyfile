@@ -9,8 +9,8 @@
 	}
 
 	handle /api/* {
-		reverse_proxy https://yukiani.com {
-			header_up Host yukiani.com
+		reverse_proxy https://www.yukiani.com {
+			header_up Host www.yukiani.com
 			transport http {
 				versions 1.1 2
 				keepalive 2m
