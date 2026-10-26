@@ -1,0 +1,50 @@
+name: Docker CN
+
+on:
+  push:
+    branches: [main-cn, test-cn-caddy-proxy]
+    paths:
+      - 'web/**'
+      - '.github/workflows/docker-cn.yml'
+  workflow_dispatch:
+
+# 串行发布；等待中的运行可能被替换
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: 构建并推送 web 镜像
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        with:
+          registry: ${{ vars.REGISTRY }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      - uses: docker/metadata-action@v6
+        id: meta
+        with:
+          images: ${{ vars.REGISTRY }}/${{ vars.REGISTRY_NAMESPACE }}/pjyk-web
+          tags: |
+            type=sha,format=long,prefix=
+            type=raw,value=latest
+      - uses: docker/build-push-action@v7
+        with:
+          context: web
+          file: web/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # 构建阶段与 main 相同，额外读取 docker.yml 的 web 缓存
+          cache-from: |
+            type=gha,scope=web-cn
+            type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web-cn

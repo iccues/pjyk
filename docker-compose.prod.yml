@@ -1,12 +1,7 @@
-# 生产服务器使用：叠加在 docker-compose.yml 之上，改为拉取 CI 发布到 GHCR 的镜像，不在服务器上构建
+# 生产服务器使用：叠加在 docker-compose.yml 之上，拉取 WEB_IMAGE 指定的镜像；未设置 WEB_IMAGE 时在本地构建
 #   docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
 #   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 # 也可以在服务器的 .env 里写 COMPOSE_FILE=docker-compose.yml:docker-compose.prod.yml，之后直接用 docker compose
 services:
-  server:
-    image: ghcr.io/iccues/pjyk-server:latest
-    build: !reset null
-
   web:
-    image: ghcr.io/iccues/pjyk-web:latest
-    build: !reset null
+    image: ${WEB_IMAGE:-}
