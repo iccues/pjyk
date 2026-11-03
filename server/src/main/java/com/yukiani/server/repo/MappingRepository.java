@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface MappingRepository extends JpaRepository<Mapping, Long> {
-    Mapping findBySourcePlatformAndPlatformId(Platform sourcePlatform, String platformId);
+    Mapping findByPlatformAndPlatformId(Platform platform, String platformId);
 
     List<Mapping> findAllByAnimeIsNull();
     List<Mapping> findAllByAnimeIsNullAndMappingInfo_StartDateIsNotNull();
@@ -26,7 +26,7 @@ public interface MappingRepository extends JpaRepository<Mapping, Long> {
      */
     @Query("""
             select new com.yukiani.server.repo.SyncCandidate(
-                m.mappingId, a.animeId, a.startDate, m.sourcePlatform, m.platformId, m.updateTime)
+                m.mappingId, a.animeId, a.startDate, m.platform, m.platformId, m.updateTime)
             from Mapping m join m.anime a
             where a.reviewStatus = :reviewStatus
               and m.updateTime < :todayStart

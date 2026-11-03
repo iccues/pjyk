@@ -443,9 +443,9 @@ public class AnimeManageServiceTest {
     }
 
     // 辅助方法：创建测试用的 Mapping
-    private Mapping createMapping(Platform sourcePlatform, String platformId) {
+    private Mapping createMapping(Platform platform, String platformId) {
         Mapping mapping = new Mapping();
-        mapping.setSourcePlatform(sourcePlatform);
+        mapping.setPlatform(platform);
         mapping.setPlatformId(platformId);
         mapping.setRawScore(8.0);
         mapping.setUpdateTime(Instant.now());

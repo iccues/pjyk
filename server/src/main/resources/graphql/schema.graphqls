@@ -47,7 +47,7 @@ type AnimeTitles {
 
 type Mapping {
     mappingId: ID!
-    sourcePlatform: Platform!
+    platform: Platform!
     platformId: String!
     rawScore: Float
     normalizedScore: Float

@@ -65,12 +65,12 @@ public class AdminMappingController {
     /**
      * 从指定平台即时抓取并创建 Mapping。
      *
-     * @param request 包含 sourcePlatform 和 platformId
+     * @param request 包含 platform 和 platformId
      * @return 包含已创建 Mapping 的成功响应
      */
     @PostMapping
     public Response<AdminMappingDTO> createMapping(@RequestBody CreateMappingRequest request) {
-        Mapping mapping = mappingManageService.createMapping(request.sourcePlatform(), request.platformId());
+        Mapping mapping = mappingManageService.createMapping(request.platform(), request.platformId());
         AdminMappingDTO mappingDTO = adminAnimeMapper.toMappingDto(mapping);
         return Response.ok(mappingDTO);
     }

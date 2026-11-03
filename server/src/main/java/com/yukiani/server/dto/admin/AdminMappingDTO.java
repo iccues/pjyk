@@ -6,7 +6,7 @@ import com.yukiani.server.entity.Platform;
 public record AdminMappingDTO(
         Long mappingId,
         Long animeId,
-        Platform sourcePlatform,
+        Platform platform,
         String platformId,
         Double rawScore,
         MappingInfo mappingInfo

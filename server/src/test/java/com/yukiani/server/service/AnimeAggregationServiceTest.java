@@ -37,13 +37,13 @@ public class AnimeAggregationServiceTest {
         anime2 = new Anime();
         
         mapping1 = new Mapping();
-        mapping1.setSourcePlatform(Platform.Bangumi);
+        mapping1.setPlatform(Platform.Bangumi);
         
         mapping2 = new Mapping();
-        mapping2.setSourcePlatform(Platform.MyAnimeList);
+        mapping2.setPlatform(Platform.MyAnimeList);
         
         mapping3 = new Mapping();
-        mapping3.setSourcePlatform(Platform.AniList);
+        mapping3.setPlatform(Platform.AniList);
     }
 
     // ==================== addMappingWithMetrics 测试 ====================
@@ -141,7 +141,7 @@ public class AnimeAggregationServiceTest {
 
         // 尝试添加另一个 Bangumi 平台的 mapping
         Mapping anotherBangumiMapping = new Mapping();
-        anotherBangumiMapping.setSourcePlatform(Platform.Bangumi);
+        anotherBangumiMapping.setPlatform(Platform.Bangumi);
 
         animeAggregationService.addMappingIfAbsent(anime1, anotherBangumiMapping);
 
@@ -177,7 +177,7 @@ public class AnimeAggregationServiceTest {
     void testUpsertMapping_WhenPresent() {
         // anime1 已有 Bangumi 平台的 mapping
         Mapping oldBangumiMapping = new Mapping();
-        oldBangumiMapping.setSourcePlatform(Platform.Bangumi);
+        oldBangumiMapping.setPlatform(Platform.Bangumi);
         anime1.addMapping(oldBangumiMapping);
 
         // 用新的 Bangumi mapping 替换
@@ -237,7 +237,7 @@ public class AnimeAggregationServiceTest {
 
         // anime2 也有 Bangumi mapping（冲突）和 MyAnimeList mapping
         Mapping conflictBangumiMapping = new Mapping();
-        conflictBangumiMapping.setSourcePlatform(Platform.Bangumi);
+        conflictBangumiMapping.setPlatform(Platform.Bangumi);
         anime2.addMapping(conflictBangumiMapping);
         anime2.addMapping(mapping2);
 

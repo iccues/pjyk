@@ -114,7 +114,7 @@ public class InfoServiceTest {
     void testAggregateInfo_WithNullMappingInfo() {
         // 创建没有 MappingInfo 的 Mapping
         Mapping mappingWithoutInfo = new Mapping();
-        mappingWithoutInfo.setSourcePlatform(Platform.AniList);
+        mappingWithoutInfo.setPlatform(Platform.AniList);
         mappingWithoutInfo.setPlatformId("999");
         
         anime.addMapping(mappingWithoutInfo);
@@ -196,7 +196,7 @@ public class InfoServiceTest {
     void testApplyMappingInfo_WithNullMappingInfo() {
         // 创建没有 MappingInfo 的 Mapping
         Mapping mappingWithoutInfo = new Mapping();
-        mappingWithoutInfo.setSourcePlatform(Platform.AniList);
+        mappingWithoutInfo.setPlatform(Platform.AniList);
 
         // 应用 mapping 信息
         infoService.applyMappingInfo(anime, mappingWithoutInfo);
@@ -288,7 +288,7 @@ public class InfoServiceTest {
     void testSetCoverImageFromMyAnimeList_WithNullMappingInfo() {
         // 创建没有 MappingInfo 的 MyAnimeList Mapping
         Mapping myAnimeListWithoutInfo = new Mapping();
-        myAnimeListWithoutInfo.setSourcePlatform(Platform.MyAnimeList);
+        myAnimeListWithoutInfo.setPlatform(Platform.MyAnimeList);
         myAnimeListWithoutInfo.setPlatformId("999");
         
         anime.addMapping(myAnimeListWithoutInfo);

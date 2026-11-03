@@ -9,7 +9,7 @@ const props = defineProps<{
   mapping: MappingItemFragment;
 }>();
 
-const platformConfig = computed(() => getPlatformConfig(props.mapping.sourcePlatform));
+const platformConfig = computed(() => getPlatformConfig(props.mapping.platform));
 const animeUrl = computed(() => platformConfig.value.getAnimeUrl?.(props.mapping.platformId));
 const formater = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
 </script>

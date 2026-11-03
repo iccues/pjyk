@@ -158,7 +158,7 @@ public abstract class AbstractAnimeFetchService {
      * @throws IllegalArgumentException Mapping 平台与当前抓取服务不一致时抛出
      */
     public void recalculateMetrics(Mapping mapping) {
-        if (mapping.getSourcePlatform() != getPlatform()) {
+        if (mapping.getPlatform() != getPlatform()) {
             throw new IllegalArgumentException("Mapping 平台与 FetchService 不匹配");
         }
 

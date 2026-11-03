@@ -30,15 +30,12 @@ export async function updateMappingAnime(
 
 /**
  * 创建新的映射
- * @param sourcePlatform 平台名称
+ * @param platform 平台名称
  * @param platformId 平台 ID
  */
-export async function createMapping(
-  sourcePlatform: string,
-  platformId: string,
-): Promise<AdminMapping> {
+export async function createMapping(platform: string, platformId: string): Promise<AdminMapping> {
   const response = await adminClient.post<AdminMapping>("/api/admin/mappings", {
-    sourcePlatform,
+    platform,
     platformId,
   });
   return response.data;

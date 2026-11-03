@@ -46,9 +46,9 @@ public class Mapping {
     /** 与 {@link #platformId} 共同组成平台 Mapping 的 natural key。 */
     @NaturalId
     @Enumerated(EnumType.STRING)
-    Platform sourcePlatform;
+    Platform platform;
 
-    /** 来源平台中的 platformId，与 {@link #sourcePlatform} 共同组成 natural key。 */
+    /** 来源平台中的 platformId，与 {@link #platform} 共同组成 natural key。 */
     @NaturalId
     String platformId;
 
@@ -74,8 +74,8 @@ public class Mapping {
     /**
      * 创建外部平台 Mapping 并记录首次更新时间。
      */
-    public Mapping(Platform sourcePlatform, String platformId, MappingInfo mappingInfo) {
-        this.sourcePlatform = sourcePlatform;
+    public Mapping(Platform platform, String platformId, MappingInfo mappingInfo) {
+        this.platform = platform;
         this.platformId = platformId;
         this.mappingInfo = mappingInfo;
         this.updateTime = Instant.now();

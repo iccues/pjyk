@@ -92,7 +92,7 @@ public class AbstractAnimeFetchServiceTest {
         Mapping mapping = testService.buildMapping(jsonNode);
 
         // 验证：只构造不保存
-        assertEquals(Platform.Bangumi, mapping.getSourcePlatform());
+        assertEquals(Platform.Bangumi, mapping.getPlatform());
         assertEquals("12345", mapping.getPlatformId());
         assertEquals(8.5, mapping.getRawScore(), 0.0001);
         assertNotNull(mapping.getNormalizedScore());
@@ -122,7 +122,7 @@ public class AbstractAnimeFetchServiceTest {
     @Test
     public void testRecalculateMetrics_UsesRawValues() {
         Mapping mapping = new Mapping();
-        mapping.setSourcePlatform(Platform.Bangumi);
+        mapping.setPlatform(Platform.Bangumi);
         mapping.setRawPopularity(80.0);
         mapping.setRawScore(9.0);
 
@@ -135,7 +135,7 @@ public class AbstractAnimeFetchServiceTest {
     @Test
     public void testRecalculateMetrics_RejectsAnotherPlatform() {
         Mapping mapping = new Mapping();
-        mapping.setSourcePlatform(Platform.AniList);
+        mapping.setPlatform(Platform.AniList);
 
         assertThrows(IllegalArgumentException.class, () -> testService.recalculateMetrics(mapping));
     }

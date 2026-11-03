@@ -87,16 +87,16 @@ public class MappingManageService {
      *
      * @throws ResourceAlreadyExistsException 相同平台 Mapping 已存在时抛出
      */
-    public Mapping createMapping(Platform sourcePlatform, String platformId) {
-        Mapping existingMapping = mappingRepository.findBySourcePlatformAndPlatformId(
-                sourcePlatform, platformId);
+    public Mapping createMapping(Platform platform, String platformId) {
+        Mapping existingMapping = mappingRepository.findByPlatformAndPlatformId(
+                platform, platformId);
 
         if (existingMapping != null) {
             throw new ResourceAlreadyExistsException("Mapping",
-                    sourcePlatform.name() + " - " + platformId);
+                    platform.name() + " - " + platformId);
         }
 
-        AbstractAnimeFetchService fetchServiceImpl = fetchService.getFetchService(sourcePlatform);
+        AbstractAnimeFetchService fetchServiceImpl = fetchService.getFetchService(platform);
         return fetchServiceImpl.fetchAndSaveMapping(platformId);
     }
 }

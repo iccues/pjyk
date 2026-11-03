@@ -46,7 +46,7 @@ public class GraphQLTypeMapperTest {
 
         Mapping mapping = new Mapping();
         mapping.setMappingId(10L);
-        mapping.setSourcePlatform(Platform.AniList);
+        mapping.setPlatform(Platform.AniList);
         mapping.setPlatformId("16498");
         mapping.setRawScore(88.0);
         mapping.setNormalizedScore(8.8);
@@ -208,7 +208,7 @@ public class GraphQLTypeMapperTest {
         assertNotNull(result);
         // mappingId: Long -> String
         assertEquals("10", result.getMappingId());
-        assertEquals(com.yukiani.server.generated.types.Platform.AniList, result.getSourcePlatform());
+        assertEquals(com.yukiani.server.generated.types.Platform.AniList, result.getPlatform());
         assertEquals("16498", result.getPlatformId());
         assertEquals(88.0, result.getRawScore());
         assertEquals(8.8, result.getNormalizedScore());
@@ -220,7 +220,7 @@ public class GraphQLTypeMapperTest {
     public void testToGraphQLMapping_NullScores() {
         Mapping mapping = new Mapping();
         mapping.setMappingId(20L);
-        mapping.setSourcePlatform(Platform.Bangumi);
+        mapping.setPlatform(Platform.Bangumi);
         mapping.setPlatformId("99999");
         // rawScore / normalizedScore 均为 null
 

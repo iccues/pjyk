@@ -45,7 +45,7 @@ public class AnimeAggregationService {
      * 当目标动画尚无同平台 Mapping 时添加 Mapping。
      */
     public void addMappingIfAbsent(Anime anime, Mapping mapping) {
-        if (anime.getMappingByPlatform(mapping.getSourcePlatform()) == null) {
+        if (anime.getMappingByPlatform(mapping.getPlatform()) == null) {
             addMappingWithMetrics(anime, mapping);
         }
     }
@@ -54,7 +54,7 @@ public class AnimeAggregationService {
      * 使用新 Mapping 替换目标动画已有的同平台 Mapping。
      */
     public void upsertMapping(Anime anime, Mapping mapping) {
-        Mapping existing = anime.getMappingByPlatform(mapping.getSourcePlatform());
+        Mapping existing = anime.getMappingByPlatform(mapping.getPlatform());
         if (existing != null) {
             removeMappingWithMetrics(anime, existing);
         }

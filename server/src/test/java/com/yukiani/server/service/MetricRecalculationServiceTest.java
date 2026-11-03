@@ -26,16 +26,16 @@ class MetricRecalculationServiceTest {
     void recalculatesAllAnimeMetrics() {
         Anime anime1 = new Anime();
         Mapping mapping1 = new Mapping();
-        mapping1.setSourcePlatform(Platform.Bangumi);
+        mapping1.setPlatform(Platform.Bangumi);
         mapping1.setNormalizedScore(8.0);
         anime1.addMapping(mapping1);
 
         Anime anime2 = new Anime();
         Mapping mapping2 = new Mapping();
-        mapping2.setSourcePlatform(Platform.Bangumi);
+        mapping2.setPlatform(Platform.Bangumi);
         mapping2.setNormalizedScore(9.0);
         Mapping mapping3 = new Mapping();
-        mapping3.setSourcePlatform(Platform.MyAnimeList);
+        mapping3.setPlatform(Platform.MyAnimeList);
         mapping3.setNormalizedScore(6.0);
         anime2.addMapping(mapping2);
         anime2.addMapping(mapping3);

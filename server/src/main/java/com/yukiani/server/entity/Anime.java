@@ -88,7 +88,7 @@ public class Anime {
      */
     public Mapping getMappingByPlatform(Platform platform) {
         for (Mapping mapping : getMappings()) {
-            if (mapping.getSourcePlatform() == platform) {
+            if (mapping.getPlatform() == platform) {
                 return mapping;
             }
         }

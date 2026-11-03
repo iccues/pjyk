@@ -16,7 +16,7 @@ import java.time.Instant;
 /**
  * 外部平台 Mapping 的原始评分与热度快照。
  *
- * <p>快照通过 {@code (sourcePlatform, platformId)} 归属于平台条目，不与 Mapping 建立外键，
+ * <p>快照通过 {@code (platform, platformId)} 归属于平台条目，不与 Mapping 建立外键，
  * 因此 Mapping 删除后仍会保留。归一化指标不随快照存储，查询时根据当前配置计算。</p>
  */
 @Getter
@@ -31,7 +31,7 @@ public class MappingMetricHistory {
 
     /** 与 {@link #platformId} 共同标识来源平台中的条目。 */
     @Enumerated(EnumType.STRING)
-    Platform sourcePlatform;
+    Platform platform;
 
     /** 来源平台中的条目 ID。 */
     String platformId;
@@ -45,9 +45,9 @@ public class MappingMetricHistory {
     /** 采样时间，取自 Mapping 的 updateTime。 */
     Instant recordedAt;
 
-    public MappingMetricHistory(Platform sourcePlatform, String platformId,
+    public MappingMetricHistory(Platform platform, String platformId,
                          Double rawScore, Double rawPopularity, Instant recordedAt) {
-        this.sourcePlatform = sourcePlatform;
+        this.platform = platform;
         this.platformId = platformId;
         this.rawScore = rawScore;
         this.rawPopularity = rawPopularity;

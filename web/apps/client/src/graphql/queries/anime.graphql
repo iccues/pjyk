@@ -88,7 +88,7 @@ query GetAnimeDetail($animeId: ID!) {
 }
 
 fragment MappingItem on Mapping {
-  sourcePlatform
+  platform
   platformId
   rawScore
   normalizedScore

@@ -269,7 +269,7 @@ public class MappingManageServiceTest {
     public void testCreateMapping_Success_CreatesAndReturnsMapping() {
         // Mock FetchService
         Mapping mockMapping = new Mapping();
-        mockMapping.setSourcePlatform(Platform.MyAnimeList);
+        mockMapping.setPlatform(Platform.MyAnimeList);
         mockMapping.setPlatformId("12345");
         mockMapping.setRawScore(8.5);
 
@@ -282,7 +282,7 @@ public class MappingManageServiceTest {
 
         // 验证
         assertNotNull(result);
-        assertEquals(Platform.MyAnimeList, result.getSourcePlatform());
+        assertEquals(Platform.MyAnimeList, result.getPlatform());
         assertEquals("12345", result.getPlatformId());
         assertEquals(8.5, result.getRawScore());
 
@@ -376,9 +376,9 @@ public class MappingManageServiceTest {
     }
 
     // 辅助方法：创建测试用的 Mapping
-    private Mapping createMapping(Platform sourcePlatform, String platformId) {
+    private Mapping createMapping(Platform platform, String platformId) {
         Mapping mapping = new Mapping();
-        mapping.setSourcePlatform(sourcePlatform);
+        mapping.setPlatform(platform);
         mapping.setPlatformId(platformId);
         mapping.setRawScore(8.0);
         mapping.setUpdateTime(Instant.now());

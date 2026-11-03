@@ -12,6 +12,6 @@ import java.time.LocalDate;
  * @param startDate  关联动画的开播日期
  * @param updateTime Mapping 最近一次成功抓取并保存的时间
  */
-public record SyncCandidate(Long mappingId, Long animeId, LocalDate startDate, Platform sourcePlatform,
+public record SyncCandidate(Long mappingId, Long animeId, LocalDate startDate, Platform platform,
                             String platformId, Instant updateTime) {
 }

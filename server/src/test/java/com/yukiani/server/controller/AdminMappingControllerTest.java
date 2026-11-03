@@ -77,7 +77,7 @@ public class AdminMappingControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data", hasSize(2)))
-                .andExpect(jsonPath("$.data[*].sourcePlatform", containsInAnyOrder("MyAnimeList", "Bangumi")));
+                .andExpect(jsonPath("$.data[*].platform", containsInAnyOrder("MyAnimeList", "Bangumi")));
     }
 
     @Test
@@ -271,7 +271,7 @@ public class AdminMappingControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.sourcePlatform").value("MyAnimeList"))
+                .andExpect(jsonPath("$.data.platform").value("MyAnimeList"))
                 .andExpect(jsonPath("$.data.platformId").value("12345"));
 
         verify(fetchService, atLeast(1)).getFetchService(Platform.MyAnimeList);
@@ -307,10 +307,10 @@ public class AdminMappingControllerTest {
     }
 
     // 辅助方法：创建测试用的 Mapping
-    private Mapping createMapping(Platform sourcePlatform, String platformId) {
+    private Mapping createMapping(Platform platform, String platformId) {
         AnimeTitles titles = new AnimeTitles();
         titles.setTitleNative("Test Anime");
         MappingInfo mappingInfo = new MappingInfo(titles, null, null);
-        return new Mapping(sourcePlatform, platformId, mappingInfo);
+        return new Mapping(platform, platformId, mappingInfo);
     }
 }

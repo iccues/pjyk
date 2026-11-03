@@ -47,7 +47,7 @@ public class AdminAnimeMapperTest {
         testMapping = new Mapping();
         testMapping.setMappingId(10L);
         testMapping.setAnime(testAnime);
-        testMapping.setSourcePlatform(Platform.AniList);
+        testMapping.setPlatform(Platform.AniList);
         testMapping.setPlatformId("12345");
         testMapping.setRawScore(85.0);
         testMapping.setNormalizedScore(8.5);
@@ -177,7 +177,7 @@ public class AdminAnimeMapperTest {
         assertNotNull(result);
         assertEquals(10L, result.mappingId());
         assertEquals(1L, result.animeId());
-        assertEquals(Platform.AniList, result.sourcePlatform());
+        assertEquals(Platform.AniList, result.platform());
         assertEquals("12345", result.platformId());
         assertEquals(85.0, result.rawScore());
         assertNotNull(result.mappingInfo());
@@ -231,7 +231,7 @@ public class AdminAnimeMapperTest {
         Mapping mapping2 = new Mapping();
         mapping2.setMappingId(20L);
         mapping2.setAnime(testAnime);
-        mapping2.setSourcePlatform(Platform.Bangumi);
+        mapping2.setPlatform(Platform.Bangumi);
         mapping2.setPlatformId("67890");
         mapping2.setRawScore(8.2);
 
