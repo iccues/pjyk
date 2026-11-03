@@ -4,6 +4,7 @@ import com.yukiani.server.entity.Anime;
 import com.yukiani.server.entity.AnimeTitles;
 import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import com.yukiani.server.entity.ReviewStatus;
 import com.yukiani.server.exception.ResourceAlreadyExistsException;
 import com.yukiani.server.exception.ResourceNotFoundException;
@@ -269,8 +270,7 @@ public class MappingManageServiceTest {
     public void testCreateMapping_Success_CreatesAndReturnsMapping() {
         // Mock FetchService
         Mapping mockMapping = new Mapping();
-        mockMapping.setPlatform(Platform.MyAnimeList);
-        mockMapping.setPlatformId("12345");
+        mockMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         mockMapping.setRawScore(8.5);
 
         AbstractAnimeFetchService mockFetchService = mock(AbstractAnimeFetchService.class);
@@ -278,12 +278,12 @@ public class MappingManageServiceTest {
         when(mockFetchService.fetchAndSaveMapping("12345")).thenReturn(mockMapping);
 
         // 执行创建
-        Mapping result = mappingManageService.createMapping(Platform.MyAnimeList, "12345");
+        Mapping result = mappingManageService.createMapping(new PlatformKey(Platform.MyAnimeList, "12345"));
 
         // 验证
         assertNotNull(result);
-        assertEquals(Platform.MyAnimeList, result.getPlatform());
-        assertEquals("12345", result.getPlatformId());
+        assertEquals(Platform.MyAnimeList, result.getPlatformKey().getPlatform());
+        assertEquals("12345", result.getPlatformKey().getPlatformId());
         assertEquals(8.5, result.getRawScore());
 
         // 验证调用了fetchService
@@ -299,7 +299,7 @@ public class MappingManageServiceTest {
         // 尝试创建相同的映射
         ResourceAlreadyExistsException exception = assertThrows(
                 ResourceAlreadyExistsException.class,
-                () -> mappingManageService.createMapping(Platform.MyAnimeList, "12345")
+                () -> mappingManageService.createMapping(new PlatformKey(Platform.MyAnimeList, "12345"))
         );
 
         assertTrue(exception.getMessage().contains("Mapping"));
@@ -378,8 +378,7 @@ public class MappingManageServiceTest {
     // 辅助方法：创建测试用的 Mapping
     private Mapping createMapping(Platform platform, String platformId) {
         Mapping mapping = new Mapping();
-        mapping.setPlatform(platform);
-        mapping.setPlatformId(platformId);
+        mapping.setPlatformKey(new PlatformKey(platform, platformId));
         mapping.setRawScore(8.0);
         mapping.setUpdateTime(Instant.now());
 

@@ -62,7 +62,7 @@ const isAnimeMatch = (anime: AdminAnime, keyword: string) => {
   return anime.mappings.some(
     (m) =>
       String(m.mappingId) === keyword ||
-      m.platformId === keyword ||
+      m.platformKey.platformId === keyword ||
       titleMatches(m.mappingInfo?.title, keyword),
   );
 };

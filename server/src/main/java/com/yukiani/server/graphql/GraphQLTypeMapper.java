@@ -1,6 +1,7 @@
 package com.yukiani.server.graphql;
 
 import com.yukiani.server.entity.Anime;
+import com.yukiani.server.entity.PlatformKey;
 import com.yukiani.server.generated.types.AnimePage;
 import com.yukiani.server.generated.types.PageInfo;
 import com.yukiani.server.entity.Season;
@@ -46,6 +47,8 @@ public interface GraphQLTypeMapper {
     @Mapping(target = "mappingId", source = "mappingId", qualifiedByName = "longToString")
     com.yukiani.server.generated.types.Mapping toGraphQLMapping(
             com.yukiani.server.entity.Mapping mapping);
+
+    com.yukiani.server.generated.types.PlatformKey toGraphQLPlatformKey(PlatformKey platformKey);
 
     @Named("longToString")
     default String longToString(Long id) {

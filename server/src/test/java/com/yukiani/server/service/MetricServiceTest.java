@@ -3,6 +3,7 @@ package com.yukiani.server.service;
 import com.yukiani.server.entity.Anime;
 import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,15 +24,15 @@ public class MetricServiceTest {
 
         // 三个平台，权重都是 1
         Mapping mapping1 = new Mapping();
-        mapping1.setPlatform(Platform.MyAnimeList);
+        mapping1.setPlatformKey(new PlatformKey(Platform.MyAnimeList, null));
         mapping1.setNormalizedScore(8.0);
 
         Mapping mapping2 = new Mapping();
-        mapping2.setPlatform(Platform.AniList);
+        mapping2.setPlatformKey(new PlatformKey(Platform.AniList, null));
         mapping2.setNormalizedScore(9.0);
 
         Mapping mapping3 = new Mapping();
-        mapping3.setPlatform(Platform.MyAnimeList);
+        mapping3.setPlatformKey(new PlatformKey(Platform.MyAnimeList, null));
         mapping3.setNormalizedScore(7.0);
 
         anime.addMapping(mapping1);
@@ -50,12 +51,12 @@ public class MetricServiceTest {
 
         // Bangumi 权重 2
         Mapping bangumiMapping = new Mapping();
-        bangumiMapping.setPlatform(Platform.Bangumi);
+        bangumiMapping.setPlatformKey(new PlatformKey(Platform.Bangumi, null));
         bangumiMapping.setNormalizedScore(9.0);
 
         // MyAnimeList 权重 1
         Mapping malMapping = new Mapping();
-        malMapping.setPlatform(Platform.MyAnimeList);
+        malMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, null));
         malMapping.setNormalizedScore(6.0);
 
         anime.addMapping(bangumiMapping);
@@ -73,17 +74,17 @@ public class MetricServiceTest {
 
         // Bangumi 权重 2
         Mapping bangumi = new Mapping();
-        bangumi.setPlatform(Platform.Bangumi);
+        bangumi.setPlatformKey(new PlatformKey(Platform.Bangumi, null));
         bangumi.setNormalizedScore(8.0);
 
         // MyAnimeList 权重 1
         Mapping mal = new Mapping();
-        mal.setPlatform(Platform.MyAnimeList);
+        mal.setPlatformKey(new PlatformKey(Platform.MyAnimeList, null));
         mal.setNormalizedScore(7.0);
 
         // AniList 权重 1
         Mapping anilist = new Mapping();
-        anilist.setPlatform(Platform.AniList);
+        anilist.setPlatformKey(new PlatformKey(Platform.AniList, null));
         anilist.setNormalizedScore(9.0);
 
         anime.addMapping(bangumi);
@@ -101,11 +102,11 @@ public class MetricServiceTest {
         Anime anime = new Anime();
 
         Mapping mapping1 = new Mapping();
-        mapping1.setPlatform(Platform.Bangumi);
+        mapping1.setPlatformKey(new PlatformKey(Platform.Bangumi, null));
         mapping1.setNormalizedScore(null);
 
         Mapping mapping2 = new Mapping();
-        mapping2.setPlatform(Platform.MyAnimeList);
+        mapping2.setPlatformKey(new PlatformKey(Platform.MyAnimeList, null));
         mapping2.setNormalizedScore(null);
 
         anime.addMapping(mapping1);
@@ -121,11 +122,11 @@ public class MetricServiceTest {
         Anime anime = new Anime();
 
         Mapping mapping1 = new Mapping();
-        mapping1.setPlatform(Platform.Bangumi);
+        mapping1.setPlatformKey(new PlatformKey(Platform.Bangumi, null));
         mapping1.setNormalizedScore(0.0);
 
         Mapping mapping2 = new Mapping();
-        mapping2.setPlatform(Platform.MyAnimeList);
+        mapping2.setPlatformKey(new PlatformKey(Platform.MyAnimeList, null));
         mapping2.setNormalizedScore(0.0);
 
         anime.addMapping(mapping1);
@@ -143,22 +144,22 @@ public class MetricServiceTest {
 
         // 有效分数，权重 2
         Mapping mapping1 = new Mapping();
-        mapping1.setPlatform(Platform.Bangumi);
+        mapping1.setPlatformKey(new PlatformKey(Platform.Bangumi, null));
         mapping1.setNormalizedScore(8.0);
 
         // null 分数，应该被忽略
         Mapping mapping2 = new Mapping();
-        mapping2.setPlatform(Platform.MyAnimeList);
+        mapping2.setPlatformKey(new PlatformKey(Platform.MyAnimeList, null));
         mapping2.setNormalizedScore(null);
 
         // 0 分数，参与计算，权重 1
         Mapping mapping3 = new Mapping();
-        mapping3.setPlatform(Platform.AniList);
+        mapping3.setPlatformKey(new PlatformKey(Platform.AniList, null));
         mapping3.setNormalizedScore(0.0);
 
         // 有效分数，权重 1
         Mapping mapping4 = new Mapping();
-        mapping4.setPlatform(Platform.MyAnimeList);
+        mapping4.setPlatformKey(new PlatformKey(Platform.MyAnimeList, null));
         mapping4.setNormalizedScore(9.0);
 
         anime.addMapping(mapping1);
@@ -187,11 +188,11 @@ public class MetricServiceTest {
         Anime anime = new Anime();
 
         Mapping mapping1 = new Mapping();
-        mapping1.setPlatform(Platform.Bangumi);
+        mapping1.setPlatformKey(new PlatformKey(Platform.Bangumi, null));
         mapping1.setNormalizedScore(-1.0);
 
         Mapping mapping2 = new Mapping();
-        mapping2.setPlatform(Platform.MyAnimeList);
+        mapping2.setPlatformKey(new PlatformKey(Platform.MyAnimeList, null));
         mapping2.setNormalizedScore(8.0);
 
         anime.addMapping(mapping1);
@@ -208,7 +209,7 @@ public class MetricServiceTest {
         Anime anime = new Anime();
 
         Mapping mapping = new Mapping();
-        mapping.setPlatform(Platform.Bangumi);
+        mapping.setPlatformKey(new PlatformKey(Platform.Bangumi, null));
         mapping.setNormalizedScore(7.5);
 
         anime.addMapping(mapping);
@@ -224,7 +225,7 @@ public class MetricServiceTest {
 
         // 只有 Bangumi 的分数，权重为 2
         Mapping bangumi = new Mapping();
-        bangumi.setPlatform(Platform.Bangumi);
+        bangumi.setPlatformKey(new PlatformKey(Platform.Bangumi, null));
         bangumi.setNormalizedScore(7.5);
 
         anime.addMapping(bangumi);
@@ -240,15 +241,15 @@ public class MetricServiceTest {
         Anime anime = new Anime();
 
         Mapping bangumi = new Mapping();
-        bangumi.setPlatform(Platform.Bangumi);
+        bangumi.setPlatformKey(new PlatformKey(Platform.Bangumi, null));
         bangumi.setNormalizedPopularity(1000.0);
 
         Mapping anilist = new Mapping();
-        anilist.setPlatform(Platform.AniList);
+        anilist.setPlatformKey(new PlatformKey(Platform.AniList, null));
         anilist.setNormalizedPopularity(1000.0);
 
         Mapping mal = new Mapping();
-        mal.setPlatform(Platform.MyAnimeList);
+        mal.setPlatformKey(new PlatformKey(Platform.MyAnimeList, null));
         mal.setNormalizedPopularity(1000.0);
 
         anime.addMapping(bangumi);

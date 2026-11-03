@@ -6,10 +6,13 @@ import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.MappingInfo;
 import com.yukiani.server.entity.MappingMetricHistory;
 import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import com.yukiani.server.repo.AnimeRepository;
 import com.yukiani.server.repo.MappingRepository;
 import com.yukiani.server.repo.MappingMetricHistoryRepository;
 import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +41,9 @@ public class MappingRepoServiceTest {
     @Resource
     private MappingMetricHistoryRepository mappingMetricHistoryRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private MappingInfo testMappingInfo;
 
     @BeforeEach
@@ -57,8 +63,7 @@ public class MappingRepoServiceTest {
     @Test
     public void testSaveOrUpdate_NewMapping_SavesDirectly() {
         Mapping newMapping = new Mapping();
-        newMapping.setPlatform(Platform.MyAnimeList);
-        newMapping.setPlatformId("12345");
+        newMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         newMapping.setRawScore(8.5);
         newMapping.setNormalizedScore(85.0);
         newMapping.setMappingInfo(testMappingInfo);
@@ -66,13 +71,13 @@ public class MappingRepoServiceTest {
 
         Mapping result = mappingRepoService.saveOrUpdate(newMapping);
 
-        Mapping saved = mappingRepository.findByPlatformAndPlatformId(Platform.MyAnimeList, "12345");
+        Mapping saved = mappingRepository.findByPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         assertNotNull(saved);
         // 返回的是持久化后的实例，带有生成的 mappingId
         assertSame(saved, result);
         assertNotNull(result.getMappingId());
-        assertEquals(Platform.MyAnimeList, saved.getPlatform());
-        assertEquals("12345", saved.getPlatformId());
+        assertEquals(Platform.MyAnimeList, saved.getPlatformKey().getPlatform());
+        assertEquals("12345", saved.getPlatformKey().getPlatformId());
         assertEquals(8.5, saved.getRawScore());
         assertEquals(85.0, saved.getNormalizedScore());
     }
@@ -84,8 +89,7 @@ public class MappingRepoServiceTest {
         MappingInfo oldMappingInfo = new MappingInfo(oldTitles, "https://example.com/old.jpg", null);
 
         Mapping existingMapping = new Mapping();
-        existingMapping.setPlatform(Platform.MyAnimeList);
-        existingMapping.setPlatformId("12345");
+        existingMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         existingMapping.setRawScore(8.0);
         existingMapping.setNormalizedScore(80.0);
         existingMapping.setMappingInfo(oldMappingInfo);
@@ -96,8 +100,7 @@ public class MappingRepoServiceTest {
         Integer originalVersion = existingMapping.getVersion();
 
         Mapping updateMapping = new Mapping();
-        updateMapping.setPlatform(Platform.MyAnimeList);
-        updateMapping.setPlatformId("12345");
+        updateMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         updateMapping.setRawScore(8.5);
         updateMapping.setNormalizedScore(85.0);
         updateMapping.setMappingInfo(testMappingInfo);
@@ -106,7 +109,7 @@ public class MappingRepoServiceTest {
 
         Mapping result = mappingRepoService.saveOrUpdate(updateMapping);
 
-        Mapping updated = mappingRepository.findByPlatformAndPlatformId(Platform.MyAnimeList, "12345");
+        Mapping updated = mappingRepository.findByPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         assertNotNull(updated);
         // 返回的是数据库中已有的那一行，而不是传入的 updateMapping
         assertSame(updated, result);
@@ -127,22 +130,20 @@ public class MappingRepoServiceTest {
         anime = animeRepository.save(anime);
 
         Mapping existingMapping = new Mapping();
-        existingMapping.setPlatform(Platform.MyAnimeList);
-        existingMapping.setPlatformId("12345");
+        existingMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         existingMapping.setRawScore(8.0);
         existingMapping.setAnime(anime);
         existingMapping.setUpdateTime(Instant.now());
         mappingRepository.save(existingMapping);
 
         Mapping updateMapping = new Mapping();
-        updateMapping.setPlatform(Platform.MyAnimeList);
-        updateMapping.setPlatformId("12345");
+        updateMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         updateMapping.setRawScore(8.5);
         updateMapping.setUpdateTime(Instant.now());
 
         mappingRepoService.saveOrUpdate(updateMapping);
 
-        Mapping updated = mappingRepository.findByPlatformAndPlatformId(Platform.MyAnimeList, "12345");
+        Mapping updated = mappingRepository.findByPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         assertNotNull(updated);
         assertNotNull(updated.getAnime());
         assertEquals(anime.getAnimeId(), updated.getAnime().getAnimeId());
@@ -150,24 +151,22 @@ public class MappingRepoServiceTest {
     }
 
     @Test
-    public void testSaveOrUpdate_DifferentPlatforms() {
+    public void testSaveOrUpdate_DifferentPlatformsWithSameId() {
         Mapping malMapping = new Mapping();
-        malMapping.setPlatform(Platform.MyAnimeList);
-        malMapping.setPlatformId("12345");
+        malMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         malMapping.setRawScore(8.5);
         malMapping.setUpdateTime(Instant.now());
 
         Mapping bangumiMapping = new Mapping();
-        bangumiMapping.setPlatform(Platform.Bangumi);
-        bangumiMapping.setPlatformId("67890");
+        bangumiMapping.setPlatformKey(new PlatformKey(Platform.Bangumi, "12345"));
         bangumiMapping.setRawScore(7.8);
         bangumiMapping.setUpdateTime(Instant.now());
 
         mappingRepoService.saveOrUpdate(malMapping);
         mappingRepoService.saveOrUpdate(bangumiMapping);
 
-        Mapping savedMal = mappingRepository.findByPlatformAndPlatformId(Platform.MyAnimeList, "12345");
-        Mapping savedBangumi = mappingRepository.findByPlatformAndPlatformId(Platform.Bangumi, "67890");
+        Mapping savedMal = mappingRepository.findByPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
+        Mapping savedBangumi = mappingRepository.findByPlatformKey(new PlatformKey(Platform.Bangumi, "12345"));
 
         assertNotNull(savedMal);
         assertNotNull(savedBangumi);
@@ -177,23 +176,21 @@ public class MappingRepoServiceTest {
     @Test
     public void testSaveOrUpdate_UpdateScoreToNull() {
         Mapping existingMapping = new Mapping();
-        existingMapping.setPlatform(Platform.MyAnimeList);
-        existingMapping.setPlatformId("12345");
+        existingMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         existingMapping.setRawScore(8.5);
         existingMapping.setNormalizedScore(85.0);
         existingMapping.setUpdateTime(Instant.now());
         mappingRepository.save(existingMapping);
 
         Mapping updateMapping = new Mapping();
-        updateMapping.setPlatform(Platform.MyAnimeList);
-        updateMapping.setPlatformId("12345");
+        updateMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         updateMapping.setRawScore(null);
         updateMapping.setNormalizedScore(null);
         updateMapping.setUpdateTime(Instant.now());
 
         mappingRepoService.saveOrUpdate(updateMapping);
 
-        Mapping updated = mappingRepository.findByPlatformAndPlatformId(Platform.MyAnimeList, "12345");
+        Mapping updated = mappingRepository.findByPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         assertNotNull(updated);
         assertNull(updated.getRawScore());
         assertNull(updated.getNormalizedScore());
@@ -202,21 +199,19 @@ public class MappingRepoServiceTest {
     @Test
     public void testSaveOrUpdate_UpdateMappingInfoToNull() {
         Mapping existingMapping = new Mapping();
-        existingMapping.setPlatform(Platform.MyAnimeList);
-        existingMapping.setPlatformId("12345");
+        existingMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         existingMapping.setMappingInfo(testMappingInfo);
         existingMapping.setUpdateTime(Instant.now());
         mappingRepository.save(existingMapping);
 
         Mapping updateMapping = new Mapping();
-        updateMapping.setPlatform(Platform.MyAnimeList);
-        updateMapping.setPlatformId("12345");
+        updateMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         updateMapping.setMappingInfo(null);
         updateMapping.setUpdateTime(Instant.now());
 
         mappingRepoService.saveOrUpdate(updateMapping);
 
-        Mapping updated = mappingRepository.findByPlatformAndPlatformId(Platform.MyAnimeList, "12345");
+        Mapping updated = mappingRepository.findByPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         assertNotNull(updated);
         assertNull(updated.getMappingInfo());
     }
@@ -224,22 +219,20 @@ public class MappingRepoServiceTest {
     @Test
     public void testSaveOrUpdate_SamePlatformDifferentIds() {
         Mapping mapping1 = new Mapping();
-        mapping1.setPlatform(Platform.MyAnimeList);
-        mapping1.setPlatformId("12345");
+        mapping1.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         mapping1.setRawScore(8.5);
         mapping1.setUpdateTime(Instant.now());
 
         Mapping mapping2 = new Mapping();
-        mapping2.setPlatform(Platform.MyAnimeList);
-        mapping2.setPlatformId("67890");
+        mapping2.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "67890"));
         mapping2.setRawScore(7.8);
         mapping2.setUpdateTime(Instant.now());
 
         mappingRepoService.saveOrUpdate(mapping1);
         mappingRepoService.saveOrUpdate(mapping2);
 
-        Mapping saved1 = mappingRepository.findByPlatformAndPlatformId(Platform.MyAnimeList, "12345");
-        Mapping saved2 = mappingRepository.findByPlatformAndPlatformId(Platform.MyAnimeList, "67890");
+        Mapping saved1 = mappingRepository.findByPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
+        Mapping saved2 = mappingRepository.findByPlatformKey(new PlatformKey(Platform.MyAnimeList, "67890"));
 
         assertNotNull(saved1);
         assertNotNull(saved2);
@@ -251,30 +244,27 @@ public class MappingRepoServiceTest {
     @Test
     public void testSaveOrUpdate_MultipleUpdatesToSameMapping() {
         Mapping initialMapping = new Mapping();
-        initialMapping.setPlatform(Platform.MyAnimeList);
-        initialMapping.setPlatformId("12345");
+        initialMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         initialMapping.setRawScore(8.0);
         initialMapping.setUpdateTime(Instant.now());
 
         mappingRepoService.saveOrUpdate(initialMapping);
 
         Mapping update1 = new Mapping();
-        update1.setPlatform(Platform.MyAnimeList);
-        update1.setPlatformId("12345");
+        update1.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         update1.setRawScore(8.5);
         update1.setUpdateTime(Instant.parse("2024-01-01T00:00:00Z"));
 
         mappingRepoService.saveOrUpdate(update1);
 
         Mapping update2 = new Mapping();
-        update2.setPlatform(Platform.MyAnimeList);
-        update2.setPlatformId("12345");
+        update2.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         update2.setRawScore(9.0);
         update2.setUpdateTime(Instant.parse("2024-01-02T00:00:00Z"));
 
         mappingRepoService.saveOrUpdate(update2);
 
-        Mapping finalMapping = mappingRepository.findByPlatformAndPlatformId(Platform.MyAnimeList, "12345");
+        Mapping finalMapping = mappingRepository.findByPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         assertNotNull(finalMapping);
         assertEquals(9.0, finalMapping.getRawScore());
         assertEquals(Instant.parse("2024-01-02T00:00:00Z"), finalMapping.getUpdateTime());
@@ -284,15 +274,14 @@ public class MappingRepoServiceTest {
     @Test
     public void testSaveOrUpdate_WithZeroScores() {
         Mapping newMapping = new Mapping();
-        newMapping.setPlatform(Platform.MyAnimeList);
-        newMapping.setPlatformId("12345");
+        newMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         newMapping.setRawScore(0.0);
         newMapping.setNormalizedScore(0.0);
         newMapping.setUpdateTime(Instant.now());
 
         mappingRepoService.saveOrUpdate(newMapping);
 
-        Mapping saved = mappingRepository.findByPlatformAndPlatformId(Platform.MyAnimeList, "12345");
+        Mapping saved = mappingRepository.findByPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         assertNotNull(saved);
         assertEquals(0.0, saved.getRawScore());
         assertEquals(0.0, saved.getNormalizedScore());
@@ -301,15 +290,13 @@ public class MappingRepoServiceTest {
     @Test
     public void testSaveOrUpdate_NaturalIdUniqueness() {
         Mapping mapping1 = new Mapping();
-        mapping1.setPlatform(Platform.MyAnimeList);
-        mapping1.setPlatformId("12345");
+        mapping1.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         mapping1.setRawScore(8.5);
         mapping1.setUpdateTime(Instant.now());
         mappingRepoService.saveOrUpdate(mapping1);
 
         Mapping mapping2 = new Mapping();
-        mapping2.setPlatform(Platform.MyAnimeList);
-        mapping2.setPlatformId("12345");
+        mapping2.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         mapping2.setRawScore(9.0);
         mapping2.setUpdateTime(Instant.now());
         mappingRepoService.saveOrUpdate(mapping2);
@@ -317,30 +304,28 @@ public class MappingRepoServiceTest {
         long count = mappingRepository.count();
         assertEquals(1, count);
 
-        Mapping saved = mappingRepository.findByPlatformAndPlatformId(Platform.MyAnimeList, "12345");
+        Mapping saved = mappingRepository.findByPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         assertEquals(9.0, saved.getRawScore());
     }
 
     @Test
     public void testSaveOrUpdate_OptimisticLockingVersion() {
         Mapping initialMapping = new Mapping();
-        initialMapping.setPlatform(Platform.MyAnimeList);
-        initialMapping.setPlatformId("12345");
+        initialMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         initialMapping.setRawScore(8.0);
         initialMapping.setUpdateTime(Instant.now());
         mappingRepoService.saveOrUpdate(initialMapping);
 
-        Mapping saved = mappingRepository.findByPlatformAndPlatformId(Platform.MyAnimeList, "12345");
+        Mapping saved = mappingRepository.findByPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         assertEquals(0, saved.getVersion());
 
         Mapping updateMapping = new Mapping();
-        updateMapping.setPlatform(Platform.MyAnimeList);
-        updateMapping.setPlatformId("12345");
+        updateMapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         updateMapping.setRawScore(8.5);
         updateMapping.setUpdateTime(Instant.now());
         mappingRepoService.saveOrUpdate(updateMapping);
 
-        Mapping updated = mappingRepository.findByPlatformAndPlatformId(Platform.MyAnimeList, "12345");
+        Mapping updated = mappingRepository.findByPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         assertEquals(1, updated.getVersion());
     }
     private List<MappingMetricHistory> historyByTime() {
@@ -351,8 +336,7 @@ public class MappingRepoServiceTest {
 
     private Mapping metricMapping(Double rawScore, Double rawPopularity, Instant updateTime) {
         Mapping mapping = new Mapping();
-        mapping.setPlatform(Platform.MyAnimeList);
-        mapping.setPlatformId("12345");
+        mapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         mapping.setRawScore(rawScore);
         mapping.setRawPopularity(rawPopularity);
         mapping.setMappingInfo(testMappingInfo);
@@ -369,8 +353,8 @@ public class MappingRepoServiceTest {
         List<MappingMetricHistory> history = historyByTime();
         assertEquals(1, history.size());
         MappingMetricHistory snapshot = history.get(0);
-        assertEquals(Platform.MyAnimeList, snapshot.getPlatform());
-        assertEquals("12345", snapshot.getPlatformId());
+        assertEquals(Platform.MyAnimeList, snapshot.getPlatformKey().getPlatform());
+        assertEquals("12345", snapshot.getPlatformKey().getPlatformId());
         assertEquals(8.5, snapshot.getRawScore());
         assertEquals(1000.0, snapshot.getRawPopularity());
         assertEquals(recordedAt, snapshot.getRecordedAt());
@@ -436,14 +420,19 @@ public class MappingRepoServiceTest {
     @Test
     public void testMetricHistory_SurvivesMappingDeletion() {
         mappingRepoService.saveOrUpdate(metricMapping(8.5, 1000.0, Instant.parse("2024-01-01T00:00:00Z")));
+        mappingRepository.flush();
+        entityManager.clear();
 
-        Mapping saved = mappingRepository.findByPlatformAndPlatformId(Platform.MyAnimeList, "12345");
+        PlatformKey key = new PlatformKey(Platform.MyAnimeList, "12345");
+        Mapping saved = mappingRepository.findByPlatformKey(key);
         assertNotNull(saved);
+        assertEquals(key, saved.getPlatformKey());
         mappingRepository.delete(saved);
         mappingRepository.flush();
+        entityManager.clear();
 
         List<MappingMetricHistory> history = historyByTime();
         assertEquals(1, history.size());
-        assertEquals("12345", history.get(0).getPlatformId());
+        assertEquals(key, history.get(0).getPlatformKey());
     }
 }

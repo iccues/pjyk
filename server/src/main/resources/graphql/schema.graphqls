@@ -45,10 +45,14 @@ type AnimeTitles {
     titleCn: String
 }
 
-type Mapping {
-    mappingId: ID!
+type PlatformKey {
     platform: Platform!
     platformId: String!
+}
+
+type Mapping {
+    mappingId: ID!
+    platformKey: PlatformKey!
     rawScore: Float
     normalizedScore: Float
     rawPopularity: Float

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getAllPlatformConfigs } from "@pjyk-web/shared/config/platforms.ts";
+import type { PlatformKey } from "@pjyk-web/shared/types/platformKey.ts";
 import {
   ElButton,
   ElDialog,
@@ -19,7 +20,7 @@ const visible = defineModel<boolean>("visible", { required: true });
 
 const { addMappingToUnmapped } = useAdminListPageStore();
 
-const formData = ref({
+const formData = ref<PlatformKey>({
   platform: "",
   platformId: "",
 });
@@ -42,10 +43,10 @@ const handleSubmit = async () => {
     return;
   }
   try {
-    const newMapping = await createMapping(
-      formData.value.platform,
-      formData.value.platformId.trim(),
-    );
+    const newMapping = await createMapping({
+      platform: formData.value.platform,
+      platformId: formData.value.platformId.trim(),
+    });
     addMappingToUnmapped(newMapping);
     ElMessage.success("映射创建成功");
     handleClose();

@@ -2,6 +2,7 @@ package com.yukiani.server.service;
 
 import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import com.yukiani.server.entity.ReviewStatus;
 import com.yukiani.server.exception.FetchFailedException;
 import com.yukiani.server.repo.MappingRepository;
@@ -71,28 +72,28 @@ class MappingSyncServiceTest {
     void isDue_DailyTier_DueUntilSyncedToday() {
         LocalDate startDate = TODAY.minusDays(10);
 
-        assertTrue(isDue(new SyncCandidate(1L, 1L, startDate, Platform.MyAnimeList, "1", YESTERDAY_NOON)));
-        assertFalse(isDue(new SyncCandidate(1L, 1L, startDate, Platform.MyAnimeList, "1", at(TODAY, 0))));
+        assertTrue(isDue(new SyncCandidate(1L, 1L, startDate, new PlatformKey(Platform.MyAnimeList, "1"), YESTERDAY_NOON)));
+        assertFalse(isDue(new SyncCandidate(1L, 1L, startDate, new PlatformKey(Platform.MyAnimeList, "1"), at(TODAY, 0))));
     }
 
     @Test
     void isDue_DailyTier_IncludesPremiereDayAndUnairedWithin30Days() {
         long animeId = scheduledDaysAgo(1);
 
-        assertTrue(isDue(new SyncCandidate(1L, animeId, TODAY, Platform.MyAnimeList, "1", YESTERDAY_NOON)),
+        assertTrue(isDue(new SyncCandidate(1L, animeId, TODAY, new PlatformKey(Platform.MyAnimeList, "1"), YESTERDAY_NOON)),
                 "Premiere day");
-        assertTrue(isDue(new SyncCandidate(1L, animeId, TODAY.plusDays(30), Platform.MyAnimeList, "1", YESTERDAY_NOON)),
+        assertTrue(isDue(new SyncCandidate(1L, animeId, TODAY.plusDays(30), new PlatformKey(Platform.MyAnimeList, "1"), YESTERDAY_NOON)),
                 "30 days before premiere");
         // 开播前 31 天属于每 30 天档，该 animeId 的排班日在昨天且昨天已同步
-        assertFalse(isDue(new SyncCandidate(1L, animeId, TODAY.plusDays(31), Platform.MyAnimeList, "1", YESTERDAY_NOON)),
+        assertFalse(isDue(new SyncCandidate(1L, animeId, TODAY.plusDays(31), new PlatformKey(Platform.MyAnimeList, "1"), YESTERDAY_NOON)),
                 "31 days before premiere");
     }
 
     @Test
     void isDue_NoStartDate_Monthly() {
-        assertTrue(isDue(new SyncCandidate(1L, scheduledDaysAgo(0), null, Platform.MyAnimeList, "1", YESTERDAY_NOON)),
+        assertTrue(isDue(new SyncCandidate(1L, scheduledDaysAgo(0), null, new PlatformKey(Platform.MyAnimeList, "1"), YESTERDAY_NOON)),
                 "Scheduled today");
-        assertFalse(isDue(new SyncCandidate(1L, scheduledDaysAgo(29), null, Platform.MyAnimeList, "1",
+        assertFalse(isDue(new SyncCandidate(1L, scheduledDaysAgo(29), null, new PlatformKey(Platform.MyAnimeList, "1"),
                         at(TODAY.minusDays(29), 12))),
                 "Synced on its scheduled day 29 days ago");
     }
@@ -107,11 +108,11 @@ class MappingSyncServiceTest {
         LocalDate startDate = TODAY.minusDays(startDaysAgo);
         Instant yesterdayStart = at(TODAY.minusDays(1), 0);
 
-        assertTrue(isDue(new SyncCandidate(1L, scheduledDaysAgo(0), startDate, Platform.MyAnimeList, "1", YESTERDAY_NOON)),
+        assertTrue(isDue(new SyncCandidate(1L, scheduledDaysAgo(0), startDate, new PlatformKey(Platform.MyAnimeList, "1"), YESTERDAY_NOON)),
                 "Scheduled today and not synced today");
-        assertFalse(isDue(new SyncCandidate(1L, scheduledDaysAgo(1), startDate, Platform.MyAnimeList, "1", yesterdayStart)),
+        assertFalse(isDue(new SyncCandidate(1L, scheduledDaysAgo(1), startDate, new PlatformKey(Platform.MyAnimeList, "1"), yesterdayStart)),
                 "Scheduled yesterday and synced at yesterday's midnight");
-        assertTrue(isDue(new SyncCandidate(1L, scheduledDaysAgo(1), startDate, Platform.MyAnimeList, "1",
+        assertTrue(isDue(new SyncCandidate(1L, scheduledDaysAgo(1), startDate, new PlatformKey(Platform.MyAnimeList, "1"),
                         yesterdayStart.minusSeconds(1))),
                 "Scheduled yesterday but last synced just before it");
     }
@@ -122,9 +123,9 @@ class MappingSyncServiceTest {
         LocalDate startDate = TODAY.minusDays(365);
         long animeId = scheduledDaysAgo(3);
 
-        assertTrue(isDue(new SyncCandidate(1L, animeId, startDate, Platform.MyAnimeList, "1",
+        assertTrue(isDue(new SyncCandidate(1L, animeId, startDate, new PlatformKey(Platform.MyAnimeList, "1"),
                 at(TODAY.minusDays(4), 12))), "Not synced since the scheduled day");
-        assertFalse(isDue(new SyncCandidate(1L, animeId, startDate, Platform.MyAnimeList, "1",
+        assertFalse(isDue(new SyncCandidate(1L, animeId, startDate, new PlatformKey(Platform.MyAnimeList, "1"),
                 at(TODAY.minusDays(2), 12))), "Caught up after the scheduled day");
     }
 
@@ -138,9 +139,9 @@ class MappingSyncServiceTest {
         long animeId = scheduledDaysAgo(scheduledDaysAgoInNextTier);
 
         assertTrue(isDue(new SyncCandidate(1L, animeId, TODAY.minusDays(lastDayOfTier),
-                Platform.MyAnimeList, "1", YESTERDAY_NOON)));
+                new PlatformKey(Platform.MyAnimeList, "1"), YESTERDAY_NOON)));
         assertFalse(isDue(new SyncCandidate(1L, animeId, TODAY.minusDays(lastDayOfTier + 1),
-                Platform.MyAnimeList, "1", YESTERDAY_NOON)));
+                new PlatformKey(Platform.MyAnimeList, "1"), YESTERDAY_NOON)));
     }
 
     // ==================== 同步轮次 ====================
@@ -160,7 +161,7 @@ class MappingSyncServiceTest {
         SyncCandidate due = candidate(1, Platform.MyAnimeList, YESTERDAY_NOON);
         // 每 3 天档，排班日为昨天且昨天已同步
         SyncCandidate notDue = new SyncCandidate(2L, scheduledDaysAgo(1), TODAY.minusDays(120),
-                Platform.MyAnimeList, "2", YESTERDAY_NOON);
+                new PlatformKey(Platform.MyAnimeList, "2"), YESTERDAY_NOON);
         givenCandidates(due, notDue);
         when(fetchService.getFetchService(Platform.MyAnimeList)).thenReturn(malFetchService);
         when(malFetchService.fetchAndSaveMapping("1")).thenReturn(saved(NOW));
@@ -332,7 +333,7 @@ class MappingSyncServiceTest {
 
     /** 开播 10 天、每天同步的候选 Mapping；platformId 与 mappingId 取相同数字，便于对照。 */
     private static SyncCandidate candidate(long mappingId, Platform platform, Instant updateTime) {
-        return new SyncCandidate(mappingId, 1L, TODAY.minusDays(10), platform, String.valueOf(mappingId), updateTime);
+        return new SyncCandidate(mappingId, 1L, TODAY.minusDays(10), new PlatformKey(platform, String.valueOf(mappingId)), updateTime);
     }
 
     private static Mapping saved(Instant updateTime) {

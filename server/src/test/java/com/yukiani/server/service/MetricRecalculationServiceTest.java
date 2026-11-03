@@ -3,6 +3,7 @@ package com.yukiani.server.service;
 import com.yukiani.server.entity.Anime;
 import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import com.yukiani.server.repo.AnimeRepository;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
@@ -26,16 +27,16 @@ class MetricRecalculationServiceTest {
     void recalculatesAllAnimeMetrics() {
         Anime anime1 = new Anime();
         Mapping mapping1 = new Mapping();
-        mapping1.setPlatform(Platform.Bangumi);
+        mapping1.setPlatformKey(new PlatformKey(Platform.Bangumi, "1"));
         mapping1.setNormalizedScore(8.0);
         anime1.addMapping(mapping1);
 
         Anime anime2 = new Anime();
         Mapping mapping2 = new Mapping();
-        mapping2.setPlatform(Platform.Bangumi);
+        mapping2.setPlatformKey(new PlatformKey(Platform.Bangumi, "2"));
         mapping2.setNormalizedScore(9.0);
         Mapping mapping3 = new Mapping();
-        mapping3.setPlatform(Platform.MyAnimeList);
+        mapping3.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "1"));
         mapping3.setNormalizedScore(6.0);
         anime2.addMapping(mapping2);
         anime2.addMapping(mapping3);

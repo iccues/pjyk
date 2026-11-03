@@ -97,7 +97,7 @@ public class MappingSyncService {
         // 平台之间互不影响，各用一个线程；关闭执行器时会等待全部平台处理完毕。
         try (ExecutorService executor = Executors.newCachedThreadPool()) {
             toSync.stream()
-                    .collect(Collectors.groupingBy(SyncCandidate::platform))
+                    .collect(Collectors.groupingBy(candidate -> candidate.platformKey().getPlatform()))
                     .forEach((platform, candidates) ->
                             executor.execute(() -> syncPlatform(platform, candidates, roundStart)));
         }

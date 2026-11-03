@@ -6,6 +6,7 @@ import com.yukiani.server.entity.MappingInfo;
 import com.yukiani.server.entity.AnimeTitles;
 import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import com.yukiani.server.entity.Season;
 import com.yukiani.server.exception.FetchFailedException;
 import com.yukiani.server.service.MappingRepoService;
@@ -92,8 +93,8 @@ public class AbstractAnimeFetchServiceTest {
         Mapping mapping = testService.buildMapping(jsonNode);
 
         // 验证：只构造不保存
-        assertEquals(Platform.Bangumi, mapping.getPlatform());
-        assertEquals("12345", mapping.getPlatformId());
+        assertEquals(Platform.Bangumi, mapping.getPlatformKey().getPlatform());
+        assertEquals("12345", mapping.getPlatformKey().getPlatformId());
         assertEquals(8.5, mapping.getRawScore(), 0.0001);
         assertNotNull(mapping.getNormalizedScore());
         verifyNoInteractions(mappingRepoService);
@@ -122,7 +123,7 @@ public class AbstractAnimeFetchServiceTest {
     @Test
     public void testRecalculateMetrics_UsesRawValues() {
         Mapping mapping = new Mapping();
-        mapping.setPlatform(Platform.Bangumi);
+        mapping.setPlatformKey(new PlatformKey(Platform.Bangumi, null));
         mapping.setRawPopularity(80.0);
         mapping.setRawScore(9.0);
 
@@ -135,7 +136,7 @@ public class AbstractAnimeFetchServiceTest {
     @Test
     public void testRecalculateMetrics_RejectsAnotherPlatform() {
         Mapping mapping = new Mapping();
-        mapping.setPlatform(Platform.AniList);
+        mapping.setPlatformKey(new PlatformKey(Platform.AniList, null));
 
         assertThrows(IllegalArgumentException.class, () -> testService.recalculateMetrics(mapping));
     }
@@ -163,7 +164,7 @@ public class AbstractAnimeFetchServiceTest {
                 { "title": "Empty Media" }
                 """));
 
-        assertNull(mapping.getPlatformId());
+        assertNull(mapping.getPlatformKey().getPlatformId());
         assertNull(mapping.getMappingInfo().getStartDate());
     }
 
@@ -216,7 +217,7 @@ public class AbstractAnimeFetchServiceTest {
 
         var mappingCaptor = org.mockito.ArgumentCaptor.forClass(Mapping.class);
         verify(mappingRepoService).saveOrUpdate(mappingCaptor.capture());
-        assertEquals("1", mappingCaptor.getValue().getPlatformId());
+        assertEquals("1", mappingCaptor.getValue().getPlatformKey().getPlatformId());
     }
 
     @Test
@@ -238,7 +239,7 @@ public class AbstractAnimeFetchServiceTest {
         MappingInfo mappingInfo = new MappingInfo(titles, null, null);
 
         // Mock 保存结果
-        Mapping savedMapping = new Mapping(Platform.Bangumi, "12345", mappingInfo);
+        Mapping savedMapping = new Mapping(new PlatformKey(Platform.Bangumi, "12345"), mappingInfo);
         when(mappingRepoService.saveOrUpdate(any(Mapping.class))).thenReturn(savedMapping);
 
         // 调用方法

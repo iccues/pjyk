@@ -6,6 +6,7 @@ import com.yukiani.server.entity.Anime;
 import com.yukiani.server.entity.AnimeTitles;
 import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,8 +47,7 @@ public class GraphQLTypeMapperTest {
 
         Mapping mapping = new Mapping();
         mapping.setMappingId(10L);
-        mapping.setPlatform(Platform.AniList);
-        mapping.setPlatformId("16498");
+        mapping.setPlatformKey(new PlatformKey(Platform.AniList, "16498"));
         mapping.setRawScore(88.0);
         mapping.setNormalizedScore(8.8);
         mapping.setRawPopularity(50000.0);
@@ -208,8 +208,8 @@ public class GraphQLTypeMapperTest {
         assertNotNull(result);
         // mappingId: Long -> String
         assertEquals("10", result.getMappingId());
-        assertEquals(com.yukiani.server.generated.types.Platform.AniList, result.getPlatform());
-        assertEquals("16498", result.getPlatformId());
+        assertEquals(com.yukiani.server.generated.types.Platform.AniList, result.getPlatformKey().getPlatform());
+        assertEquals("16498", result.getPlatformKey().getPlatformId());
         assertEquals(88.0, result.getRawScore());
         assertEquals(8.8, result.getNormalizedScore());
         assertEquals(50000.0, result.getRawPopularity());
@@ -220,8 +220,7 @@ public class GraphQLTypeMapperTest {
     public void testToGraphQLMapping_NullScores() {
         Mapping mapping = new Mapping();
         mapping.setMappingId(20L);
-        mapping.setPlatform(Platform.Bangumi);
-        mapping.setPlatformId("99999");
+        mapping.setPlatformKey(new PlatformKey(Platform.Bangumi, "99999"));
         // rawScore / normalizedScore 均为 null
 
         com.yukiani.server.generated.types.Mapping result = graphQLTypeMapper.toGraphQLMapping(mapping);

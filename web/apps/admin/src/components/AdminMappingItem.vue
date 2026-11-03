@@ -15,10 +15,12 @@ const emit = defineEmits<{
 }>();
 
 // 根据平台名称获取配置
-const platformConfig = computed(() => getPlatformConfig(props.mapping.platform));
+const platformConfig = computed(() => getPlatformConfig(props.mapping.platformKey.platform));
 
 // 生成动画条目URL
-const animeUrl = computed(() => platformConfig.value.getAnimeUrl?.(props.mapping.platformId));
+const animeUrl = computed(() =>
+  platformConfig.value.getAnimeUrl?.(props.mapping.platformKey.platformId),
+);
 
 const titleTooltip = computed(() => {
   if (!props.mapping.mappingInfo) return "";
@@ -85,7 +87,9 @@ const handleDelete = (e: Event) => {
     </div>
     <a :href="animeUrl" target="_blank" rel="noopener noreferrer" @click.stop title="访问平台页面">
       <div class="flex w-[100px] shrink-0 justify-center py-0.5">
-        <el-tag type="primary" size="small" effect="plain">{{ mapping.platform }}</el-tag>
+        <el-tag type="primary" size="small" effect="plain">{{
+          mapping.platformKey.platform
+        }}</el-tag>
       </div>
     </a>
     <div

@@ -144,7 +144,8 @@ public abstract class AbstractAnimeFetchService {
      * <p>platformId 和开播日期可能为 {@code null}，由调用方按需检查后再保存。</p>
      */
     Mapping buildMapping(JsonNode jsonNode) {
-        Mapping mapping = new Mapping(getPlatform(), extractPlatformId(jsonNode), extractMappingInfo(jsonNode));
+        PlatformKey platformKey = new PlatformKey(getPlatform(), extractPlatformId(jsonNode));
+        Mapping mapping = new Mapping(platformKey, extractMappingInfo(jsonNode));
         mapping.setRawPopularity(extractRawPopularity(jsonNode));
         mapping.setRawScore(extractRawScore(jsonNode));
         recalculateMetrics(mapping);
@@ -158,7 +159,7 @@ public abstract class AbstractAnimeFetchService {
      * @throws IllegalArgumentException Mapping 平台与当前抓取服务不一致时抛出
      */
     public void recalculateMetrics(Mapping mapping) {
-        if (mapping.getPlatform() != getPlatform()) {
+        if (mapping.getPlatformKey().getPlatform() != getPlatform()) {
             throw new IllegalArgumentException("Mapping 平台与 FetchService 不匹配");
         }
 
@@ -186,7 +187,7 @@ public abstract class AbstractAnimeFetchService {
             for (JsonNode jsonNode : mediaList) {
                 Mapping mapping = buildMapping(jsonNode);
                 // 缺少 platformId 或开播日期的条目无法参与主数据关联，不必保存。
-                if (mapping.getPlatformId() == null || mapping.getMappingInfo().getStartDate() == null) {
+                if (mapping.getPlatformKey().getPlatformId() == null || mapping.getMappingInfo().getStartDate() == null) {
                     continue;
                 }
                 mappingRepoService.saveOrUpdate(mapping);
@@ -221,9 +222,9 @@ public abstract class AbstractAnimeFetchService {
             }
             Mapping mapping = buildMapping(jsonNode);
             // 平台返回其他条目或缺少 platformId 时，保存它并不能更新请求的 Mapping。
-            if (!platformId.equals(mapping.getPlatformId())) {
+            if (!platformId.equals(mapping.getPlatformKey().getPlatformId())) {
                 log.warn("{} returned platformId={} for requested platformId={}",
-                        getPlatform(), mapping.getPlatformId(), platformId);
+                        getPlatform(), mapping.getPlatformKey().getPlatformId(), platformId);
                 throw new FetchFailedException(getPlatform(), platformId);
             }
             return mappingRepoService.saveOrUpdate(mapping);

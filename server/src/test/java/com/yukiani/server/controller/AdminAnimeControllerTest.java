@@ -5,6 +5,7 @@ import com.yukiani.server.dto.admin.AnimeUpdateRequest;
 import com.yukiani.server.entity.Anime;
 import com.yukiani.server.entity.AnimeTitles;
 import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import com.yukiani.server.entity.ReviewStatus;
 import com.yukiani.server.repo.AnimeRepository;
 import com.yukiani.server.repo.MappingRepository;
@@ -229,8 +230,7 @@ public class AdminAnimeControllerTest {
 
         // 创建一个映射并关联到这个动画
         com.yukiani.server.entity.Mapping mapping = new com.yukiani.server.entity.Mapping();
-        mapping.setPlatform(Platform.MyAnimeList);
-        mapping.setPlatformId("12345");
+        mapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "12345"));
         mapping.setAnime(anime);
         mapping = mappingRepository.save(mapping);
 

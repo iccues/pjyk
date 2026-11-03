@@ -88,8 +88,10 @@ query GetAnimeDetail($animeId: ID!) {
 }
 
 fragment MappingItem on Mapping {
-  platform
-  platformId
+  platformKey {
+    platform
+    platformId
+  }
   rawScore
   normalizedScore
   rawPopularity

@@ -2,6 +2,7 @@ package com.yukiani.server.service;
 
 import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import com.yukiani.server.exception.FetchFailedException;
 import com.yukiani.server.repo.SyncCandidate;
 import com.yukiani.server.service.fetch.AbstractAnimeFetchService;
@@ -151,7 +152,7 @@ class PlatformSyncRunnerTest {
     private static List<SyncCandidate> candidates(int count) {
         return IntStream.rangeClosed(1, count)
                 .mapToObj(id -> new SyncCandidate((long) id, 1L, LocalDate.of(2026, 10, 1),
-                        Platform.MyAnimeList, String.valueOf(id), LAST_SYNCED))
+                        new PlatformKey(Platform.MyAnimeList, String.valueOf(id)), LAST_SYNCED))
                 .toList();
     }
 

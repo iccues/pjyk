@@ -2,9 +2,9 @@ package com.yukiani.server.controller;
 
 import com.yukiani.server.common.Response;
 import com.yukiani.server.dto.admin.AdminMappingDTO;
-import com.yukiani.server.dto.admin.CreateMappingRequest;
 import com.yukiani.server.dto.admin.UpdateMappingAnimeRequest;
 import com.yukiani.server.entity.Mapping;
+import com.yukiani.server.entity.PlatformKey;
 import com.yukiani.server.mapper.AdminAnimeMapper;
 import com.yukiani.server.service.MappingManageService;
 import jakarta.annotation.Resource;
@@ -65,12 +65,12 @@ public class AdminMappingController {
     /**
      * 从指定平台即时抓取并创建 Mapping。
      *
-     * @param request 包含 platform 和 platformId
+     * @param platformKey 待创建 Mapping 的平台条目标识
      * @return 包含已创建 Mapping 的成功响应
      */
     @PostMapping
-    public Response<AdminMappingDTO> createMapping(@RequestBody CreateMappingRequest request) {
-        Mapping mapping = mappingManageService.createMapping(request.platform(), request.platformId());
+    public Response<AdminMappingDTO> createMapping(@RequestBody PlatformKey platformKey) {
+        Mapping mapping = mappingManageService.createMapping(platformKey);
         AdminMappingDTO mappingDTO = adminAnimeMapper.toMappingDto(mapping);
         return Response.ok(mappingDTO);
     }

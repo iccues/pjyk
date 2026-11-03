@@ -3,6 +3,7 @@ package com.yukiani.server.service;
 import com.yukiani.server.entity.Anime;
 import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,13 +38,13 @@ public class AnimeAggregationServiceTest {
         anime2 = new Anime();
         
         mapping1 = new Mapping();
-        mapping1.setPlatform(Platform.Bangumi);
+        mapping1.setPlatformKey(new PlatformKey(Platform.Bangumi, null));
         
         mapping2 = new Mapping();
-        mapping2.setPlatform(Platform.MyAnimeList);
+        mapping2.setPlatformKey(new PlatformKey(Platform.MyAnimeList, null));
         
         mapping3 = new Mapping();
-        mapping3.setPlatform(Platform.AniList);
+        mapping3.setPlatformKey(new PlatformKey(Platform.AniList, null));
     }
 
     // ==================== addMappingWithMetrics 测试 ====================
@@ -141,7 +142,7 @@ public class AnimeAggregationServiceTest {
 
         // 尝试添加另一个 Bangumi 平台的 mapping
         Mapping anotherBangumiMapping = new Mapping();
-        anotherBangumiMapping.setPlatform(Platform.Bangumi);
+        anotherBangumiMapping.setPlatformKey(new PlatformKey(Platform.Bangumi, null));
 
         animeAggregationService.addMappingIfAbsent(anime1, anotherBangumiMapping);
 
@@ -177,7 +178,7 @@ public class AnimeAggregationServiceTest {
     void testUpsertMapping_WhenPresent() {
         // anime1 已有 Bangumi 平台的 mapping
         Mapping oldBangumiMapping = new Mapping();
-        oldBangumiMapping.setPlatform(Platform.Bangumi);
+        oldBangumiMapping.setPlatformKey(new PlatformKey(Platform.Bangumi, null));
         anime1.addMapping(oldBangumiMapping);
 
         // 用新的 Bangumi mapping 替换
@@ -237,7 +238,7 @@ public class AnimeAggregationServiceTest {
 
         // anime2 也有 Bangumi mapping（冲突）和 MyAnimeList mapping
         Mapping conflictBangumiMapping = new Mapping();
-        conflictBangumiMapping.setPlatform(Platform.Bangumi);
+        conflictBangumiMapping.setPlatformKey(new PlatformKey(Platform.Bangumi, null));
         anime2.addMapping(conflictBangumiMapping);
         anime2.addMapping(mapping2);
 

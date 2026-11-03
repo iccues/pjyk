@@ -2,6 +2,9 @@ package com.yukiani.server.graphql;
 
 import com.yukiani.server.entity.Anime;
 import com.yukiani.server.entity.AnimeTitles;
+import com.yukiani.server.entity.Mapping;
+import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import com.yukiani.server.entity.ReviewStatus;
 import com.yukiani.server.repo.AnimeRepository;
 import com.yukiani.server.repo.MappingRepository;
@@ -80,10 +83,13 @@ public class AnimeQueryResolverTest {
     @Test
     public void testAnimeList_ReturnsSavedAnime() throws Exception {
         Anime anime = createAndSaveAnime("進撃の巨人", LocalDate.of(2024, 1, 15), 9.0, 80000.0);
+        Mapping mapping = new Mapping(new PlatformKey(Platform.AniList, "16498"), null);
+        anime.addMapping(mapping);
+        mappingRepository.save(mapping);
 
         String query = """
                 {
-                  "query": "{ animeList { content { animeId title { titleNative } coverImage startDate averageScore popularity } pageInfo { totalElements totalPages size number } } }"
+                  "query": "{ animeList { content { animeId title { titleNative } coverImage startDate averageScore popularity mappings { platformKey { platform platformId } } } pageInfo { totalElements totalPages size number } } }"
                 }
                 """;
 
@@ -103,6 +109,11 @@ public class AnimeQueryResolverTest {
                         .value("2024-01-15"))
                 .andExpect(jsonPath("$.data.animeList.content[0].averageScore")
                         .value(9.0))
+                .andExpect(jsonPath("$.data.animeList.content[0].mappings", hasSize(1)))
+                .andExpect(jsonPath("$.data.animeList.content[0].mappings[0].platformKey.platform")
+                        .value("AniList"))
+                .andExpect(jsonPath("$.data.animeList.content[0].mappings[0].platformKey.platformId")
+                        .value("16498"))
                 .andExpect(jsonPath("$.data.animeList.pageInfo.totalElements").value(1))
                 .andExpect(jsonPath("$.data.animeList.pageInfo.totalPages").value(1));
     }
