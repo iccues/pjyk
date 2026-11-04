@@ -1,7 +1,7 @@
 package com.yukiani.server.repo;
 
 import com.yukiani.server.entity.Mapping;
-import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import com.yukiani.server.entity.ReviewStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface MappingRepository extends JpaRepository<Mapping, Long> {
-    Mapping findBySourcePlatformAndPlatformId(Platform sourcePlatform, String platformId);
+    Mapping findByPlatformKey(PlatformKey platformKey);
 
     List<Mapping> findAllByAnimeIsNull();
     List<Mapping> findAllByAnimeIsNullAndMappingInfo_StartDateIsNotNull();
@@ -26,7 +26,7 @@ public interface MappingRepository extends JpaRepository<Mapping, Long> {
      */
     @Query("""
             select new com.yukiani.server.repo.SyncCandidate(
-                m.mappingId, a.animeId, a.startDate, m.sourcePlatform, m.platformId, m.updateTime)
+                m.mappingId, a.animeId, a.startDate, m.platformKey, m.updateTime)
             from Mapping m join m.anime a
             where a.reviewStatus = :reviewStatus
               and m.updateTime < :todayStart

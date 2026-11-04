@@ -8,7 +8,7 @@ def get_platform_score(platform: str) -> pandas.DataFrame:
     SELECT m.raw_score
     FROM mapping m
     JOIN public.anime a ON a.anime_id = m.anime_id
-    WHERE m.source_platform = %(platform)s
+    WHERE m.platform = %(platform)s
       AND a.review_status = 'APPROVED'
     """
     return pandas.read_sql(query, engine, params={"platform": platform})
@@ -19,7 +19,7 @@ def get_platform_popularity(platform: str) -> pandas.DataFrame:
     SELECT m.raw_popularity
     FROM mapping m
     JOIN public.anime a ON a.anime_id = m.anime_id
-    WHERE m.source_platform = %(platform)s
+    WHERE m.platform = %(platform)s
       AND a.review_status = 'APPROVED'
     """
     return pandas.read_sql(query, engine, params={"platform": platform})
@@ -29,9 +29,9 @@ def get_score_data() -> pandas.DataFrame:
     query = """
     SELECT
         a.anime_id,
-        MAX(CASE WHEN m.source_platform = 'Bangumi' THEN m.raw_score END) as bangumi,
-        MAX(CASE WHEN m.source_platform = 'AniList' THEN m.raw_score END) as anilist,
-        MAX(CASE WHEN m.source_platform = 'MyAnimeList' THEN m.raw_score END) as myanimelist
+        MAX(CASE WHEN m.platform = 'Bangumi' THEN m.raw_score END) as bangumi,
+        MAX(CASE WHEN m.platform = 'AniList' THEN m.raw_score END) as anilist,
+        MAX(CASE WHEN m.platform = 'MyAnimeList' THEN m.raw_score END) as myanimelist
     FROM anime a
     JOIN mapping m ON a.anime_id = m.anime_id
     WHERE a.review_status = 'APPROVED'
@@ -45,9 +45,9 @@ def get_popularity_data() -> pandas.DataFrame:
     query = """
     SELECT
         a.anime_id,
-        MAX(CASE WHEN m.source_platform = 'Bangumi' THEN m.raw_popularity END) as bangumi,
-        MAX(CASE WHEN m.source_platform = 'AniList' THEN m.raw_popularity END) as anilist,
-        MAX(CASE WHEN m.source_platform = 'MyAnimeList' THEN m.raw_popularity END) as myanimelist
+        MAX(CASE WHEN m.platform = 'Bangumi' THEN m.raw_popularity END) as bangumi,
+        MAX(CASE WHEN m.platform = 'AniList' THEN m.raw_popularity END) as anilist,
+        MAX(CASE WHEN m.platform = 'MyAnimeList' THEN m.raw_popularity END) as myanimelist
     FROM anime a
     JOIN mapping m ON a.anime_id = m.anime_id
     WHERE a.review_status = 'APPROVED'

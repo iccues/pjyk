@@ -1,6 +1,10 @@
 package com.yukiani.server.graphql;
 
 import com.yukiani.server.entity.Anime;
+import com.yukiani.server.entity.PlatformKey;
+import com.yukiani.server.generated.types.AnimeMetricPoint;
+import com.yukiani.server.generated.types.MappingMetricPoint;
+import com.yukiani.server.service.MetricTimelineService;
 import com.yukiani.server.generated.types.AnimePage;
 import com.yukiani.server.generated.types.PageInfo;
 import com.yukiani.server.entity.Season;
@@ -41,11 +45,25 @@ public interface GraphQLTypeMapper {
 
     @Mapping(target = "animeId", source = "animeId", qualifiedByName = "longToString")
     @Mapping(target = "startDate", source = "startDate", qualifiedByName = "localDateToString")
+    @Mapping(target = "metricHistory", ignore = true)
+    @Mapping(target = "metricAt", ignore = true)
     com.yukiani.server.generated.types.Anime toGraphQLAnime(Anime anime);
 
     @Mapping(target = "mappingId", source = "mappingId", qualifiedByName = "longToString")
+    @Mapping(target = "metricHistory", ignore = true)
+    @Mapping(target = "metricAt", ignore = true)
     com.yukiani.server.generated.types.Mapping toGraphQLMapping(
             com.yukiani.server.entity.Mapping mapping);
+
+    com.yukiani.server.generated.types.PlatformKey toGraphQLPlatformKey(PlatformKey platformKey);
+
+    PlatformKey toPlatformKey(com.yukiani.server.generated.types.PlatformKey platformKey);
+
+    @Mapping(target = "date", source = "date", qualifiedByName = "localDateToString")
+    AnimeMetricPoint toGraphQLAnimeMetricPoint(MetricTimelineService.AnimePoint point);
+
+    @Mapping(target = "date", source = "date", qualifiedByName = "localDateToString")
+    MappingMetricPoint toGraphQLMappingMetricPoint(MetricTimelineService.MappingPoint point);
 
     @Named("longToString")
     default String longToString(Long id) {

@@ -5,6 +5,7 @@ import com.yukiani.server.entity.AnimeTitles;
 import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.MappingInfo;
 import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import com.yukiani.server.repo.AnimeRepository;
 import com.yukiani.server.repo.MappingRepository;
 import org.junit.jupiter.api.Test;
@@ -101,7 +102,7 @@ public class TitleBasedLinkServiceTest {
         MappingInfo mappingInfo = new MappingInfo(titles, "https://example.com/image.jpg", LocalDate.of(2024, 1, 15));
 
         // 准备未关联的 Mapping
-        Mapping mapping = new Mapping(Platform.Bangumi, "12345", mappingInfo);
+        Mapping mapping = new Mapping(new PlatformKey(Platform.Bangumi, "12345"), mappingInfo);
 
         // Mock anime - findAnime 返回现有的 Anime
         Anime anime = new Anime();
@@ -125,8 +126,8 @@ public class TitleBasedLinkServiceTest {
         titles.setTitleNative("Orphaned Anime");
         MappingInfo mappingInfo = new MappingInfo(titles, "https://example.com/image.jpg", LocalDate.of(2024, 1, 15));
 
-        Mapping mapping1 = new Mapping(Platform.Bangumi, "1", mappingInfo);
-        Mapping mapping2 = new Mapping(Platform.Bangumi, "2", mappingInfo);
+        Mapping mapping1 = new Mapping(new PlatformKey(Platform.Bangumi, "1"), mappingInfo);
+        Mapping mapping2 = new Mapping(new PlatformKey(Platform.Bangumi, "2"), mappingInfo);
 
         List<Mapping> orphanedMappings = List.of(mapping1, mapping2);
 

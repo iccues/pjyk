@@ -43,14 +43,10 @@ public class Mapping {
         return anime.getAnimeId();
     }
 
-    /** 与 {@link #platformId} 共同组成平台 Mapping 的 natural key。 */
+    /** 平台条目标识，同时作为 Mapping 的 natural key。 */
     @NaturalId
-    @Enumerated(EnumType.STRING)
-    Platform sourcePlatform;
-
-    /** 来源平台中的 platformId，与 {@link #sourcePlatform} 共同组成 natural key。 */
-    @NaturalId
-    String platformId;
+    @Embedded
+    PlatformKey platformKey;
 
     /** 来源平台返回的原始评分，无有效评分时为 {@code null}。 */
     Double rawScore;
@@ -74,9 +70,8 @@ public class Mapping {
     /**
      * 创建外部平台 Mapping 并记录首次更新时间。
      */
-    public Mapping(Platform sourcePlatform, String platformId, MappingInfo mappingInfo) {
-        this.sourcePlatform = sourcePlatform;
-        this.platformId = platformId;
+    public Mapping(PlatformKey platformKey, MappingInfo mappingInfo) {
+        this.platformKey = platformKey;
         this.mappingInfo = mappingInfo;
         this.updateTime = Instant.now();
     }

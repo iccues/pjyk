@@ -1,3 +1,5 @@
+import type { PlatformKey } from "@pjyk-web/shared/types/platformKey.ts";
+
 import type { AdminMapping } from "@/types/adminAnime";
 
 import adminClient from "./request";
@@ -30,17 +32,10 @@ export async function updateMappingAnime(
 
 /**
  * 创建新的映射
- * @param sourcePlatform 平台名称
- * @param platformId 平台 ID
+ * @param platformKey 平台条目标识
  */
-export async function createMapping(
-  sourcePlatform: string,
-  platformId: string,
-): Promise<AdminMapping> {
-  const response = await adminClient.post<AdminMapping>("/api/admin/mappings", {
-    sourcePlatform,
-    platformId,
-  });
+export async function createMapping(platformKey: PlatformKey): Promise<AdminMapping> {
+  const response = await adminClient.post<AdminMapping>("/api/admin/mappings", platformKey);
   return response.data;
 }
 

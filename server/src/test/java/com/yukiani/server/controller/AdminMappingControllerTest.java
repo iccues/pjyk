@@ -1,12 +1,12 @@
 package com.yukiani.server.controller;
 
-import com.yukiani.server.dto.admin.CreateMappingRequest;
 import com.yukiani.server.dto.admin.UpdateMappingAnimeRequest;
 import com.yukiani.server.entity.Anime;
 import com.yukiani.server.entity.AnimeTitles;
 import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.MappingInfo;
 import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import com.yukiani.server.entity.ReviewStatus;
 import com.yukiani.server.repo.AnimeRepository;
 import com.yukiani.server.repo.MappingRepository;
@@ -77,7 +77,7 @@ public class AdminMappingControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data", hasSize(2)))
-                .andExpect(jsonPath("$.data[*].sourcePlatform", containsInAnyOrder("MyAnimeList", "Bangumi")));
+                .andExpect(jsonPath("$.data[*].platformKey.platform", containsInAnyOrder("MyAnimeList", "Bangumi")));
     }
 
     @Test
@@ -264,15 +264,17 @@ public class AdminMappingControllerTest {
         when(fetchService.getFetchService(Platform.MyAnimeList)).thenReturn(mockFetchServiceImpl);
         when(mockFetchServiceImpl.fetchAndSaveMapping("12345")).thenReturn(mockedMapping);
 
-        CreateMappingRequest request = new CreateMappingRequest(Platform.MyAnimeList, "12345");
-
         mockMvc.perform(post("/api/admin/mappings")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content("""
+                                {"platform":"MyAnimeList","platformId":"12345"}
+                                """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.sourcePlatform").value("MyAnimeList"))
-                .andExpect(jsonPath("$.data.platformId").value("12345"));
+                .andExpect(jsonPath("$.data.platformKey.platform").value("MyAnimeList"))
+                .andExpect(jsonPath("$.data.platformKey.platformId").value("12345"))
+                .andExpect(jsonPath("$.data.platform").doesNotExist())
+                .andExpect(jsonPath("$.data.platformId").doesNotExist());
 
         verify(fetchService, atLeast(1)).getFetchService(Platform.MyAnimeList);
         verify(mockFetchServiceImpl, times(1)).fetchAndSaveMapping("12345");
@@ -284,11 +286,11 @@ public class AdminMappingControllerTest {
         Mapping existingMapping = createMapping(Platform.MyAnimeList, "12345");
         mappingRepository.save(existingMapping);
 
-        CreateMappingRequest request = new CreateMappingRequest(Platform.MyAnimeList, "12345");
-
         mockMvc.perform(post("/api/admin/mappings")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content("""
+                                {"platform":"MyAnimeList","platformId":"12345"}
+                                """))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.code").value("ALREADY_EXISTS"));
@@ -307,10 +309,10 @@ public class AdminMappingControllerTest {
     }
 
     // 辅助方法：创建测试用的 Mapping
-    private Mapping createMapping(Platform sourcePlatform, String platformId) {
+    private Mapping createMapping(Platform platform, String platformId) {
         AnimeTitles titles = new AnimeTitles();
         titles.setTitleNative("Test Anime");
         MappingInfo mappingInfo = new MappingInfo(titles, null, null);
-        return new Mapping(sourcePlatform, platformId, mappingInfo);
+        return new Mapping(new PlatformKey(platform, platformId), mappingInfo);
     }
 }

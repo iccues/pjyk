@@ -4,6 +4,7 @@ import com.yukiani.server.entity.Anime;
 import com.yukiani.server.entity.AnimeTitles;
 import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import com.yukiani.server.entity.ReviewStatus;
 import com.yukiani.server.entity.Season;
 import com.yukiani.server.exception.ResourceNotFoundException;
@@ -443,10 +444,9 @@ public class AnimeManageServiceTest {
     }
 
     // 辅助方法：创建测试用的 Mapping
-    private Mapping createMapping(Platform sourcePlatform, String platformId) {
+    private Mapping createMapping(Platform platform, String platformId) {
         Mapping mapping = new Mapping();
-        mapping.setSourcePlatform(sourcePlatform);
-        mapping.setPlatformId(platformId);
+        mapping.setPlatformKey(new PlatformKey(platform, platformId));
         mapping.setRawScore(8.0);
         mapping.setUpdateTime(Instant.now());
 

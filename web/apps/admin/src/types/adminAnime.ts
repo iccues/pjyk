@@ -1,3 +1,5 @@
+import type { PlatformKey } from "@pjyk-web/shared/types/platformKey.ts";
+
 export interface AnimeTitles {
   titleNative: string;
   titleRomaji: string;
@@ -18,8 +20,7 @@ export interface AdminAnime {
 export interface AdminMapping {
   mappingId: number;
   animeId: number | null;
-  sourcePlatform: string;
-  platformId: string;
+  platformKey: PlatformKey;
   rawScore: number;
   mappingInfo: MappingInfo;
 }

@@ -2,7 +2,7 @@ package com.yukiani.server.service;
 
 import com.yukiani.server.entity.Anime;
 import com.yukiani.server.entity.Mapping;
-import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import com.yukiani.server.exception.ResourceAlreadyExistsException;
 import com.yukiani.server.exception.ResourceNotFoundException;
 import com.yukiani.server.repo.AnimeRepository;
@@ -87,16 +87,15 @@ public class MappingManageService {
      *
      * @throws ResourceAlreadyExistsException 相同平台 Mapping 已存在时抛出
      */
-    public Mapping createMapping(Platform sourcePlatform, String platformId) {
-        Mapping existingMapping = mappingRepository.findBySourcePlatformAndPlatformId(
-                sourcePlatform, platformId);
+    public Mapping createMapping(PlatformKey platformKey) {
+        Mapping existingMapping = mappingRepository.findByPlatformKey(platformKey);
 
         if (existingMapping != null) {
             throw new ResourceAlreadyExistsException("Mapping",
-                    sourcePlatform.name() + " - " + platformId);
+                    platformKey.getPlatform().name() + " - " + platformKey.getPlatformId());
         }
 
-        AbstractAnimeFetchService fetchServiceImpl = fetchService.getFetchService(sourcePlatform);
-        return fetchServiceImpl.fetchAndSaveMapping(platformId);
+        AbstractAnimeFetchService fetchServiceImpl = fetchService.getFetchService(platformKey.getPlatform());
+        return fetchServiceImpl.fetchAndSaveMapping(platformKey.getPlatformId());
     }
 }

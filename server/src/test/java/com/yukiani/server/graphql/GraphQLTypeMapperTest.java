@@ -1,11 +1,15 @@
 package com.yukiani.server.graphql;
 
 import com.yukiani.server.generated.types.AnimePage;
+import com.yukiani.server.generated.types.AnimeMetricPoint;
+import com.yukiani.server.generated.types.MappingMetricPoint;
+import com.yukiani.server.service.MetricTimelineService;
 import com.yukiani.server.generated.types.PageInfo;
 import com.yukiani.server.entity.Anime;
 import com.yukiani.server.entity.AnimeTitles;
 import com.yukiani.server.entity.Mapping;
 import com.yukiani.server.entity.Platform;
+import com.yukiani.server.entity.PlatformKey;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,8 +50,7 @@ public class GraphQLTypeMapperTest {
 
         Mapping mapping = new Mapping();
         mapping.setMappingId(10L);
-        mapping.setSourcePlatform(Platform.AniList);
-        mapping.setPlatformId("16498");
+        mapping.setPlatformKey(new PlatformKey(Platform.AniList, "16498"));
         mapping.setRawScore(88.0);
         mapping.setNormalizedScore(8.8);
         mapping.setRawPopularity(50000.0);
@@ -208,8 +211,8 @@ public class GraphQLTypeMapperTest {
         assertNotNull(result);
         // mappingId: Long -> String
         assertEquals("10", result.getMappingId());
-        assertEquals(com.yukiani.server.generated.types.Platform.AniList, result.getSourcePlatform());
-        assertEquals("16498", result.getPlatformId());
+        assertEquals(com.yukiani.server.generated.types.Platform.AniList, result.getPlatformKey().getPlatform());
+        assertEquals("16498", result.getPlatformKey().getPlatformId());
         assertEquals(88.0, result.getRawScore());
         assertEquals(8.8, result.getNormalizedScore());
         assertEquals(50000.0, result.getRawPopularity());
@@ -220,8 +223,7 @@ public class GraphQLTypeMapperTest {
     public void testToGraphQLMapping_NullScores() {
         Mapping mapping = new Mapping();
         mapping.setMappingId(20L);
-        mapping.setSourcePlatform(Platform.Bangumi);
-        mapping.setPlatformId("99999");
+        mapping.setPlatformKey(new PlatformKey(Platform.Bangumi, "99999"));
         // rawScore / normalizedScore 均为 null
 
         com.yukiani.server.generated.types.Mapping result = graphQLTypeMapper.toGraphQLMapping(mapping);
@@ -301,5 +303,46 @@ public class GraphQLTypeMapperTest {
         assertEquals(2, pageInfo.getNumber());
         assertEquals(100, pageInfo.getTotalElements());
         assertEquals(10, pageInfo.getTotalPages());
+    }
+    @Test
+    public void testToPlatformKey() {
+        for (var platform : com.yukiani.server.generated.types.Platform.values()) {
+            var key = new com.yukiani.server.generated.types.PlatformKey(platform, "123");
+            assertEquals(new PlatformKey(Platform.valueOf(platform.name()), "123"),
+                    graphQLTypeMapper.toPlatformKey(key));
+        }
+        assertNull(graphQLTypeMapper.toPlatformKey(null));
+    }
+
+    // ============ 指标历史点转换测试 ============
+
+    @Test
+    public void testToGraphQLAnimeMetricPoint() {
+        MetricTimelineService.AnimePoint point = new MetricTimelineService.AnimePoint(
+                LocalDate.of(2026, 9, 14), 75.5, 30000.0);
+
+        AnimeMetricPoint result = graphQLTypeMapper.toGraphQLAnimeMetricPoint(point);
+
+        assertNotNull(result);
+        assertEquals("2026-09-14", result.getDate());
+        assertEquals(75.5, result.getAverageScore());
+        assertEquals(30000.0, result.getPopularity());
+        assertNull(graphQLTypeMapper.toGraphQLAnimeMetricPoint(null));
+    }
+
+    @Test
+    public void testToGraphQLMappingMetricPoint() {
+        MetricTimelineService.MappingPoint point = new MetricTimelineService.MappingPoint(
+                LocalDate.of(2026, 9, 14), 8.0, 66.6, 25000.0, 10000.0);
+
+        MappingMetricPoint result = graphQLTypeMapper.toGraphQLMappingMetricPoint(point);
+
+        assertNotNull(result);
+        assertEquals("2026-09-14", result.getDate());
+        assertEquals(8.0, result.getRawScore());
+        assertEquals(66.6, result.getNormalizedScore());
+        assertEquals(25000.0, result.getRawPopularity());
+        assertEquals(10000.0, result.getNormalizedPopularity());
+        assertNull(graphQLTypeMapper.toGraphQLMappingMetricPoint(null));
     }
 }

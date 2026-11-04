@@ -54,7 +54,7 @@ public class MetricRecalculationService {
             List<Mapping> mappingList = mappingRepository.findAll();
             for (Mapping mapping : mappingList) {
                 AbstractAnimeFetchService implFetchService = fetchService.getFetchService(
-                        mapping.getSourcePlatform()
+                        mapping.getPlatformKey().getPlatform()
                 );
                 implFetchService.recalculateMetrics(mapping);
             }

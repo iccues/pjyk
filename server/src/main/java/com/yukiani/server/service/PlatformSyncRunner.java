@@ -127,10 +127,10 @@ class PlatformSyncRunner {
     /** 抓取并保存单条 Mapping；{@code fetchAndSaveMapping} 正常返回即表示已保存。 */
     private Outcome sync(SyncCandidate candidate) {
         try {
-            service.fetchAndSaveMapping(candidate.platformId());
+            service.fetchAndSaveMapping(candidate.platformKey().getPlatformId());
             return Outcome.SUCCESS;
         } catch (Exception e) {
-            log.warn("Failed to sync mapping {}:{} - {}", platform, candidate.platformId(), e.getMessage());
+            log.warn("Failed to sync mapping {}:{} - {}", platform, candidate.platformKey().getPlatformId(), e.getMessage());
             return isPlatformFailure(e) ? Outcome.PLATFORM_FAILURE : Outcome.ITEM_FAILURE;
         }
     }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getAllPlatformConfigs } from "@pjyk-web/shared/config/platforms.ts";
+import type { PlatformKey } from "@pjyk-web/shared/types/platformKey.ts";
 import {
   ElButton,
   ElDialog,
@@ -19,8 +20,8 @@ const visible = defineModel<boolean>("visible", { required: true });
 
 const { addMappingToUnmapped } = useAdminListPageStore();
 
-const formData = ref({
-  sourcePlatform: "",
+const formData = ref<PlatformKey>({
+  platform: "",
   platformId: "",
 });
 
@@ -33,7 +34,7 @@ const platformOptions = computed(() => {
 });
 
 const handleSubmit = async () => {
-  if (!formData.value.sourcePlatform) {
+  if (!formData.value.platform) {
     ElMessage.warning("请选择平台");
     return;
   }
@@ -42,10 +43,10 @@ const handleSubmit = async () => {
     return;
   }
   try {
-    const newMapping = await createMapping(
-      formData.value.sourcePlatform,
-      formData.value.platformId.trim(),
-    );
+    const newMapping = await createMapping({
+      platform: formData.value.platform,
+      platformId: formData.value.platformId.trim(),
+    });
     addMappingToUnmapped(newMapping);
     ElMessage.success("映射创建成功");
     handleClose();
@@ -56,7 +57,7 @@ const handleSubmit = async () => {
 
 const handleClose = () => {
   formData.value = {
-    sourcePlatform: "",
+    platform: "",
     platformId: "",
   };
   visible.value = false;
@@ -67,7 +68,7 @@ const handleClose = () => {
   <el-dialog :model-value="visible" title="创建新映射" width="500px" @close="handleClose">
     <el-form :model="formData" label-width="100px">
       <el-form-item label="平台" required>
-        <el-select v-model="formData.sourcePlatform" placeholder="请选择平台" style="width: 100%">
+        <el-select v-model="formData.platform" placeholder="请选择平台" style="width: 100%">
           <el-option
             v-for="option in platformOptions"
             :key="option.value"

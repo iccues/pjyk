@@ -34,7 +34,7 @@ public class MappingRepoService {
      */
     @Transactional
     public Mapping saveOrUpdate(Mapping m) {
-        var existing = repo.findBySourcePlatformAndPlatformId(m.getSourcePlatform(), m.getPlatformId());
+        var existing = repo.findByPlatformKey(m.getPlatformKey());
         if (existing != null) {
             existing.setRawScore(m.getRawScore());
             existing.setNormalizedScore(m.getNormalizedScore());
@@ -61,8 +61,7 @@ public class MappingRepoService {
     /** 将 Mapping 当前的原始指标和更新时间保存为历史记录。 */
     private void recordMetricHistory(Mapping mapping) {
         mappingMetricHistoryRepository.save(new MappingMetricHistory(
-                mapping.getSourcePlatform(),
-                mapping.getPlatformId(),
+                mapping.getPlatformKey(),
                 mapping.getRawScore(),
                 mapping.getRawPopularity(),
                 mapping.getUpdateTime()
