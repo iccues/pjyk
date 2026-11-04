@@ -1,7 +1,12 @@
 package com.yukiani.server.exception;
 
 import com.yukiani.server.common.Response;
+import graphql.GraphQLError;
+import graphql.GraphqlErrorBuilder;
+import graphql.schema.DataFetchingEnvironment;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.graphql.data.method.annotation.GraphQlExceptionHandler;
+import org.springframework.graphql.execution.ErrorType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -50,6 +55,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(Response.fail("INVALID_ARGUMENT", ex.getMessage()));
+    }
+
+    @GraphQlExceptionHandler(IllegalArgumentException.class)
+    public GraphQLError handleGraphQlIllegalArgumentException(
+            IllegalArgumentException ex, DataFetchingEnvironment env) {
+        log.warn("GraphQL illegal argument: {}", ex.getMessage());
+        return GraphqlErrorBuilder.newError(env)
+                .errorType(ErrorType.BAD_REQUEST)
+                .message(ex.getMessage())
+                .build();
     }
 
     @ExceptionHandler(Exception.class)

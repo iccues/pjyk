@@ -19,6 +19,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.time.Instant;
+import java.util.Map;
+import tools.jackson.databind.ObjectMapper;
+import com.yukiani.server.entity.Mapping;
+import com.yukiani.server.entity.MappingMetricHistory;
+import com.yukiani.server.entity.Platform;
+import com.yukiani.server.repo.MappingMetricHistoryRepository;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,6 +51,12 @@ public class AnimeQueryResolverTest {
     private MappingRepository mappingRepository;
 
     @Resource
+    private MappingMetricHistoryRepository historyRepository;
+
+    @Resource
+    private ObjectMapper objectMapper;
+
+    @Resource
     private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
@@ -56,6 +69,7 @@ public class AnimeQueryResolverTest {
 
     @AfterEach
     public void cleanup() {
+        historyRepository.deleteAll();
         mappingRepository.deleteAll();
         animeRepository.deleteAll();
     }
@@ -424,6 +438,72 @@ public class AnimeQueryResolverTest {
                 .andExpect(jsonPath("$.errors").doesNotExist())
                 // startDate 应该是 ISO 格式字符串
                 .andExpect(jsonPath("$.data.animeList.content[0].startDate").value("2024-12-31"));
+    }
+
+    @Test
+    public void testMetricHistoryObservationsAndMissingValues() throws Exception {
+        Anime anime = createAndSaveAnime("历史测试", LocalDate.of(2024, 1, 1), null, null);
+        Mapping mapping = new Mapping();
+        mapping.setPlatformKey(new PlatformKey(Platform.MyAnimeList, "history-test"));
+        mapping.setUpdateTime(Instant.now());
+        mapping.setAnime(anime);
+        mappingRepository.save(mapping);
+        historyRepository.save(new MappingMetricHistory(new PlatformKey(Platform.MyAnimeList, "history-test"), 7.0, 25000.0,
+                Instant.parse("2024-01-01T00:00:00Z")));
+        historyRepository.save(new MappingMetricHistory(new PlatformKey(Platform.MyAnimeList, "history-test"), null, null,
+                Instant.parse("2024-01-03T00:00:00Z")));
+        String query = """
+                { anime(animeId: "%s") {
+                    metricHistory(from: "2024-01-01", to: "2024-01-04") { date averageScore popularity }
+                    metricAt(at: "2024-01-02") { date averageScore popularity }
+                    absent: metricAt(at: "2023-12-31") { date }
+                    future: metricAt(at: "2099-01-01") { date popularity }
+                    gap: metricHistory(from: "2024-01-02", to: "2024-01-02") { date }
+                    mappings {
+                        metricHistory(from: "2024-01-01", to: "2024-01-04") { date rawScore }
+                        metricAt(at: "2024-01-02") { date rawScore normalizedScore }
+                        absent: metricAt(at: "2023-12-31") { date }
+                    }
+                } }
+                """.formatted(anime.getAnimeId());
+        mockMvc.perform(post(GRAPHQL_PATH).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("query", query))))
+                .andExpect(jsonPath("$.errors").doesNotExist())
+                .andExpect(jsonPath("$.data.anime.metricHistory", hasSize(2)))
+                .andExpect(jsonPath("$.data.anime.metricHistory[1].date").value("2024-01-03"))
+                .andExpect(jsonPath("$.data.anime.metricHistory[1].averageScore").value(nullValue()))
+                .andExpect(jsonPath("$.data.anime.metricHistory[1].popularity").value(0.0))
+                .andExpect(jsonPath("$.data.anime.metricAt.date").value("2024-01-01"))
+                .andExpect(jsonPath("$.data.anime.metricAt.averageScore").value(50.0))
+                .andExpect(jsonPath("$.data.anime.metricAt.popularity").value(10000.0))
+                .andExpect(jsonPath("$.data.anime.absent").value(nullValue()))
+                .andExpect(jsonPath("$.data.anime.future.date").value("2024-01-03"))
+                .andExpect(jsonPath("$.data.anime.future.popularity").value(0.0))
+                .andExpect(jsonPath("$.data.anime.gap", hasSize(0)))
+                .andExpect(jsonPath("$.data.anime.mappings[0].metricHistory", hasSize(2)))
+                .andExpect(jsonPath("$.data.anime.mappings[0].metricAt.date").value("2024-01-01"))
+                .andExpect(jsonPath("$.data.anime.mappings[0].metricAt.normalizedScore").value(50.0))
+                .andExpect(jsonPath("$.data.anime.mappings[0].absent").value(nullValue()));
+    }
+
+    @Test
+    public void testMetricHistoryInvalidArgumentsReturnBadRequestError() throws Exception {
+        Anime anime = createAndSaveAnime("参数校验测试", LocalDate.of(2024, 1, 1), 8.0, 5000.0);
+        String query = """
+                { anime(animeId: "%s") {
+                    invalidDate: metricAt(at: "not-a-date") { date }
+                    rangeTooLong: metricHistory(from: "2024-01-01", to: "2024-05-01") { date }
+                } }
+                """.formatted(anime.getAnimeId());
+
+        mockMvc.perform(post(GRAPHQL_PATH).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("query", query))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errors", hasSize(2)))
+                .andExpect(jsonPath("$.errors[0].message").value("参数 at 不是合法的 ISO 日期: not-a-date"))
+                .andExpect(jsonPath("$.errors[0].extensions.classification").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.errors[1].message").value("查询区间最多包含 90 天"))
+                .andExpect(jsonPath("$.errors[1].extensions.classification").value("BAD_REQUEST"));
     }
 
     // ============ 辅助方法 ============

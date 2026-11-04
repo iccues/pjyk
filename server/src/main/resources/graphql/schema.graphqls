@@ -36,6 +36,8 @@ type Anime {
     averageScore: Float
     popularity: Float
     mappings: [Mapping!]!
+    metricHistory(from: String!, to: String!): [AnimeMetricPoint!]!
+    metricAt(at: String!): AnimeMetricPoint
 }
 
 type AnimeTitles {
@@ -53,6 +55,22 @@ type PlatformKey {
 type Mapping {
     mappingId: ID!
     platformKey: PlatformKey!
+    rawScore: Float
+    normalizedScore: Float
+    rawPopularity: Float
+    normalizedPopularity: Float
+    metricHistory(from: String!, to: String!): [MappingMetricPoint!]!
+    metricAt(at: String!): MappingMetricPoint
+}
+
+type AnimeMetricPoint {
+    date: String!
+    averageScore: Float
+    popularity: Float
+}
+
+type MappingMetricPoint {
+    date: String!
     rawScore: Float
     normalizedScore: Float
     rawPopularity: Float
