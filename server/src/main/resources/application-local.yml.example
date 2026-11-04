@@ -6,7 +6,3 @@ spring:
 
 mal:
   client-id: ${MAL_CLIENT_ID}
-
-OIDC:
-  issuer: ${OIDC_ISSUER}
-  client-id: ${OIDC_CLIENT_ID}

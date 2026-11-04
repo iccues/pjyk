@@ -13,7 +13,12 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${oidc.issuer}
+          issuer-uri: ${oidc.issuer:}
+
+oidc:
+  enabled: true
+  issuer: ${OIDC_ISSUER:}
+  client-id: ${OIDC_CLIENT_ID:}
 
 platform:
   bangumi:

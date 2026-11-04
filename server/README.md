@@ -19,7 +19,7 @@
 
 ## 快速开始
 
-运行前请先将 `src/main/resources/application-local.yml.example` 复制为 `src/main/resources/application-local.yml`，并按需配置本地环境变量（数据库、MAL、OIDC）。
+运行前请先将 `src/main/resources/application-local.yml.example` 复制为 `src/main/resources/application-local.yml`，并配置数据库、MAL 环境变量。启用鉴权时还需设置 `OIDC_ISSUER` 和 `OIDC_CLIENT_ID`。
 
 ```bash
 cd server
@@ -30,6 +30,20 @@ SPRING_PROFILES_ACTIVE=dev,local ./gradlew bootRun
 
 - `dev,local` 表示同时启用 `application-dev.yml` 与 `application-local.yml`（以及默认的 `application.yml`）
 - 一般情况下，`local` 用于覆盖本机差异配置（如数据库地址、密钥等），`dev` 放开发环境的通用配置
+
+## 后台鉴权
+
+- `oidc.enabled` 控制管理 API 和管理端页面的鉴权，默认开启；`dev` 环境和自动化测试默认关闭
+- 可在配置文件中设置 `oidc.enabled`，或用环境变量 `OIDC_ENABLED=true/false` 覆盖当前环境的默认值
+- 独立部署的测试环境可设置 `OIDC_ENABLED=false` 关闭鉴权
+- 关闭后无需配置 OIDC，管理端从 `/api/config/oidc` 读取开关，直接进入后台且不发送 Token
+- 开启后需配置 `OIDC_ISSUER` 和 `OIDC_CLIENT_ID`，管理 API 继续校验 JWT
+
+例如，在开发环境临时开启鉴权：
+
+```bash
+OIDC_ENABLED=true SPRING_PROFILES_ACTIVE=dev,local ./gradlew bootRun
+```
 
 ## 数据库
 

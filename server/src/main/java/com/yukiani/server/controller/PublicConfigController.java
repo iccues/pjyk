@@ -18,9 +18,9 @@ public class PublicConfigController {
     OidcConfig oidc;
 
     /**
-     * 获取前端登录所需的 OIDC 公开配置。
+     * 获取后台鉴权开关及前端登录所需的 OIDC 公开配置。
      *
-     * @return 包含 OIDC issuer 和 clientId 的成功响应
+     * @return 包含鉴权开关、OIDC issuer 和 clientId 的成功响应
      */
     @GetMapping("/oidc")
     public Response<OidcConfig> oidcConfig() {

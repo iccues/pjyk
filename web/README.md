@@ -89,4 +89,4 @@ pnpm --filter @pjyk-web/client codegen
 
 - 前台默认通过 `/api/graphql` 调用后端
 - 公开站点的主要路由包括首页、搜索、动画详情、动画列表和文档页
-- 后台页面依赖登录/OIDC 配置，并通过后端管理接口读写数据
+- 后台页面通过 `/api/config/oidc` 读取后端的 `oidc.enabled` 开关；关闭时直接访问，开启时使用 OIDC 登录，并通过后端管理接口读写数据

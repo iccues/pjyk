@@ -8,6 +8,9 @@ spring:
       path: /api/graphiql
       enabled: true
 
+oidc:
+  enabled: false
+
 logging:
   level:
     root: INFO

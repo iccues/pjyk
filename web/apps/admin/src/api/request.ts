@@ -23,7 +23,7 @@ const onResponseRejected = (error: any) => {
 const adminClient = axios.create();
 
 adminClient.interceptors.request.use(async (config) => {
-  const user = await oidcManager.getUser();
+  const user = await oidcManager?.getUser();
   if (user?.id_token) {
     config.headers.Authorization = `Bearer ${user.id_token}`;
   }

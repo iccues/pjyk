@@ -1,6 +1,7 @@
 import { publicClient } from "./request";
 
 export interface OidcConfig {
+  enabled: boolean;
   issuer: string;
   clientId: string;
 }

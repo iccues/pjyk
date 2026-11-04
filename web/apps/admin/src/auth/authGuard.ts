@@ -1,22 +1,25 @@
-import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
+import type { RouteLocationNormalized } from "vue-router";
 
-import { oidcManager } from "./oidc";
+import { oidcConfig, oidcManager } from "./oidc";
 
-export async function authGuard(
-  to: RouteLocationNormalized,
-  _from: RouteLocationNormalized,
-  next: NavigationGuardNext,
-) {
+export async function authGuard(to: RouteLocationNormalized) {
+  if (!oidcConfig.enabled) {
+    if (to.path === "/auth/login" || to.path === "/auth/callback") {
+      return "/";
+    }
+    return true;
+  }
+
   if (!to.meta.requiresAuth) {
-    return next();
+    return true;
   }
 
-  const user = await oidcManager.getUser();
+  const user = await oidcManager?.getUser();
   if (!user || user.expired) {
-    return next({
+    return {
       path: "/auth/login",
-    });
+    };
   }
 
-  return next();
+  return true;
 }

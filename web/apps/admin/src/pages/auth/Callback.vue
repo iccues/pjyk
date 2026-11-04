@@ -8,7 +8,7 @@ const router = useRouter();
 
 onMounted(async () => {
   try {
-    await oidcManager.signinRedirectCallback();
+    await oidcManager?.signinRedirectCallback();
     router.replace("/");
   } catch (e) {
     console.error("Auth callback failed", e);
