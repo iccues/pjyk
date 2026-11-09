@@ -41,4 +41,3 @@ docker compose up --build
 - 后端默认 GraphQL 路径是 `/api/graphql`
 - 前端通过 `/api/graphql` 和后端交互，`apps/client` 是公开站点，`apps/admin` 是管理后台
 - 数据分析模块默认连接本地 PostgreSQL
-- [`pjyk-labs`](https://github.com/iccues/pjyk-labs)：`pjyk` 的实验仓库，用于尝试其他技术栈的实现方式

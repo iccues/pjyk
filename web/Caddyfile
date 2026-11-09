@@ -9,7 +9,7 @@
 	}
 
 	handle /api/* {
-		reverse_proxy server:8080
+		reverse_proxy pjyk-server:8080
 	}
 
 	# 静态资源长期缓存
