@@ -15,16 +15,15 @@ RUN pnpm fetch
 
 # 安装并构建
 COPY . .
-RUN pnpm install --offline --frozen-lockfile && pnpm -r build
+RUN pnpm install --offline --frozen-lockfile && pnpm --filter @pjyk-web/client build
 
 # 生产阶段
 FROM caddy:2.11.7
 
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /app/apps/client/dist /srv/client
-COPY --from=build /app/apps/admin/dist /srv/admin
 
-EXPOSE 80 81
+EXPOSE 80 443 443/udp
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD wget -q --spider http://127.0.0.1/health || exit 1

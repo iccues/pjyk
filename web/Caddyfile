@@ -8,8 +8,12 @@
 		respond "OK"
 	}
 
-	handle /api/* {
+	handle /api/graphql {
 		reverse_proxy pjyk-server:8080
+	}
+
+	handle /api/* {
+		respond 404
 	}
 
 	# 静态资源长期缓存
@@ -26,14 +30,17 @@
 	}
 }
 
-# web-client
-:80 {
+www.yukiani.cn {
 	root * /srv/client
 	import spa
 }
 
-# web-admin
-:81 {
-	root * /srv/admin
-	import spa
+yukiani.cn {
+	redir https://www.yukiani.cn{uri} 308
+}
+
+# 容器健康检查使用本机 HTTP，不依赖公网证书。
+http://127.0.0.1 {
+	respond /health "OK"
+	respond 404
 }

@@ -85,6 +85,16 @@ import LinkButton from "@/components/LinkButton.vue";
         </a>
       </div>
       <p>&copy; 2026 Project Yuki. All rights reserved.</p>
+      <p class="mt-2">
+        <a
+          href="https://beian.miit.gov.cn/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition-colors hover:text-gray-800"
+        >
+          粤ICP备2026172590号
+        </a>
+      </p>
     </footer>
   </div>
 </template>

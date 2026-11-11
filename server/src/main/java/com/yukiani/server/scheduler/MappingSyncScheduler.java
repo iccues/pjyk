@@ -21,7 +21,6 @@ public class MappingSyncScheduler {
      *
      * <p>在调度线程上同步执行；上一轮未结束时，Spring 会跳过错过的触发时刻，不会重叠执行。</p>
      */
-    @Scheduled(cron = "0 0 * * * ?")
     public void scheduleMappingSync() {
         log.info("=== Mapping sync round started ===");
         try {
